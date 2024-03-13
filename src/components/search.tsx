@@ -6,9 +6,46 @@ import Image from "next/image";
 
 import Loader from "./loader";
 
+interface SearchResult {
+    pool_id: string,
+    created_at: string,
+    name: string,
+    email: string
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type DebounceFunction = (...p: any[]) => any;
+
 const Search: React.FC = (): React.ReactNode => {
     const [searchText, setSearchText] = useState<string>("");
-    // const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+
+    function debounce(fn: DebounceFunction, t: number): DebounceFunction {
+        let timeout: ReturnType<typeof setTimeout>;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                fn(...args);
+            }, t);
+        };
+    }
+
+    const handleInputChange = debounce(async (value: string) => {
+        console.log("SEARCHING")
+        setSearchText(value);
+        setLoading(true);
+        try {
+            const res = await fetch(`http://localhost:8080/api/v1/drep/query?search_query=${value}`);
+            const queryResults = await res.json() as SearchResult[];
+            console.log(queryResults);
+            setSearchResults(queryResults);
+            setLoading(false);
+        } catch (err) {
+            console.log(err);
+        }
+    }, 300);
 
     return (
         <motion.div 
@@ -22,11 +59,12 @@ const Search: React.FC = (): React.ReactNode => {
                 type="text" 
                 className="flex-1 w-full bg-transparent outline-none placeholder:text-secondary/60 font-ibm-mono text-[13px] text-secondary font-medium"
                 placeholder="search dreps here"
-                onChange={(e) => setSearchText(e.target.value)}
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+                onChange={(e) => handleInputChange(e.target.value)}
             />
 
             {
-                searchText ? <Loader /> : <FiSearch />
+                searchText && loading ? <Loader /> : <FiSearch />
             }
             {/* {
                 loading && <Loader />
@@ -36,7 +74,7 @@ const Search: React.FC = (): React.ReactNode => {
             <div className={`absolute left-0 top-full translate-y-4 w-full  bg-white border-brd-clr rounded-lg overflow-hidden ${searchText ? "max-h-[415px] md:max-h-[350px] border-b " : "max-h-0 border-0"} transition-all duration-300  `}>
                 <div className="p-3 md:px-5 md:py-4">
                     {
-                        Array(3).fill(0).map((_, i) => (
+                        searchResults.map((el, i) => (
                             <div 
                                 key={i}
                                 className={`p-3 border-b border-primary-light flex flex-col md:flex-row justify-between items-center gap-2`}
@@ -53,10 +91,10 @@ const Search: React.FC = (): React.ReactNode => {
                                     </div>
                                     <div className="flex flex-col gap-1 w-full max-w-none md:max-w-[290px]">
                                         <div className="text-secondary font-inter text-xs md:text-sm tracking-wide font-medium">
-                                            on which topics does AfD better reflect?
+                                            {el.name}
                                         </div>
                                         <div className="text-tertiary font-inter text-[10px] md:text-xs tracking-wide font-medium">
-                                            Hello sir J., thank you for your question. I entered the AfD because I no longer felt 
+                                            {el.email}
                                         </div>
                                     </div>
                                 </div>
