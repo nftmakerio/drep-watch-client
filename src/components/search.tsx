@@ -33,6 +33,11 @@ const Search: React.FC = (): React.ReactNode => {
     }
 
     const handleInputChange = debounce(async (value: string) => {
+        if(value === "") {
+            setSearchResults([]);
+            setSearchText("")
+            return;
+        };
         console.log("SEARCHING")
         setSearchText(value);
         setLoading(true);
