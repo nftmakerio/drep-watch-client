@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type AppType } from "next/dist/shared/lib/utils";
 
 import "~/styles/globals.css";
+import { MeshProvider } from "@meshsdk/react";
 
 const queryClient = new QueryClient();
 
@@ -23,7 +24,9 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 
     return (
         <QueryClientProvider client={queryClient}>
-            <Component {...pageProps} />
+            <MeshProvider>
+                <Component {...pageProps} />
+            </MeshProvider>
         </QueryClientProvider>
     );
 };
