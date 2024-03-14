@@ -2,6 +2,7 @@ import { type ChangeEvent, useState } from "react";
 import { motion } from "framer-motion";
 import axios, { AxiosError } from "axios";
 import User from "./user";
+import { BASE_API_URL } from "~/data/api";
 
 interface QuestionsProps {
   question: {
@@ -35,7 +36,7 @@ const Questions: React.FC<QuestionsProps> = ({
     console.log(quesData);
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/v1/questions/ask-question",
+        `${BASE_API_URL}/api/v1/questions/ask-question`,
         quesData,
       );
       console.log(response.data);
