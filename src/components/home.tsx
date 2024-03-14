@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
@@ -10,11 +11,82 @@ import { FILTER_TYPES, FILTERS, SMALL_WIDTHS, WIDTHS } from "~/constants";
 import useDeviceType from "~/hooks/use-device-type";
 import useInView from "~/hooks/use-in-view";
 
+interface Question {
+    id: number;
+    theme: string;
+    question_title: string;
+    question_description: string;
+    user_id: number;
+    drep_id: string;
+}
+
+interface Answer {
+    id: number;
+    answer: string;
+    question_id: number;
+    drep_id: string;
+}
+
+interface Drep {
+    pool_id: string;
+    created_at: string;
+    name: string;
+    email: string;
+}
+
+async function getData(activeNum: number) {
+    if (activeNum === FILTER_TYPES.LATEST_QUESTIONS)
+        return getLatestQuestions();
+    else if (activeNum === FILTER_TYPES.EXPLORE_DREPS)
+        return getDreps();
+    else
+        return getLatestAnswers();
+}
+
+async function getDreps(): Promise<{
+    dreps: Drep[];
+    questionAnswers: false;
+}> {
+    const res = await fetch(
+        "http://localhost:8080/api/v1/drep",
+    );
+    const dreps = (await res.json()) as Drep[];
+    // console.log("GET DREPS CALLED")
+    return { dreps, questionAnswers: false }
+}
+async function getLatestQuestions(): Promise<{
+    answers: (Answer | undefined)[], questionAnswers: true, questions: Question[]
+}> {
+    const res = await fetch(
+        "http://localhost:8080/api/v1/questions?latest=true",
+    );
+    const resJson = (await res.json()) as { questions: Question[] };
+    // console.log(resJson.questions)
+    const questionIds = await Promise.all(resJson.questions.map((question) => fetch(`http://localhost:8080/api/v1/answers/${question.id}`)));
+    const answers = await Promise.all(questionIds.map((questionId) => questionId.json())) as { answer?: Answer }[];
+    // console.log("GET LATEST QUESTIONS CALLED")
+    return { answers: answers.map(el => el.answer), questionAnswers: true, questions: resJson.questions }
+}
+async function getLatestAnswers(): Promise<{
+    answers: Answer[], questionAnswers: true, questions: Question[]
+}> {
+    const res = await fetch(
+        "http://localhost:8080/api/v1/answers?latest=true",
+    );
+    const resJson = (await res.json()) as { answers: Answer[] };
+    // console.log(resJson.answers)
+    const questionsRes = await Promise.all(resJson.answers.map((ans) => fetch(`http://localhost:8080/api/v1/questions/${ans.question_id}`)));
+    const questions = await Promise.all(questionsRes.map((el) => el.json())) as { question: Question }[];
+    // console.log("GET LATEST ANSWERS CALLED")
+    return { answers: resJson.answers, questionAnswers: true, questions: questions.map(el => el.question) }
+}
+
 const Home: React.FC = (): React.ReactNode => {
     const [active, setActive] = useState<number>(FILTER_TYPES.LATEST_ANSWERS);
 
     const deviceType = useDeviceType();
     const {initialLoad, ref} = useInView();
+    const { isLoading, data: pageData } = useQuery({ queryFn: () => getData(active), queryKey: ["getData", active] });
 
 
     const getLeftOffset = (): string => {
@@ -119,62 +191,74 @@ const Home: React.FC = (): React.ReactNode => {
                         </motion.div>
                     </div>
 
-                    {
-                        active === FILTER_TYPES.LATEST_ANSWERS &&
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {
-                                    Array(4).fill(0).map((_, i) => (
-                                        <motion.div
-                                            key={i}
-                                            initial={{ opacity: 0, x: -40 }}
-                                            whileInView={{opacity: 1, x: 0 }}
-                                            viewport={{ once: true }}
-                                            transition={{delay: initialLoad ? 1.25 + (i*0.25) : i*0.25, duration: 0.5}}
-                                        >
-                                            <QueAnsCard id={i+1} />
-                                        </motion.div>
-                                    ))
-                                }
-                            </div>
-                    }
+                    {active === FILTER_TYPES.LATEST_ANSWERS && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {pageData && pageData.questionAnswers && pageData.questions.map((question, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, x: -40 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{
+                                        delay: initialLoad
+                                            ? 1.25 + i * 0.25
+                                            : i * 0.25,
+                                        duration: 0.5,
+                                    }}
+                                >
+                                    <QueAnsCard
+                                        question={question}
+                                        answer={pageData.answers[i]}
+                                        id={i + 1}
+                                    />
+                                </motion.div>
+                            ))}
+                        </div>
+                    )}
 
-                    {
-                        active === FILTER_TYPES.LATEST_QUESTIONS &&
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {
-                                    Array(4).fill(0).map((_, i) => (
-                                        <motion.div
-                                            key={i}
-                                            initial={{ opacity: 0, x: -40 }}
-                                            whileInView={{opacity: 1, x: 0 }}
-                                            viewport={{ once: true }}
-                                            transition={{delay: initialLoad ? 1.25 + (i*0.25) : i*0.25, duration: 0.5}}
-                                        >
-                                            <QueAnsCard id={i+1} />
-                                        </motion.div>
-                                    ))
-                                }
-                            </div>
-                    }
+                    {active === FILTER_TYPES.LATEST_QUESTIONS && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {pageData && pageData.questionAnswers && pageData.questions.map((question, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, x: -40 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{
+                                        delay: initialLoad
+                                            ? 1.25 + i * 0.25
+                                            : i * 0.25,
+                                        duration: 0.5,
+                                    }}
+                                >
+                                    <QueAnsCard
+                                        question={question}
+                                        answer={pageData.answers[i]}
+                                        id={i + 1}
+                                    />
+                                </motion.div>
+                            ))}
+                        </div>
+                    )}
 
-                    {
-                        active === FILTER_TYPES.EXPLORE_DREPS && 
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {
-                                    Array(6).fill(0).map((_, i) => (
-                                        <motion.div
-                                            key={i}
-                                            initial={{ opacity: 0, x: -40 }}
-                                            whileInView={{opacity: 1, x: 0 }}
-                                            viewport={{ once: true }}
-                                            transition={{delay: i*0.25, duration: 0.5}}
-                                        >
-                                            <ProfileCard />
-                                        </motion.div>
-                                    ))
-                                }
-                            </div>
-                    }
+                    {active === FILTER_TYPES.EXPLORE_DREPS && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {pageData && !pageData.questionAnswers && pageData.dreps.map((_, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, x: -40 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{
+                                        delay: i * 0.25,
+                                        duration: 0.5,
+                                    }}
+                                >
+                                    <ProfileCard drep={pageData.dreps[i]} />
+                                </motion.div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </section>
