@@ -10,6 +10,7 @@ import Search from "./search";
 import { FILTER_TYPES, FILTERS, SMALL_WIDTHS, WIDTHS } from "~/constants";
 import useDeviceType from "~/hooks/use-device-type";
 import useInView from "~/hooks/use-in-view";
+import { BASE_API_URL } from "~/data/api";
 
 interface Question {
     id: number;
@@ -48,7 +49,7 @@ async function getDreps(): Promise<{
     questionAnswers: false;
 }> {
     const res = await fetch(
-        "http://localhost:8080/api/v1/drep",
+        `${BASE_API_URL}/api/v1/drep`,
     );
     const dreps = (await res.json()) as Drep[];
     // console.log("GET DREPS CALLED")
@@ -58,11 +59,11 @@ async function getLatestQuestions(): Promise<{
     answers: (Answer | undefined)[], questionAnswers: true, questions: Question[]
 }> {
     const res = await fetch(
-        "http://localhost:8080/api/v1/questions?latest=true",
+        `${BASE_API_URL}/api/v1/questions?latest=true`,
     );
     const resJson = (await res.json()) as { questions: Question[] };
     // console.log(resJson.questions)
-    const questionIds = await Promise.all(resJson.questions.map((question) => fetch(`http://localhost:8080/api/v1/answers/${question.id}`)));
+    const questionIds = await Promise.all(resJson.questions.map((question) => fetch(`${BASE_API_URL}/api/v1/answers/${question.id}`)));
     const answers = await Promise.all(questionIds.map((questionId) => questionId.json())) as { answer?: Answer }[];
     // console.log("GET LATEST QUESTIONS CALLED")
     return { answers: answers.map(el => el.answer), questionAnswers: true, questions: resJson.questions }
@@ -71,11 +72,11 @@ async function getLatestAnswers(): Promise<{
     answers: Answer[], questionAnswers: true, questions: Question[]
 }> {
     const res = await fetch(
-        "http://localhost:8080/api/v1/answers?latest=true",
+        `${BASE_API_URL}/api/v1/answers?latest=true`,
     );
     const resJson = (await res.json()) as { answers: Answer[] };
     // console.log(resJson.answers)
-    const questionsRes = await Promise.all(resJson.answers.map((ans) => fetch(`http://localhost:8080/api/v1/questions/${ans.question_id}`)));
+    const questionsRes = await Promise.all(resJson.answers.map((ans) => fetch(`${BASE_API_URL}/api/v1/questions/${ans.question_id}`)));
     const questions = await Promise.all(questionsRes.map((el) => el.json())) as { question: Question }[];
     // console.log("GET LATEST ANSWERS CALLED")
     return { answers: resJson.answers, questionAnswers: true, questions: questions.map(el => el.question) }

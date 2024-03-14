@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 import Loader from "./loader";
+import { BASE_API_URL } from "~/data/api";
 
 interface SearchResult {
     pool_id: string,
@@ -42,7 +43,7 @@ const Search: React.FC = (): React.ReactNode => {
         setSearchText(value);
         setLoading(true);
         try {
-            const res = await fetch(`http://localhost:8080/api/v1/drep/query?search_query=${value}`);
+            const res = await fetch(`${BASE_API_URL}/api/v1/drep/query?search_query=${value}`);
             const queryResults = await res.json() as SearchResult[];
             console.log(queryResults);
             setSearchResults(queryResults);
