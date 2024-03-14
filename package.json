@@ -13,6 +13,7 @@
     "dependencies": {
         "@studio-freight/lenis": "^1.0.34",
         "@t3-oss/env-nextjs": "^0.7.1",
+        "@tanstack/react-query": "^5.28.0",
         "axios": "^1.6.7",
         "framer-motion": "^11.0.8",
         "next": "^14.0.4",

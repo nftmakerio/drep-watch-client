@@ -11,6 +11,9 @@ dependencies:
   '@t3-oss/env-nextjs':
     specifier: ^0.7.1
     version: 0.7.3(typescript@5.3.3)(zod@3.22.4)
+  '@tanstack/react-query':
+    specifier: ^5.28.0
+    version: 5.28.0(react@18.2.0)
   axios:
     specifier: ^1.6.7
     version: 1.6.7
@@ -1620,6 +1623,19 @@ packages:
       '@t3-oss/env-core': 0.7.3(typescript@5.3.3)(zod@3.22.4)
       typescript: 5.3.3
       zod: 3.22.4
+    dev: false
+
+  /@tanstack/query-core@5.28.0:
+    resolution: {integrity: sha512-BfltXqnoIAXTCFrQCu40M3Ch7odQ6IJraTy0t8n12jAwXMYKIgDwOBWTqkSUYD+vxMi8Ag0+9F8lw9wZKhi2Yg==}
+    dev: false
+
+  /@tanstack/react-query@5.28.0(react@18.2.0):
+    resolution: {integrity: sha512-nF4E4rFMQdh30gECGkTfyzgjgfSr4MLVgYoIsf7KqVkjUjEQHPpi9jyx10kO3Yq/OQMKOLMHAzD31st/lxDPbQ==}
+    peerDependencies:
+      react: ^18.0.0
+    dependencies:
+      '@tanstack/query-core': 5.28.0
+      react: 18.2.0
     dev: false
 
   /@types/eslint-scope@3.7.7:
