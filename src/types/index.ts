@@ -3,9 +3,9 @@ import { type StaticImageData } from "next/image";
 export type DeviceType = "mobile" | "tablet" | "desktop" | "monitor";
 
 export interface UserType {
-    username: string;
+    name: string;
     walletId: string;
-    questionsAnswered: number;
-    totalQuestions: number;
+    questionsAnswers: number;
+    questionsAsked: number;
     img: string | StaticImageData;
 }

@@ -18,14 +18,14 @@ const User: React.FC<UserProps> = ({ user }: UserProps): React.ReactNode => {
                 currentPercentage += 1;
                 setPercentage(currentPercentage);
 
-                if (currentPercentage >= Math.floor((user.questionsAnswered / user.totalQuestions) * 100)) {
+                if (currentPercentage >= Math.floor((user.questionsAnswers / user.questionsAsked) * 100)) {
                     clearInterval(interval);
                 }
             }, 10);
         };
 
         setTimeout(animatePercentage, 1750);
-    }, [user.questionsAnswered, user.totalQuestions]);
+    }, [user.questionsAnswers, user.questionsAsked]);
 
     return (
 
@@ -51,7 +51,7 @@ const User: React.FC<UserProps> = ({ user }: UserProps): React.ReactNode => {
                         width={1000}
                         height={1000}
                         className="w-[140px] rounded-lg"
-                        alt={user.username}
+                        alt={user.name}
                     />
                 </motion.div>
                 <motion.div 
@@ -72,7 +72,7 @@ const User: React.FC<UserProps> = ({ user }: UserProps): React.ReactNode => {
                 viewport={{ once: true }}
                 transition={{delay: 0.85, duration: 0.5}}
             >
-                {user.username}
+                {user.name}
             </motion.h2>
 
             <motion.div 
@@ -111,9 +111,9 @@ const User: React.FC<UserProps> = ({ user }: UserProps): React.ReactNode => {
 
                 <div className="flex flex-[2_2_0%] flex-col justify-center gap-2 pl-3 text-xl md:text-2xl">
                     <p className="font-inter font-medium tracking-wide">
-                        <span className="font-semibold">{user.questionsAnswered}</span>
+                        <span className="font-semibold">{user.questionsAnswers}</span>
                         <span className="font-semibold text-gray-400">
-                            {" / " + user.totalQuestions}
+                            {" / " + user.questionsAsked}
                         </span>
                     </p>
                     <span className="inline-block text-xs md:text-sm font-semibold text-tertiary font-ibm-mono">

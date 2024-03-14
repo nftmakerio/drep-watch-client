@@ -93,9 +93,9 @@ const Questions: React.FC<QuestionsProps> = ({
           <User
             user={{
               img: "/assets/ask-questions/user.png",
-              questionsAnswered: 860,
-              totalQuestions: 950,
-              username: "Drep of NMKR",
+              questionsAnswers: 860,
+              questionsAsked: 950,
+              name: "Drep of NMKR",
               walletId: "uqwdbd8271gd98n13241",
             }}
           />
@@ -202,9 +202,9 @@ const Questions: React.FC<QuestionsProps> = ({
         <User
           user={{
             img: "/assets/ask-questions/user.png",
-            questionsAnswered: 860,
-            totalQuestions: 950,
-            username: "Drep of NMKR",
+            questionsAnswers: 860,
+            questionsAsked: 950,
+            name: "Drep of NMKR",
             walletId: "uqwdbd8271gd98n13241",
           }}
         />
