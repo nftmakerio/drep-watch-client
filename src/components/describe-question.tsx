@@ -22,6 +22,8 @@ const Questions: React.FC<QuestionsProps> = ({
     drep_id: "fd8907e6-8c0d-4814-bf71-6706ce506c7b",
   });
 
+  const [preview, setPreview] = useState<boolean>(false);
+
   const handleInputChange = (fieldName: string, value: string) => {
     setQuesData((prevState) => ({
       ...prevState,
@@ -38,11 +40,22 @@ const Questions: React.FC<QuestionsProps> = ({
       );
       console.log(response.data);
     } catch (error: unknown) {
-      if(error instanceof AxiosError && error.response && error.response.data){
-        const responseData = (error.response.data)
-        console.log(responseData)
+      if (
+        error instanceof AxiosError &&
+        error.response &&
+        error.response.data
+      ) {
+        const responseData = error.response.data;
+        console.log(responseData);
       }
       console.log(error);
+    }
+  };
+
+  const handleNextButtonClick = () => {
+    const { theme, question_title, question_description } = quesData;
+    if (theme && question_title && question_description) {
+      setPreview(true);
     }
   };
 
@@ -72,7 +85,7 @@ const Questions: React.FC<QuestionsProps> = ({
             viewport={{ once: true }}
             transition={{ delay: 0.25, duration: 0.5 }}
           >
-            {question.theme ? "Preview" : "Describe your question"}
+            {preview ? "Preview" : "Describe your question"}
           </motion.h1>
         </div>
 
@@ -94,6 +107,7 @@ const Questions: React.FC<QuestionsProps> = ({
             value={question.theme ?? null}
             title="Theme"
             onChange={(value: string) => handleInputChange("theme", value)}
+            preview={preview}
           />
           <TitleAndInput
             index={2}
@@ -102,6 +116,7 @@ const Questions: React.FC<QuestionsProps> = ({
             onChange={(value: string) =>
               handleInputChange("question_title", value)
             }
+            preview={preview}
           />
           <TitleAndInput
             textArea
@@ -112,9 +127,10 @@ const Questions: React.FC<QuestionsProps> = ({
             onChange={(value: string) =>
               handleInputChange("question_description", value)
             }
+            preview={preview}
           />
         </div>
-        {question.theme ? (
+        {preview ? (
           <div className="mt-3 flex justify-between border-brd-clr pl-6 pr-5 pt-6 font-inter font-medium tracking-wide md:mt-8 md:pl-12 lg:border-t">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -126,6 +142,7 @@ const Questions: React.FC<QuestionsProps> = ({
                 className="flex h-11 items-center justify-center rounded-lg bg-tertiary-light px-8 text-sm text-secondary"
                 whileHover={{ scaleX: 1.025 }}
                 whileTap={{ scaleX: 0.995 }}
+                onClick={() => setPreview(false)}
               >
                 Back
               </motion.button>
@@ -172,7 +189,7 @@ const Questions: React.FC<QuestionsProps> = ({
                 className="text-shadow flex h-11 items-center justify-center rounded-lg bg-gradient-to-b from-[#FFC896] from-[-47.73%] to-[#FB652B]  to-[78.41%] px-8 text-sm text-white"
                 whileHover={{ scaleX: 1.025 }}
                 whileTap={{ scaleX: 0.995 }}
-                onClick={handleSubmit}
+                onClick={handleNextButtonClick}
               >
                 Next &nbsp; &#10003;
               </motion.button>
@@ -215,7 +232,8 @@ interface InputProps {
   textArea?: boolean;
   value: string | null;
   index: number;
-  onChange: any;
+  onChange: (value: string) => void;
+  preview: boolean;
 }
 
 function TitleAndInput({
@@ -225,6 +243,7 @@ function TitleAndInput({
   value,
   index,
   onChange,
+  preview,
 }: InputProps) {
   const [inpVal, setInpVal] = useState<string>(value ?? "");
 
@@ -255,6 +274,7 @@ function TitleAndInput({
             value={inpVal ?? ""}
             rows={6}
             onChange={handleOnChange}
+            readOnly={preview}
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -267,6 +287,7 @@ function TitleAndInput({
             placeholder={inputPlaceholder ?? "Lorem ipsum dolor sit amet"}
             value={inpVal ?? ""}
             onChange={handleOnChange}
+            readOnly={preview}
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
