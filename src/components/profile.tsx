@@ -18,6 +18,7 @@ import { useParams } from "next/navigation";
 import axios, { AxiosError } from "axios";
 import { UserType } from "~/types";
 import Link from "next/link";
+import { BASE_API_URL } from "~/data/api";
 
 const Profile: React.FC = (): React.ReactNode => {
   const param = useParams();
@@ -49,7 +50,7 @@ const Profile: React.FC = (): React.ReactNode => {
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/v1/drep/drep-profile",
+        `${BASE_API_URL}/api/v1/drep/drep-profile`,
         { drep_id: param.id },
       );
       setProfileData(response.data);
