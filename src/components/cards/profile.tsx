@@ -4,9 +4,16 @@ import Image from "next/image";
 
 interface ProfileCardProps {
     test?: string;
+    drep?: Drep;
 };
+interface Drep {
+    pool_id: string;
+    created_at: string;
+    name: string;
+    email: string;
+}
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ }: ProfileCardProps): React.ReactNode => {
+const ProfileCard: React.FC<ProfileCardProps> = ({ drep }: ProfileCardProps): React.ReactNode => {
     return (
         <motion.div
             className="border-brd-clr border rounded-xl flex flex-col"
@@ -22,11 +29,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ }: ProfileCardProps): React.R
                 />
 
                 <div className="bg-tertiary-light text-tertiary py-3 px-4 rounded-[10px] font-ibm-mono font-medium text-sm tracking-wide">
-                    uqwdbd8271gd98n13241
+                    {drep ? drep.pool_id : "uqwdbd8271gd98n13241"}
                 </div>
             </div>
             <div className="bg-[#F5F5F5] border-y border-brd-clr text-secondary p-3 md:p-5 font-semibold font-inter tracking-wide text-center text-sm md:text-base">
-                Drep of NMKR
+                {drep ? drep.name : "Drep of NMKR"}
             </div>
             <motion.button 
                 className="my-3 py-3 md:py-4 mx-[18px]  flex justify-center items-center gap-2.5 bg-primary-light text-primary rounded-[10px] border border-[#E6E6E6] "

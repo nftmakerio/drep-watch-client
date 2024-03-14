@@ -3,12 +3,34 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
+interface Question {
+    theme: string;
+    question_title: string;
+    question_description: string;
+    user_id: number;
+    drep_id: string;
+}
+
+interface Answer {
+    id: number;
+    answer: string;
+    question_id: number;
+    drep_id: string;
+}
+
 interface QueAnsCardProps {
     large?: boolean;
     id?: number | string;
-};
+    question?: Question;
+    answer?: Answer;
+}
 
-const QueAnsCard: React.FC<QueAnsCardProps> = ({ large=false, id }: QueAnsCardProps): React.ReactNode => {
+const QueAnsCard: React.FC<QueAnsCardProps> = ({
+    large = false,
+    id,
+    question,
+    answer
+}: QueAnsCardProps): React.ReactNode => {
     const router = useRouter();
     const handleClick = () => {
         if(!large && id) {
@@ -46,11 +68,11 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({ large=false, id }: QueAnsCardPr
                     {
                         large ? (
                             <>
-                                Dear Mr. Frisch, on which topics does the AfD better reflect your opinion than other parties, which justifies remaining in the party despite leaving the parliamentary group? MfG PeterJMfG P.
+                                {question ? question.question_title : "Dear Mr. Frisch, on which topics does the AfD better reflect your opinion than other parties, which justifies remaining in the party despite leaving the parliamentary group? MfG PeterJMfG P."}
                             </>
                         ) : ( 
                             <>
-                                Would the AFD finally favor the pensioners vs. end the statutory pensioners (inflation compensation etc.) ?
+                                {question? question.question_title : "Would the AFD finally favor the pensioners vs. end the statutory pensioners (inflation compensation etc.) ?"}
                                 <span className="ml-2 text-[#cbcbcb]">read more...</span>
                             </>
                         )
@@ -98,7 +120,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({ large=false, id }: QueAnsCardPr
                                 </>
                             ) : (
                                 <>
-                                    Thank you for your question. You can find information on the subject of pensions here: https://www.afd.de/
+                                    {answer ? answer.answer : "Thank you for your question. You can find information on the subject of pensions here: https://www.afd.de/"}
                                     <span className="ml-2 text-[#cbcbcb]">read more...</span>
                                 </>
                             )
@@ -113,7 +135,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({ large=false, id }: QueAnsCardPr
                         </div>
                         <div className="flex gap-1 items-center">
                             {
-                                ["Pension", "Inflation"].map(i => (
+                                (question ? [question.theme] : ["Poverty", "Labour"]).map(i => (
                                     <div 
                                         className="px-3 py-1 bg-white rounded-full font-inter font-medium text-xs md:text-[13px] text-[#444]"
                                         key={i}
