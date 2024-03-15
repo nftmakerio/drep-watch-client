@@ -19,10 +19,11 @@ import axios, { AxiosError } from "axios";
 import { DrepType, UserType } from "~/types";
 import Link from "next/link";
 import { BASE_API_URL } from "~/data/api";
+import { useQuery } from "@tanstack/react-query";
 
 const Profile: React.FC = (): React.ReactNode => {
   const param = useParams();
-  const [profileData, setProfileData] = useState<DrepType>();
+  // const [profileData, setProfileData] = useState<DrepType>();
   const [active, setActive] = useState<number>(
     P_FILTER_TYPES.QUESTIONS_ANSWERS,
   );
@@ -53,7 +54,9 @@ const Profile: React.FC = (): React.ReactNode => {
         `${BASE_API_URL}/api/v1/drep/drep-profile`,
         { drep_id: param.id },
       );
-      setProfileData(response.data);
+      // setProfileData(response.data);
+
+      return response.data;
       //   console.log(data);
     } catch (error: unknown) {
       if (
@@ -67,10 +70,11 @@ const Profile: React.FC = (): React.ReactNode => {
       console.log(error);
     }
   };
-  console.log(profileData);
-  useEffect(() => {
-    fetchData();
-  }, [param]);
+
+  const { data: profileData } = useQuery({
+    queryKey: ["drep-profile", param.id],
+    queryFn: () => fetchData(),
+  });
 
   return (
     <section className="flex w-full flex-col gap-[40px] pb-20 pt-[150px] md:gap-[90px] md:pt-[190px]">
@@ -92,7 +96,7 @@ const Profile: React.FC = (): React.ReactNode => {
               />
             </div>
             <div className="flex flex-col">
-              <div className="text-center font-ibm-mono text-xs w-[300px] overflow-hidden text-ellipsis tracking-wide text-tertiary md:text-left md:text-sm">
+              <div className="w-[300px] overflow-hidden text-ellipsis text-center font-ibm-mono text-xs tracking-wide text-tertiary md:text-left md:text-sm">
                 {profileData?.drep_id}
               </div>
               <div className="text-center font-neue-regrade text-[36px] font-semibold text-black md:text-start">
@@ -133,11 +137,7 @@ const Profile: React.FC = (): React.ReactNode => {
           className="flex w-full max-w-[1600px] flex-col gap-6 md:gap-10"
         >
           <div className="flex w-full flex-col items-start justify-between gap-2 font-inter font-medium tracking-wide text-secondary-dark md:flex-row md:items-center ">
-            <div
-              className="text-base md:text-xl"
-            >
-              Questions and answers
-            </div>
+            <div className="text-base md:text-xl">Questions and answers</div>
             <motion.div
               className="rounded-lg p-1.5 text-xs text-tertiary md:text-sm"
               initial={{ backgroundColor: "transparent", opacity: 0 }}

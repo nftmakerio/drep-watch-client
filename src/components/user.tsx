@@ -25,7 +25,7 @@ const User: React.FC<UserProps> = ({ user }: UserProps): React.ReactNode => {
                         alt={user.name}
                     />
                 </div>
-                <div className="rounded-lg bg-primary-light px-[18px] py-2 font-semibold text-primary font-ibm-mono text-xs md:text-[13px] tracking-wide">
+                <div className="rounded-lg w-[200px] overflow-hidden text-ellipsis mt-4 bg-primary-light px-[18px] py-2 font-semibold text-primary font-ibm-mono text-xs md:text-[13px] tracking-wide">
                     {user.walletId}
                 </div>
             </div>

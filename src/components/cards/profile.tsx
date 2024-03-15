@@ -1,13 +1,14 @@
 import { BsChatQuoteFill } from "react-icons/bs";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 interface ProfileCardProps {
     test?: string;
     drep?: Drep;
 };
 interface Drep {
-    pool_id: string;
+    drep_id: string;
     created_at: string;
     name: string;
     email: string;
@@ -28,23 +29,22 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ drep }: ProfileCardProps): Re
                     alt={`card-img-${1}`}
                 />
 
-                <div className="bg-tertiary-light text-tertiary py-3 px-4 rounded-[10px] font-ibm-mono font-medium text-sm tracking-wide">
-                    {drep ? drep.pool_id : "uqwdbd8271gd98n13241"}
+                <div className="bg-tertiary-light text-tertiary py-3 px-4 w-[200px] overflow-hidden text-ellipsis rounded-[10px] font-ibm-mono font-medium text-sm tracking-wide">
+                    {drep?.drep_id}
                 </div>
             </div>
             <div className="bg-[#F5F5F5] border-y border-brd-clr text-secondary p-3 md:p-5 font-semibold font-inter tracking-wide text-center text-sm md:text-base">
-                {drep ? drep.name : "Drep of NMKR"}
+                {drep?.name}
             </div>
-            <motion.button 
+            <Link
+                href={`/ask-question?to=${drep?.drep_id}`} 
                 className="my-3 py-3 md:py-4 mx-[18px]  flex justify-center items-center gap-2.5 bg-primary-light text-primary rounded-[10px] border border-[#E6E6E6] "
-                whileHover={{scaleX: 1.025}}
-                whileTap={{scaleX: 0.995}}
             >
                 <BsChatQuoteFill className="text-lg md:text-xl" />
                 <div className="font-inter font-semibold text-xs md:text-sm tracking-wide ">
                     Ask question
                 </div>
-            </motion.button>
+            </Link>
 
             <div className="mb-3 py-3 md:py-4 mx-[18px]  flex justify-center items-center font-inter font-medium text-xs md:text-sm text-secondary tracking-wide">
                 <motion.button 

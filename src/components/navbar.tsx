@@ -11,6 +11,7 @@ import { WALLETS } from "~/constants";
 import { BASE_API_URL } from "~/data/api";
 import { useState } from "react";
 import Link from "next/link";
+import { useWalletStore } from "~/store/wallet";
 
 const Navbar: React.FC = (): React.ReactNode => {
   const device = useDeviceType();
@@ -20,12 +21,18 @@ const Navbar: React.FC = (): React.ReactNode => {
 
   const { connect, disconnect, connected, name } = useWallet();
 
+  const { saveWallet } = useWalletStore();
+
   const handleClick = async (name: string) => {
     try {
       setConnecting(true);
       await connect(name);
       const wallet = await BrowserWallet.enable(name);
       const address = (await wallet.getRewardAddresses())[0];
+
+      if (!address) {
+        return;
+      }
 
       const requestData = {
         name: null,
@@ -38,7 +45,10 @@ const Navbar: React.FC = (): React.ReactNode => {
         requestData,
       );
 
-      console.log(data);
+      saveWallet({
+        connected: true,
+        stake_address: address,
+      });
 
       setConnecting(false);
 

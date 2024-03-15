@@ -3,6 +3,9 @@ import { motion } from "framer-motion";
 import axios, { AxiosError } from "axios";
 import User from "./user";
 import { BASE_API_URL } from "~/data/api";
+import { useRouter } from "next/router";
+import { useWalletStore } from "~/store/wallet";
+import { useQuery } from "@tanstack/react-query";
 
 interface QuestionsProps {
   question: {
@@ -12,18 +15,17 @@ interface QuestionsProps {
   };
 }
 
-const Questions: React.FC<QuestionsProps> = ({
-  question,
-}: QuestionsProps): React.ReactNode => {
+const Questions = (): React.ReactNode => {
+  const { query } = useRouter();
   const [quesData, setQuesData] = useState({
-    drep_id: "fd8907e6-8c0d-4814-bf71-6706ce506c7b",
-    question_description: question.question_description,
-    question_title: question.question_title,
-    theme: question.theme,
-    user_id: 1,
+    question_description: "",
+    question_title: "",
+    theme: "",
   });
 
   const [preview, setPreview] = useState<boolean>(false);
+
+  const { stake_address } = useWalletStore();
 
   const handleInputChange = (fieldName: string, value: string) => {
     setQuesData((prevState) => ({
@@ -33,11 +35,11 @@ const Questions: React.FC<QuestionsProps> = ({
   };
 
   const handleSubmit = async () => {
-    console.log(quesData);
+    console.log(query);
     try {
       const response = await axios.post(
         `${BASE_API_URL}/api/v1/questions/ask-question`,
-        quesData,
+        { drep_id: query.to, ...quesData, user_id: stake_address },
       );
       console.log(response.data);
     } catch (error: unknown) {
@@ -60,6 +62,38 @@ const Questions: React.FC<QuestionsProps> = ({
     }
   };
 
+  const fetchData = async () => {
+    try {
+      if (!query.to) {
+        return;
+      }
+
+      const response = await axios.post(
+        `${BASE_API_URL}/api/v1/drep/drep-profile`,
+        { drep_id: query.to },
+      );
+      // setProfileData(response.data);
+
+      return response.data;
+      //   console.log(data);
+    } catch (error: unknown) {
+      if (
+        error instanceof AxiosError &&
+        error.response &&
+        error.response.data
+      ) {
+        const responseData = error.response.data;
+        console.log(responseData);
+      }
+      console.log(error);
+    }
+  };
+
+  const { data: profileData } = useQuery({
+    queryKey: ["drep-profile", query.to],
+    queryFn: () => fetchData(),
+  });
+
   return (
     <div className="flex w-full max-w-[1318px] flex-col gap-4 rounded-xl bg-[#FAFAFA] shadow lg:flex-row lg:pr-12">
       <div className="flex-[2_2_0%] py-12 lg:border-r lg:border-brd-clr">
@@ -74,8 +108,7 @@ const Questions: React.FC<QuestionsProps> = ({
             </motion.button>
           </div>
 
-          <h1 className="font-inter text-base font-semibold md:text-xl"
-          >
+          <h1 className="font-inter text-base font-semibold md:text-xl">
             {preview ? "Preview" : "Describe your question"}
           </h1>
         </div>
@@ -95,7 +128,7 @@ const Questions: React.FC<QuestionsProps> = ({
         <div className="mt-12 flex flex-col gap-6 px-6 md:px-12">
           <TitleAndInput
             index={1}
-            value={question.theme ?? null}
+            value={quesData.theme}
             title="Theme"
             inputPlaceholder=""
             onChange={(value: string) => handleInputChange("theme", value)}
@@ -103,7 +136,7 @@ const Questions: React.FC<QuestionsProps> = ({
           />
           <TitleAndInput
             index={2}
-            value={question.question_title ?? null}
+            value={quesData.question_title}
             title="Question Title"
             onChange={(value: string) =>
               handleInputChange("question_title", value)
@@ -114,7 +147,7 @@ const Questions: React.FC<QuestionsProps> = ({
           <TitleAndInput
             textArea={true}
             index={3}
-            value={question.question_description ?? null}
+            value={quesData.question_description}
             title="Question Description"
             inputPlaceholder=""
             onChange={(value: string) =>
@@ -169,10 +202,10 @@ const Questions: React.FC<QuestionsProps> = ({
         <User
           user={{
             img: "/assets/ask-questions/user.png",
-            name: "Drep of NMKR",
-            questionsAnswers: 860,
-            questionsAsked: 950,
-            walletId: "uqwdbd8271gd98n13241",
+            name: profileData?.name,
+            questionsAnswers: profileData?.questionsAnswers,
+            questionsAsked: profileData?.questionsAsked,
+            walletId: profileData?.drep_id,
           }}
         />
       </div>
@@ -223,9 +256,7 @@ function TitleAndInput({
 
   return (
     <div className="flex flex-col gap-1 font-inter tracking-wide">
-      <h2 className="font-semibold text-secondary ">
-        {title ?? "Lorem"}
-      </h2>
+      <h2 className="font-semibold text-secondary ">{title ?? "Lorem"}</h2>
 
       <div className="relative mt-2 font-medium">
         {textArea ? (

@@ -8,7 +8,7 @@ import Loader from "./loader";
 import { BASE_API_URL } from "~/data/api";
 
 interface SearchResult {
-    pool_id: string,
+    drep_id: string,
     created_at: string,
     name: string,
     email: string
@@ -99,8 +99,8 @@ const Search: React.FC = (): React.ReactNode => {
                                         <div className="text-secondary font-inter text-xs md:text-sm tracking-wide font-medium">
                                             {el.name}
                                         </div>
-                                        <div className="text-tertiary font-inter text-[10px] md:text-xs tracking-wide font-medium">
-                                            {el.email}
+                                        <div className="text-tertiary w-[200px] overflow-hidden text-ellipsis font-inter text-[10px] md:text-xs tracking-wide font-medium">
+                                            {el?.drep_id}
                                         </div>
                                     </div>
                                 </div>

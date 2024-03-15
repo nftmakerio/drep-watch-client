@@ -36,7 +36,7 @@ export interface Answer {
 }
 
 export interface Drep {
-  pool_id: string;
+  drep_id: string;
   created_at: string;
   name: string;
   email: string;
