@@ -74,17 +74,8 @@ const Profile: React.FC = (): React.ReactNode => {
 
   return (
     <section className="flex w-full flex-col gap-[40px] pb-20 pt-[150px] md:gap-[90px] md:pt-[190px]">
-      <motion.div
-        className=""
-        initial={{ opacity: 0, y: -60 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.5, duration: 0.5 }}
-      >
-        <motion.div
-          className="relative flex items-center justify-center"
-          whileHover={{ scale: 1.025 }}
-        >
+      <div className="">
+        <div className="relative flex items-center justify-center">
           <div className="absolute top-0 -translate-y-1/2 rounded-[10px] bg-primary-light px-5 py-3 font-ibm-mono text-xs text-primary md:text-[13px]">
             {profileData?.questionsAnswers}/{profileData?.questionsAsked}{" "}
             Question answered
@@ -133,8 +124,8 @@ const Profile: React.FC = (): React.ReactNode => {
               </div>
             </div>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       <div className="flex  w-full items-center justify-center bg-white px-[5%] py-7 pb-12 shadow-[-5px_0px_13px_0px_#0000001A]">
         <div
@@ -142,15 +133,11 @@ const Profile: React.FC = (): React.ReactNode => {
           className="flex w-full max-w-[1600px] flex-col gap-6 md:gap-10"
         >
           <div className="flex w-full flex-col items-start justify-between gap-2 font-inter font-medium tracking-wide text-secondary-dark md:flex-row md:items-center ">
-            <motion.div
+            <div
               className="text-base md:text-xl"
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 1.25, duration: 0.5 }}
             >
               Questions and answers
-            </motion.div>
+            </div>
             <motion.div
               className="rounded-lg p-1.5 text-xs text-tertiary md:text-sm"
               initial={{ backgroundColor: "transparent", opacity: 0 }}
@@ -190,18 +177,9 @@ const Profile: React.FC = (): React.ReactNode => {
               {Array(4)
                 .fill(0)
                 .map((_, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -40 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{
-                      delay: initialLoad ? 1 + i * 0.25 : i * 0.25,
-                      duration: 0.5,
-                    }}
-                  >
+                  <div key={i}>
                     <QueAnsCard id={i + 1} />
-                  </motion.div>
+                  </div>
                 ))}
             </div>
           )}
@@ -211,15 +189,9 @@ const Profile: React.FC = (): React.ReactNode => {
               {Array(6)
                 .fill(0)
                 .map((_, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -40 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.25, duration: 0.5 }}
-                  >
+                  <div key={i}>
                     <Vote />
-                  </motion.div>
+                  </div>
                 ))}
             </div>
           )}

@@ -16,11 +16,11 @@ const Questions: React.FC<QuestionsProps> = ({
   question,
 }: QuestionsProps): React.ReactNode => {
   const [quesData, setQuesData] = useState({
-    theme: question.theme,
-    question_title: question.question_title,
-    question_description: question.question_description,
-    user_id: 1,
     drep_id: "fd8907e6-8c0d-4814-bf71-6706ce506c7b",
+    question_description: question.question_description,
+    question_title: question.question_title,
+    theme: question.theme,
+    user_id: 1,
   });
 
   const [preview, setPreview] = useState<boolean>(false);
@@ -64,12 +64,7 @@ const Questions: React.FC<QuestionsProps> = ({
     <div className="flex w-full max-w-[1318px] flex-col gap-4 rounded-xl bg-[#FAFAFA] shadow lg:flex-row lg:pr-12">
       <div className="flex-[2_2_0%] py-12 lg:border-r lg:border-brd-clr">
         <div className="flex items-center gap-4 pl-6 md:pl-12">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-          >
+          <div>
             <motion.button
               className="flex h-10 w-10 items-center justify-center rounded-lg bg-tertiary-light text-tertiary"
               whileHover={{ scale: 1.05 }}
@@ -77,26 +72,21 @@ const Questions: React.FC<QuestionsProps> = ({
             >
               <LeftArrow />
             </motion.button>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            className="font-inter text-base font-semibold md:text-xl"
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.25, duration: 0.5 }}
+          <h1 className="font-inter text-base font-semibold md:text-xl"
           >
             {preview ? "Preview" : "Describe your question"}
-          </motion.h1>
+          </h1>
         </div>
 
         <div className="flex flex-1 items-center justify-center pt-8 md:hidden lg:pb-0">
           <User
             user={{
               img: "/assets/ask-questions/user.png",
+              name: "Drep of NMKR",
               questionsAnswers: 860,
               questionsAsked: 950,
-              name: "Drep of NMKR",
               walletId: "uqwdbd8271gd98n13241",
             }}
           />
@@ -135,45 +125,26 @@ const Questions: React.FC<QuestionsProps> = ({
         </div>
         {preview ? (
           <div className="mt-3 flex justify-between border-brd-clr pl-6 pr-5 pt-6 font-inter font-medium tracking-wide md:mt-8 md:pl-12 lg:border-t">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.35, duration: 0.5 }}
+            <motion.button
+              className="flex h-11 items-center justify-center rounded-lg bg-tertiary-light px-8 text-sm text-secondary"
+              whileHover={{ scaleX: 1.025 }}
+              whileTap={{ scaleX: 0.995 }}
+              onClick={() => setPreview(false)}
             >
-              <motion.button
-                className="flex h-11 items-center justify-center rounded-lg bg-tertiary-light px-8 text-sm text-secondary"
-                whileHover={{ scaleX: 1.025 }}
-                whileTap={{ scaleX: 0.995 }}
-                onClick={() => setPreview(false)}
-              >
-                Back
-              </motion.button>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.5, duration: 0.5 }}
+              Back
+            </motion.button>
+            <motion.button
+              className="text-shadow flex h-11 items-center justify-center rounded-lg bg-gradient-to-b from-[#FFC896] from-[-47.73%] to-[#FB652B]  to-[78.41%] px-8 text-sm text-white"
+              whileHover={{ scaleX: 1.025 }}
+              whileTap={{ scaleX: 0.995 }}
+              onClick={handleSubmit}
             >
-              <motion.button
-                className="text-shadow flex h-11 items-center justify-center rounded-lg bg-gradient-to-b from-[#FFC896] from-[-47.73%] to-[#FB652B]  to-[78.41%] px-8 text-sm text-white"
-                whileHover={{ scaleX: 1.025 }}
-                whileTap={{ scaleX: 0.995 }}
-                onClick={handleSubmit}
-              >
-                Submit &nbsp; &#10003;
-              </motion.button>
-            </motion.div>
+              Submit &nbsp; &#10003;
+            </motion.button>
           </div>
         ) : (
           <div className="mt-3 flex justify-between border-brd-clr pl-6 pr-5 pt-6 font-inter font-medium tracking-wide md:mt-8 md:pl-12 lg:border-t">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.35, duration: 0.5 }}
-            >
+            <div>
               <motion.button
                 className="flex h-11 items-center justify-center rounded-lg bg-tertiary-light px-8 text-sm text-secondary"
                 whileHover={{ scaleX: 1.025 }}
@@ -181,22 +152,15 @@ const Questions: React.FC<QuestionsProps> = ({
               >
                 Cancel
               </motion.button>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.5, duration: 0.5 }}
+            </div>
+            <motion.button
+              className="text-shadow flex h-11 items-center justify-center rounded-lg bg-gradient-to-b from-[#FFC896] from-[-47.73%] to-[#FB652B]  to-[78.41%] px-8 text-sm text-white"
+              whileHover={{ scaleX: 1.025 }}
+              whileTap={{ scaleX: 0.995 }}
+              onClick={handleNextButtonClick}
             >
-              <motion.button
-                className="text-shadow flex h-11 items-center justify-center rounded-lg bg-gradient-to-b from-[#FFC896] from-[-47.73%] to-[#FB652B]  to-[78.41%] px-8 text-sm text-white"
-                whileHover={{ scaleX: 1.025 }}
-                whileTap={{ scaleX: 0.995 }}
-                onClick={handleNextButtonClick}
-              >
-                Next &nbsp; &#10003;
-              </motion.button>
-            </motion.div>
+              Next &nbsp; &#10003;
+            </motion.button>
           </div>
         )}
       </div>
@@ -205,9 +169,9 @@ const Questions: React.FC<QuestionsProps> = ({
         <User
           user={{
             img: "/assets/ask-questions/user.png",
+            name: "Drep of NMKR",
             questionsAnswers: 860,
             questionsAsked: 950,
-            name: "Drep of NMKR",
             walletId: "uqwdbd8271gd98n13241",
           }}
         />
@@ -259,56 +223,38 @@ function TitleAndInput({
 
   return (
     <div className="flex flex-col gap-1 font-inter tracking-wide">
-      <motion.h2
-        className="font-semibold text-secondary "
-        initial={{ opacity: 0, x: -50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: index * 0.25, duration: 0.5 }}
-      >
+      <h2 className="font-semibold text-secondary ">
         {title ?? "Lorem"}
-      </motion.h2>
+      </h2>
 
       <div className="relative mt-2 font-medium">
         {textArea ? (
-          <motion.textarea
+          <textarea
             className="w-full resize-none overflow-hidden rounded-lg bg-tertiary-light py-3 pl-5 pr-8 font-ibm-mono text-sm text-secondary outline-none"
             placeholder={inputPlaceholder}
             value={inpVal ?? ""}
             rows={6}
             onChange={handleOnChange}
             readOnly={preview}
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.35, duration: 0.5 }}
           />
         ) : (
-          <motion.input
+          <input
             type="text"
             className="w-full rounded-lg bg-tertiary-light px-5 py-3 pr-10 font-ibm-mono text-sm text-secondary outline-none"
             placeholder={inputPlaceholder ?? "Lorem ipsum dolor sit amet"}
             value={inpVal ?? ""}
             onChange={handleOnChange}
             readOnly={preview}
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.35, duration: 0.5 }}
           />
         )}
 
         {value && (
-          <motion.svg
+          <svg
             className="pointer-events-none absolute right-3 top-3 h-5 w-5 text-gray-400"
             width="20"
             height="20"
             viewBox="0 0 20 20"
             fill="none"
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.4, duration: 0.5 }}
           >
             <path
               fillRule="evenodd"
@@ -322,7 +268,7 @@ function TitleAndInput({
               d="M11.2047 4.71937C11.4488 4.4753 11.8445 4.4753 12.0886 4.71937L15.6241 8.25492C15.8682 8.49899 15.8682 8.89472 15.6241 9.1388C15.3801 9.38288 14.9843 9.38288 14.7402 9.1388L11.2047 5.60326C10.9606 5.35918 10.9606 4.96345 11.2047 4.71937Z"
               fill="#8C8C8C"
             />
-          </motion.svg>
+          </svg>
         )}
       </div>
     </div>

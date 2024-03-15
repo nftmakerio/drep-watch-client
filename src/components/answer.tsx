@@ -8,17 +8,8 @@ const Answer: React.FC = (): React.ReactNode => {
 
     return (
         <section className="pt-[150px] md:pt-[190px] pb-20 w-full flex flex-col gap-[40px] md:gap-[90px]">
-            <motion.div 
-                className=""
-                initial={{ opacity: 0, y: -60 }}
-                whileInView={{opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{delay: 0.5, duration: 0.5}}
-            >
-                <motion.div 
-                    className="relative flex justify-center items-center"
-                    whileHover={{scale: 1.025}}
-                >
+            <div className="">
+                <div className="relative flex justify-center items-center">
                     <div className="absolute top-0 -translate-y-1/2 bg-primary-light text-primary font-ibm-mono text-xs md:text-[13px] px-5 py-3 rounded-[10px]">
                         730/770 Question answered
                     </div>
@@ -64,44 +55,27 @@ const Answer: React.FC = (): React.ReactNode => {
                             </div>
                         </div>
                     </div>
-                </motion.div>
-            </motion.div>
+                </div>
+            </div>
 
             <div className="w-full  bg-white px-[5%] py-7 pb-12 flex justify-center items-center shadow-[-5px_0px_13px_0px_#0000001A]">
                 <div className="max-w-[1600px] flex flex-col gap-6 md:gap-10 w-full">
-                    <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{delay: 0.5, duration: 0.5}}
-                    >
+                    <div>
                         <QueAnsCard large={true} />
-                    </motion.div>
+                    </div>
 
                     <div className="w-full flex justify-between items-start md:items-center text-secondary-dark font-inter font-medium tracking-wide flex-col md:flex-row gap-2 ">
-                        <motion.div 
-                            className="text-base md:text-xl"
-                            initial={{ opacity: 0, x: -50 }}
-                            whileInView={{opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{delay: 0.25, duration: 0.5}}
-                        >
+                        <div className="text-base md:text-xl">
                             Further question to this Drep
-                        </motion.div>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {
                             Array(2).fill(0).map((_, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, x: -40 }}
-                                    whileInView={{opacity: 1, x: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{delay: ((i+1)*0.25), duration: 0.5}}
-                                >
+                                <div key={i}>
                                     <QueAnsCard id={i+1} />
-                                </motion.div>
+                                </div>
                             ))
                         }
                     </div>
