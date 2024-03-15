@@ -26,6 +26,7 @@ export interface Question {
   question_description: string;
   wallet_address: string;
   drep_id: string;
+  question_id: number;
 }
 
 export interface Answer {

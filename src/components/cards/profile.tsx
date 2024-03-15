@@ -2,6 +2,9 @@ import { BsChatQuoteFill } from "react-icons/bs";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { Transaction } from "@meshsdk/core";
+import { useWallet } from "@meshsdk/react";
+import LetterAvatar from "../LetterAvartar";
 
 interface ProfileCardProps {
   test?: string;
@@ -17,19 +20,44 @@ interface Drep {
 const ProfileCard: React.FC<ProfileCardProps> = ({
   drep,
 }: ProfileCardProps): React.ReactNode => {
+  const { wallet, connected } = useWallet();
+  const onDelegate = async () => {
+    try {
+      if (!connected) {
+        return;
+      }
+
+      const address = (await wallet.getRewardAddresses())[0];
+
+      if (!address) {
+        return;
+      }
+
+      const poolId = drep?.drep_id;
+
+      if (!poolId) {
+        return;
+      }
+
+      const tx = new Transaction({ initiator: wallet });
+      tx.delegateStake(address, poolId);
+
+      const unsignedTx = await tx.build();
+      const signedTx = await wallet.signTx(unsignedTx);
+      const txHash = await wallet.submitTx(signedTx);
+
+      console.log(txHash);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <motion.div
       className="flex flex-col rounded-xl border border-brd-clr"
       whileHover={{ y: -6 }}
     >
       <div className="mx-[18px] my-4 flex items-center justify-between">
-        <Image
-          src={"/assets/home/card-img.png"}
-          width={1000}
-          height={1000}
-          className="aspect-square w-[54px] object-cover"
-          alt={`card-img-${1}`}
-        />
+        <LetterAvatar username={drep?.name ?? ""} dimension={55} />
 
         <div className="w-[200px] overflow-hidden text-ellipsis rounded-[10px] bg-tertiary-light px-4 py-3 font-ibm-mono text-sm font-medium tracking-wide text-tertiary">
           {drep?.drep_id}
@@ -57,6 +85,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         </Link>
         <div className="h-full w-[1px] bg-[#0000002E]"></div>
         <motion.button
+          onClick={() => onDelegate()}
           className="flex w-full flex-1 items-center justify-center hover:text-primary "
           whileHover={{ scaleX: 1.05 }}
           whileTap={{ scaleX: 0.95 }}

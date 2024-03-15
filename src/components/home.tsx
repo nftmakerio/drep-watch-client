@@ -12,6 +12,8 @@ import useDeviceType from "~/hooks/use-device-type";
 import useInView from "~/hooks/use-in-view";
 import { getData } from "~/server";
 import Loader from "./loader";
+import Link from "next/link";
+import { BASE_API_URL } from "~/data/api";
 
 const Home: React.FC = (): React.ReactNode => {
   const [active, setActive] = useState<number>(FILTER_TYPES.LATEST_ANSWERS);
@@ -20,7 +22,7 @@ const Home: React.FC = (): React.ReactNode => {
   const { initialLoad, ref } = useInView();
   const { isLoading, data: pageData } = useQuery({
     queryFn: () => getData(active),
-    queryKey: ["getData", active],
+    queryKey: ["latest_questions", active],
   });
 
   const getLeftOffset = (): string => {
@@ -125,14 +127,14 @@ const Home: React.FC = (): React.ReactNode => {
             >
               {pageData && pageData.questionAnswers ? (
                 pageData.questions.map((question, i) => (
-                  <div key={i}>
+                  <Link href={`/answer/${pageData.answers[i]?.question_id}`} key={i}>
                     <QueAnsCard
                       asked_user={question.wallet_address}
                       question={question}
                       answer={pageData.answers[i]}
                       id={i + 1}
                     />
-                  </div>
+                  </Link>
                 ))
               ) : (
                 <Loader />

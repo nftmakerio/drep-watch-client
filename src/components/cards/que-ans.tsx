@@ -2,6 +2,8 @@ import { MdShare } from "react-icons/md";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import LetterAvatar from "../LetterAvartar";
+import { useState } from "react";
 
 interface Question {
   theme: string;
@@ -32,8 +34,10 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
   id,
   question,
   answer,
-  asked_user
+  asked_user,
 }: QueAnsCardProps): React.ReactNode => {
+  console.log(answer, "answer");
+  const [enlargeText, setEnlargeText] = useState(false);
   return (
     <motion.div
       className={`flex flex-col overflow-hidden rounded-xl border border-brd-clr ${!large && "cursor-pointer"}`}
@@ -43,7 +47,9 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
         <div className="flex w-full items-center justify-between font-ibm-mono">
           <div className="flex items-center gap-3 font-ibm-mono text-xs font-medium text-tertiary md:text-sm ">
             <div>Question asked by</div>
-            <div className="text-black w-[200px] overflow-hidden text-ellipsis">{asked_user}</div>
+            <div className="w-[200px] overflow-hidden text-ellipsis text-black">
+              {asked_user}
+            </div>
           </div>
 
           <div className="grid h-10 w-10 place-items-center rounded-lg bg-tertiary-light text-tertiary">
@@ -64,7 +70,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
 
         <div className="font-inter text-sm font-medium tracking-wide text-secondary md:text-base">
           {large ? (
-            question?.question_title
+            <div className="text-xl">{question?.question_title}</div>
           ) : (
             <>
               {question?.question_title}
@@ -72,6 +78,11 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
             </>
           )}
         </div>
+        {large && (
+          <div className="font-inter text-xs font-light tracking-wide text-secondary md:text-base">
+            {question?.question_description}
+          </div>
+        )}
       </div>
       {answer?.answer && (
         <div className="flex flex-col justify-start gap-11 bg-[#F5F5F5] px-[18px] py-5">
@@ -83,23 +94,36 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
               </div>
 
               <div className="">
-                <Image
-                  src={"/assets/home/card-img.png"}
-                  width={1000}
-                  height={1000}
-                  className="aspect-square w-7 object-cover md:w-[32px]"
-                  alt={`card-img-${1}`}
+                <LetterAvatar
+                  username={answer.drep_name ?? ""}
+                  dimension={32}
                 />
               </div>
             </div>
 
             <div className="font-inter text-sm font-medium tracking-wide text-secondary md:text-base">
-              {large ? (
-                answer?.answer
+              {enlargeText ? (
+                <>
+                  {answer?.answer
+                    .split("\n\n")
+                    .map((text) => <div className="py-4">{text}</div>)}
+                  <span
+                    onClick={() => setEnlargeText((prev) => !prev)}
+                    className="ml-2 text-[#cbcbcb]"
+                  >
+                    Read less...
+                  </span>
+                </>
               ) : (
                 <>
-                  {answer?.answer.slice(0, 60)}...
-                  <span className="ml-2 text-[#cbcbcb]">read more...</span>
+                  {answer?.answer.slice(0, 60)}
+                  ...
+                  <span
+                    onClick={() => setEnlargeText((prev) => !prev)}
+                    className="ml-2 text-[#cbcbcb]"
+                  >
+                    Read more...
+                  </span>
                 </>
               )}
             </div>

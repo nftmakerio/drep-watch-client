@@ -22,6 +22,7 @@ import { BASE_API_URL } from "~/data/api";
 import { useQuery } from "@tanstack/react-query";
 import { getDrepQuestions } from "~/server";
 import { useRouter } from "next/router";
+import LetterAvatar from "./LetterAvartar";
 
 const Profile: React.FC = (): React.ReactNode => {
 
@@ -100,13 +101,7 @@ const Profile: React.FC = (): React.ReactNode => {
 
           <div className="flex w-[90%] flex-col items-center gap-6 rounded-xl border border-primary-light bg-white px-5  pb-7  pt-9 shadow-color md:w-auto md:flex-row ">
             <div>
-              <Image
-                src={"/assets/profile/img.png"}
-                width={1000}
-                height={1000}
-                className="aspect-square w-[140px] object-cover"
-                alt="img"
-              />
+              <LetterAvatar username={profileData?.name} dimension={130} />
             </div>
             <div className="flex flex-col">
               <div className="w-[300px] overflow-hidden text-ellipsis text-center font-ibm-mono text-xs tracking-wide text-tertiary md:text-left md:text-sm">

@@ -18,7 +18,7 @@ async function getLatestQuestions(): Promise<{
 }> {
   const res = await fetch(`${BASE_API_URL}/api/v1/questions/latest`);
   const resJson = (await res.json()) as { questions: Question[] };
-  // console.log(resJson.questions)
+  console.log(resJson.questions, "fdasdfasf")
   const questionIds = await Promise.all(
     resJson.questions.map((question) =>
       fetch(`${BASE_API_URL}/api/v1/answers/${question.id}`),
@@ -26,12 +26,11 @@ async function getLatestQuestions(): Promise<{
   );
   const answers = (await Promise.all(
     questionIds.map((questionId) => questionId.json()),
-  )) as { answer?: Answer }[];
+  )) as Answer[];
 
-  console.log(answers);
   // console.log("GET LATEST QUESTIONS CALLED")
   return {
-    answers: answers.map((el) => el.answer),
+    answers: answers,
     questionAnswers: true,
     questions: resJson.questions,
   };
@@ -84,6 +83,7 @@ async function getDrepQuestions(drep_id: string): Promise<
           .catch((e) => undefined),
       ),
     );
+
 
     if(!answers){
         return;
