@@ -31,18 +31,11 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
     question,
     answer
 }: QueAnsCardProps): React.ReactNode => {
-    const router = useRouter();
-    const handleClick = () => {
-        if(!large && id) {
-            void router.push(`/answer/${id}`)
-        }
-    }
 
     return (
         <motion.div
             className={`border-brd-clr border rounded-xl flex flex-col overflow-hidden ${!large && "cursor-pointer"}`}
             whileHover={{y: large ? 0 : -6}}
-            onClick={handleClick}
         >
             <div className="py-4 px-[18px] border-b border-brd-clr flex justify-start items-start flex-col gap-7">
                 <div className="flex justify-between items-center font-ibm-mono w-full">
@@ -66,13 +59,9 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
 
                 <div className="text-secondary font-inter text-sm md:text-base tracking-wide font-medium">
                     {
-                        large ? (
+                        large ? question?.question_title : ( 
                             <>
-                                {question ? question.question_title : "Dear Mr. Frisch, on which topics does the AfD better reflect your opinion than other parties, which justifies remaining in the party despite leaving the parliamentary group? MfG PeterJMfG P."}
-                            </>
-                        ) : ( 
-                            <>
-                                {question? question.question_title : "Would the AFD finally favor the pensioners vs. end the statutory pensioners (inflation compensation etc.) ?"}
+                                {question?.question_title}
                                 <span className="ml-2 text-[#cbcbcb]">read more...</span>
                             </>
                         )
@@ -104,23 +93,9 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
 
                     <div className="text-secondary font-inter text-sm md:text-base tracking-wide font-medium">
                         {
-                            large ? (
+                            large ? answer?.answer : (
                                 <>
-                                    Hello sir J.,
-                                    thank you for your question.
-                                    I entered the AfD because I no longer felt represented by the Merkel CDU with my Christian-conservative-free beliefs. This was particularly true for family policy, education policy and later also for euro, immigration and energy policy. In addition, the very important life protection for me has not played a role in the party with the "C" in the name since the Merkel era.
-                                    <br /><br />
-                                    Little has changed to this day. The Merz-CDU also does not stand for conservative-free goals, but obviously pursues a black-green agenda. In contrast, the AfD program still contains the largest intersection with what I am politically committed to. There is currently no better alternative. That is the reason why, despite some criticism of my party, I am still involved in the AfD.
-                                    <br /><br />
-                                    On the other hand, I make no secret of the fact that a party is only a means to an end. Should there be another option in the future that will enable me to work more successfully for our country than in the AfD, I would undoubtedly reorient myself. Because for me the welfare of Germany and its citizens always comes first.
-                                    <br /><br />
-                                    Kind regards
-                                    <br /><br />
-                                    Michael Frisch, MdL
-                                </>
-                            ) : (
-                                <>
-                                    {answer ? answer.answer : "Thank you for your question. You can find information on the subject of pensions here: https://www.afd.de/"}
+                                    {answer?.answer}
                                     <span className="ml-2 text-[#cbcbcb]">read more...</span>
                                 </>
                             )
@@ -135,7 +110,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
                         </div>
                         <div className="flex gap-1 items-center">
                             {
-                                (question ? [question.theme] : ["Poverty", "Labour"]).map(i => (
+                                ([question?.theme]).map(i => (
                                     <div 
                                         className="px-3 py-1 bg-white rounded-full font-inter font-medium text-xs md:text-[13px] text-[#444]"
                                         key={i}

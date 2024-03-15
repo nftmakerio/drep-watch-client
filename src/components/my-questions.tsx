@@ -87,10 +87,8 @@ const MyQuestions: React.FC = (): React.ReactNode => {
                             Array(1).fill(0).map((_, i) => (
                                 <motion.div
                                     key={i}
-                                    initial={{ opacity: 0, x: -40 }}
                                     whileInView={{opacity: 1, x: 0 }}
                                     viewport={{ once: true }}
-                                    transition={{delay: initialLoad ? 1 + (i*0.25) : i*0.25, duration: 0.5}}
                                 >
                                     <QueAnsCard id={i+1} />
                                 </motion.div>

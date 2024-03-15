@@ -60,4 +60,9 @@ export const WALLETS: Record<
         image:
             "https://ticketingserver.nucast.io/storage/v1/object/public/web-assets/wallets/nufi.svg",
     },
+    yoroi: {
+        title: "Yoroi",
+        image:
+            "https://ticketingserver.nucast.io/storage/v1/object/public/web-assets/wallets/yoroi.svg",
+    },
 };

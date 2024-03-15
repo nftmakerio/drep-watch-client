@@ -105,7 +105,7 @@ const Navbar: React.FC = (): React.ReactNode => {
                                                 alt={WALLETS[w.name.toLowerCase()]?.title ?? ""}
                                             />
                                         </div>
-                                        <div className="font-inter font-semibold tracking-wide text-primary/80 text-sm">
+                                        <div className="font-inter capitalize font-semibold tracking-wide text-primary/80 text-sm">
                                             {w.name}
                                         </div>
                                     </motion.button>
