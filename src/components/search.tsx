@@ -89,7 +89,7 @@ const Search: React.FC = (): React.ReactNode => {
             >
               <div className="flex items-center justify-center gap-3">
                 <div>
-                  <LetterAvatar username={el.name} dimension={50} />
+                  <LetterAvatar rounded username={el.name} dimension={50} />
                 </div>
                 <div className="flex w-full max-w-none flex-col gap-1 md:max-w-[290px]">
                   <div className="font-inter text-xs font-medium tracking-wide text-secondary md:text-sm">

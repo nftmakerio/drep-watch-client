@@ -57,7 +57,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       whileHover={{ y: -6 }}
     >
       <div className="mx-[18px] my-4 flex items-center justify-between">
-        <LetterAvatar username={drep?.name ?? ""} dimension={55} />
+        <LetterAvatar rounded username={drep?.name ?? ""} dimension={55} />
 
         <div className="w-[200px] overflow-hidden text-ellipsis rounded-[10px] bg-tertiary-light px-4 py-3 font-ibm-mono text-sm font-medium tracking-wide text-tertiary">
           {drep?.drep_id}

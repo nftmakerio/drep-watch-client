@@ -83,7 +83,7 @@ const Answer: React.FC = (): React.ReactNode => {
     <section className="flex w-full flex-col gap-[40px] pb-20 pt-[150px] md:gap-[90px] md:pt-[190px]">
       <div className="">
         <div className="relative flex items-center justify-center">
-          <div className="absolute top-0 -translate-y-1/2 rounded-[10px] bg-primary-light px-5 py-3 font-ibm-mono text-xs text-primary md:text-[13px]">
+          <div className="absolute top-0 -translate-y-1/F2 rounded-[10px] bg-primary-light px-5 py-3 font-ibm-mono text-xs text-primary md:text-[13px]">
             {profileData?.questionsAnswers}/{profileData?.questionsAsked}{" "}
             Question answered
           </div>

@@ -95,6 +95,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
 
               <div className="">
                 <LetterAvatar
+                  rounded
                   username={answer.drep_name ?? ""}
                   dimension={32}
                 />

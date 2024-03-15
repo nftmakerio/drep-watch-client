@@ -25,7 +25,6 @@ import { useRouter } from "next/router";
 import LetterAvatar from "./LetterAvartar";
 
 const Profile: React.FC = (): React.ReactNode => {
-
   const { query } = useRouter();
   // const [profileData, setProfileData] = useState<DrepType>();
   const [active, setActive] = useState<number>(
@@ -82,13 +81,12 @@ const Profile: React.FC = (): React.ReactNode => {
 
   const { data: questions } = useQuery({
     queryKey: ["drep-profile-questions", query?.id],
-    queryFn: () => query.id ? getDrepQuestions(query?.id as string) : null
-  })
+    queryFn: () => (query.id ? getDrepQuestions(query?.id as string) : null),
+  });
 
   // useEffect(() => {
   //   console.log(questions, "|fdsafdsafas")
   // }, [questions])
-  
 
   return (
     <section className="flex w-full flex-col gap-[40px] pb-20 pt-[150px] md:gap-[90px] md:pt-[190px]">
@@ -101,7 +99,11 @@ const Profile: React.FC = (): React.ReactNode => {
 
           <div className="flex w-[90%] flex-col items-center gap-6 rounded-xl border border-primary-light bg-white px-5  pb-7  pt-9 shadow-color md:w-auto md:flex-row ">
             <div>
-              <LetterAvatar username={profileData?.name} dimension={130} />
+              <LetterAvatar
+                rounded
+                username={profileData?.name}
+                dimension={130}
+              />
             </div>
             <div className="flex flex-col">
               <div className="w-[300px] overflow-hidden text-ellipsis text-center font-ibm-mono text-xs tracking-wide text-tertiary md:text-left md:text-sm">
@@ -182,10 +184,16 @@ const Profile: React.FC = (): React.ReactNode => {
 
           {active === P_FILTER_TYPES.QUESTIONS_ANSWERS && (
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              {questions && questions.questions && questions.questions
-                .map((question, i) => (
+              {questions &&
+                questions.questions &&
+                questions.questions.map((question, i) => (
                   <div key={i}>
-                    <QueAnsCard asked_user={question.wallet_address} question={question} answer={questions.answers[i]} id={i + 1} />
+                    <QueAnsCard
+                      asked_user={question.wallet_address}
+                      question={question}
+                      answer={questions.answers[i]}
+                      id={i + 1}
+                    />
                   </div>
                 ))}
             </div>
