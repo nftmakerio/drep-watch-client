@@ -117,7 +117,7 @@ const Profile: React.FC = (): React.ReactNode => {
                   whileTap={{ scaleX: 0.995 }}
                 >
                   <BsChatQuoteFill className="text-[24px]" />
-                  <Link href={`/ask-question`}>
+                  <Link href={`/ask-question?to=${query?.id}`}>
                     <div className="text-shadow font-inter text-xs font-medium md:text-sm ">
                       Ask question
                     </div>
