@@ -84,15 +84,9 @@ const Home: React.FC = (): React.ReactNode => {
           className="flex w-full max-w-[1600px] flex-col gap-6 md:gap-10"
         >
           <div className="flex w-full flex-col items-start justify-between gap-2 font-inter font-medium tracking-wide text-secondary-dark md:flex-row md:items-center ">
-            <motion.div
-              className="text-base md:text-xl"
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 1.25, duration: 0.5 }}
-            >
+            <div className="text-base md:text-xl" >
               Questions and answers
-            </motion.div>
+            </div>
             <motion.div
               className="rounded-lg p-1.5 text-xs text-tertiary md:text-sm"
               initial={{ backgroundColor: "transparent", opacity: 0 }}
@@ -133,22 +127,13 @@ const Home: React.FC = (): React.ReactNode => {
             >
               {pageData && pageData.questionAnswers ? (
                 pageData.questions.map((question, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -40 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{
-                      delay: initialLoad ? 1.25 + i * 0.25 : i * 0.25,
-                      duration: 0.5,
-                    }}
-                  >
+                  <div key={i} >
                     <QueAnsCard
                       question={question}
                       answer={pageData.answers[i]}
                       id={i + 1}
                     />
-                  </motion.div>
+                  </div>
                 ))
               ) : (
                 <Loader />
@@ -162,22 +147,13 @@ const Home: React.FC = (): React.ReactNode => {
             >
               {pageData && pageData.questionAnswers ? (
                 pageData.questions.map((question, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -40 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{
-                      delay: initialLoad ? 1.25 + i * 0.25 : i * 0.25,
-                      duration: 0.5,
-                    }}
-                  >
+                  <div key={i} >
                     <QueAnsCard
                       question={question}
                       answer={pageData.answers[i]}
                       id={i + 1}
                     />
-                  </motion.div>
+                  </div>
                 ))
               ) : (
                 <Loader />
@@ -191,18 +167,9 @@ const Home: React.FC = (): React.ReactNode => {
             >
               {pageData && !pageData.questionAnswers ? (
                 pageData.dreps.map((_, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -40 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{
-                      delay: i * 0.25,
-                      duration: 0.5,
-                    }}
-                  >
+                  <div key={i} >
                     <ProfileCard drep={pageData.dreps[i]} />
-                  </motion.div>
+                  </div>
                 ))
               ) : (
                 <Loader colored={false} />

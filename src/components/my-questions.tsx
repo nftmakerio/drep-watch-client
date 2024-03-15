@@ -7,17 +7,11 @@ import QueAnsCard from "./cards/que-ans";
 import useInView from "~/hooks/use-in-view";
 
 const MyQuestions: React.FC = (): React.ReactNode => {
-    const {initialLoad, ref} = useInView();
+    const {ref} = useInView();
 
     return (
         <section className="pt-[120px] md:pt-[190px] pb-20 w-full flex flex-col gap-[40px] md:gap-[90px]">
-            <motion.div 
-                className="relative flex justify-center items-center"
-                initial={{ opacity: 0, y: -60 }}
-                whileInView={{opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{delay: 0.5, duration: 0.5}}
-            >
+            <div className="relative flex justify-center items-center">
                 <motion.div 
                     className="w-[90%] md:w-auto flex gap-6 items-center bg-white rounded-xl border border-primary-light shadow-color flex-col md:flex-row "
                     whileHover={{scale: 1.025}}
@@ -66,32 +60,20 @@ const MyQuestions: React.FC = (): React.ReactNode => {
                         </div>
                     </div>
                 </motion.div>
-            </motion.div>
+            </div>
 
             <div className="w-full  bg-white px-[5%] py-7 pb-12 flex justify-center items-center shadow-[-5px_0px_13px_0px_#0000001A]">
                 <div ref={ref} className="max-w-[1600px] flex flex-col gap-6 md:gap-10 w-full">
                     <div className="w-full flex justify-between items-start md:items-center text-secondary-dark font-inter font-medium tracking-wide flex-col md:flex-row gap-2 ">
-                        <motion.div 
-                            className="text-base md:text-xl"
-                            initial={{ opacity: 0, x: -50 }}
-                            whileInView={{opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{delay: 0.75, duration: 0.5}}
-                        >
+                        <div className="text-base md:text-xl">
                             Your Question answers
-                        </motion.div>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {
                             Array(1).fill(0).map((_, i) => (
-                                <motion.div
-                                    key={i}
-                                    whileInView={{opacity: 1, x: 0 }}
-                                    viewport={{ once: true }}
-                                >
                                     <QueAnsCard id={i+1} />
-                                </motion.div>
                             ))
                         }
                     </div>
