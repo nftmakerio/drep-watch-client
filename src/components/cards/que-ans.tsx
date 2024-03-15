@@ -7,7 +7,7 @@ interface Question {
   theme: string;
   question_title: string;
   question_description: string;
-  user_id: number;
+  wallet_address: string;
   drep_id: string;
 }
 
@@ -16,6 +16,7 @@ interface Answer {
   answer: string;
   question_id: number;
   drep_id: string;
+  drep_name?: string | undefined;
 }
 
 interface QueAnsCardProps {
@@ -23,6 +24,7 @@ interface QueAnsCardProps {
   id?: number | string;
   question?: Question;
   answer?: Answer;
+  asked_user?: string;
 }
 
 const QueAnsCard: React.FC<QueAnsCardProps> = ({
@@ -30,6 +32,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
   id,
   question,
   answer,
+  asked_user
 }: QueAnsCardProps): React.ReactNode => {
   return (
     <motion.div
@@ -40,7 +43,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
         <div className="flex w-full items-center justify-between font-ibm-mono">
           <div className="flex items-center gap-3 font-ibm-mono text-xs font-medium text-tertiary md:text-sm ">
             <div>Question asked by</div>
-            <div className="text-black">Markus</div>
+            <div className="text-black w-[200px] overflow-hidden text-ellipsis">{asked_user}</div>
           </div>
 
           <div className="grid h-10 w-10 place-items-center rounded-lg bg-tertiary-light text-tertiary">
@@ -76,7 +79,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
             <div className="flex items-center gap-3 rounded-[10px] bg-primary-light p-2 pl-3 text-primary">
               <div className="flex items-center gap-2 font-ibm-mono text-[13px] text-xs font-medium md:text-sm ">
                 <div className="text-[#FF986F]">Answered by</div>
-                <div>Markus</div>
+                <div>{answer.drep_name ?? answer.drep_id}</div>
               </div>
 
               <div className="">
@@ -95,7 +98,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
                 answer?.answer
               ) : (
                 <>
-                  {answer?.answer}
+                  {answer?.answer.slice(0, 60)}...
                   <span className="ml-2 text-[#cbcbcb]">read more...</span>
                 </>
               )}

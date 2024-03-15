@@ -84,9 +84,7 @@ const Home: React.FC = (): React.ReactNode => {
           className="flex w-full max-w-[1600px] flex-col gap-6 md:gap-10"
         >
           <div className="flex w-full flex-col items-start justify-between gap-2 font-inter font-medium tracking-wide text-secondary-dark md:flex-row md:items-center ">
-            <div className="text-base md:text-xl" >
-              Questions and answers
-            </div>
+            <div className="text-base md:text-xl">Questions and answers</div>
             <motion.div
               className="rounded-lg p-1.5 text-xs text-tertiary md:text-sm"
               initial={{ backgroundColor: "transparent", opacity: 0 }}
@@ -127,8 +125,9 @@ const Home: React.FC = (): React.ReactNode => {
             >
               {pageData && pageData.questionAnswers ? (
                 pageData.questions.map((question, i) => (
-                  <div key={i} >
+                  <div key={i}>
                     <QueAnsCard
+                      asked_user={question.wallet_address}
                       question={question}
                       answer={pageData.answers[i]}
                       id={i + 1}
@@ -147,8 +146,9 @@ const Home: React.FC = (): React.ReactNode => {
             >
               {pageData && pageData.questionAnswers ? (
                 pageData.questions.map((question, i) => (
-                  <div key={i} >
+                  <div key={i}>
                     <QueAnsCard
+                      asked_user={question.wallet_address}
                       question={question}
                       answer={pageData.answers[i]}
                       id={i + 1}
@@ -167,7 +167,7 @@ const Home: React.FC = (): React.ReactNode => {
             >
               {pageData && !pageData.questionAnswers ? (
                 pageData.dreps.map((_, i) => (
-                  <div key={i} >
+                  <div key={i}>
                     <ProfileCard drep={pageData.dreps[i]} />
                   </div>
                 ))

@@ -20,9 +20,12 @@ import { DrepType, UserType } from "~/types";
 import Link from "next/link";
 import { BASE_API_URL } from "~/data/api";
 import { useQuery } from "@tanstack/react-query";
+import { getDrepQuestions } from "~/server";
+import { useRouter } from "next/router";
 
 const Profile: React.FC = (): React.ReactNode => {
-  const param = useParams();
+
+  const { query } = useRouter();
   // const [profileData, setProfileData] = useState<DrepType>();
   const [active, setActive] = useState<number>(
     P_FILTER_TYPES.QUESTIONS_ANSWERS,
@@ -52,7 +55,7 @@ const Profile: React.FC = (): React.ReactNode => {
     try {
       const response = await axios.post(
         `${BASE_API_URL}/api/v1/drep/drep-profile`,
-        { drep_id: param.id },
+        { drep_id: query.id },
       );
       // setProfileData(response.data);
 
@@ -72,9 +75,19 @@ const Profile: React.FC = (): React.ReactNode => {
   };
 
   const { data: profileData } = useQuery({
-    queryKey: ["drep-profile", param.id],
+    queryKey: ["drep-profile", query?.id],
     queryFn: () => fetchData(),
   });
+
+  const { data: questions } = useQuery({
+    queryKey: ["drep-profile-questions", query?.id],
+    queryFn: () => query.id ? getDrepQuestions(query?.id as string) : null
+  })
+
+  // useEffect(() => {
+  //   console.log(questions, "|fdsafdsafas")
+  // }, [questions])
+  
 
   return (
     <section className="flex w-full flex-col gap-[40px] pb-20 pt-[150px] md:gap-[90px] md:pt-[190px]">
@@ -174,11 +187,10 @@ const Profile: React.FC = (): React.ReactNode => {
 
           {active === P_FILTER_TYPES.QUESTIONS_ANSWERS && (
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              {Array(4)
-                .fill(0)
-                .map((_, i) => (
+              {questions && questions.questions && questions.questions
+                .map((question, i) => (
                   <div key={i}>
-                    <QueAnsCard id={i + 1} />
+                    <QueAnsCard asked_user={question.wallet_address} question={question} answer={questions.answers[i]} id={i + 1} />
                   </div>
                 ))}
             </div>

@@ -24,7 +24,7 @@ export interface Question {
   theme: string;
   question_title: string;
   question_description: string;
-  user_id: number;
+  wallet_address: string;
   drep_id: string;
 }
 
