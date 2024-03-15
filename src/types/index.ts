@@ -10,6 +10,15 @@ export interface UserType {
   img: string | StaticImageData;
 }
 
+export interface DrepType {
+  name: string;
+  walletId: string;
+  questionsAnswers: number;
+  questionsAsked: number;
+  img: string | StaticImageData;
+  drep_id: string;
+}
+
 export interface Question {
   id: number;
   theme: string;

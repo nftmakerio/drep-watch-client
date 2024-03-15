@@ -107,6 +107,7 @@ const Questions: React.FC<QuestionsProps> = ({
             index={1}
             value={question.theme ?? null}
             title="Theme"
+            inputPlaceholder=""
             onChange={(value: string) => handleInputChange("theme", value)}
             preview={preview}
           />
@@ -117,14 +118,15 @@ const Questions: React.FC<QuestionsProps> = ({
             onChange={(value: string) =>
               handleInputChange("question_title", value)
             }
+            inputPlaceholder=""
             preview={preview}
           />
           <TitleAndInput
-            textArea
+            textArea={true}
             index={3}
             value={question.question_description ?? null}
             title="Question Description"
-            inputPlaceholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum, amet? Tempore soluta ipsam veniam quidem, quasi odit minus maxime porro, itaque nesciunt nam explicabo esse sunt, accusantium assumenda? Dicta, architecto."
+            inputPlaceholder=""
             onChange={(value: string) =>
               handleInputChange("question_description", value)
             }
@@ -271,7 +273,7 @@ function TitleAndInput({
         {textArea ? (
           <motion.textarea
             className="w-full resize-none overflow-hidden rounded-lg bg-tertiary-light py-3 pl-5 pr-8 font-ibm-mono text-sm text-secondary outline-none"
-            placeholder={inputPlaceholder ?? "Lorem ipsum dolor sit amet"}
+            placeholder={inputPlaceholder}
             value={inpVal ?? ""}
             rows={6}
             onChange={handleOnChange}

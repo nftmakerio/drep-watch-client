@@ -17,7 +17,7 @@ async function getLatestQuestions(): Promise<{
     answers: (Answer | undefined)[], questionAnswers: true, questions: Question[]
 }> {
     const res = await fetch(
-        `${BASE_API_URL}/api/v1/questions?latest=true`,
+        `${BASE_API_URL}/api/v1/questions/latest`,
     );
     const resJson = (await res.json()) as { questions: Question[] };
     // console.log(resJson.questions)

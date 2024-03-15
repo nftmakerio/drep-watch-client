@@ -16,13 +16,13 @@ import useDeviceType from "~/hooks/use-device-type";
 import useInView from "~/hooks/use-in-view";
 import { useParams } from "next/navigation";
 import axios, { AxiosError } from "axios";
-import { UserType } from "~/types";
+import { DrepType, UserType } from "~/types";
 import Link from "next/link";
 import { BASE_API_URL } from "~/data/api";
 
 const Profile: React.FC = (): React.ReactNode => {
   const param = useParams();
-  const [profileData, setProfileData] = useState<UserType>();
+  const [profileData, setProfileData] = useState<DrepType>();
   const [active, setActive] = useState<number>(
     P_FILTER_TYPES.QUESTIONS_ANSWERS,
   );
@@ -101,8 +101,8 @@ const Profile: React.FC = (): React.ReactNode => {
               />
             </div>
             <div className="flex flex-col">
-              <div className="text-center font-ibm-mono text-xs tracking-wide text-tertiary md:text-left md:text-sm">
-                ncdubdsnfsdnfsd
+              <div className="text-center font-ibm-mono text-xs w-[300px] overflow-hidden text-ellipsis tracking-wide text-tertiary md:text-left md:text-sm">
+                {profileData?.drep_id}
               </div>
               <div className="text-center font-neue-regrade text-[36px] font-semibold text-black md:text-start">
                 {profileData?.name}
@@ -127,7 +127,7 @@ const Profile: React.FC = (): React.ReactNode => {
                   whileTap={{ scaleX: 0.995 }}
                 >
                   <div className="font-inter text-xs font-medium md:text-sm ">
-                    Delagate
+                    Delegate
                   </div>
                 </motion.button>
               </div>
