@@ -21,7 +21,7 @@ async function getLatestQuestions(): Promise<{
   console.log(resJson.questions, "fdasdfasf")
   const questionIds = await Promise.all(
     resJson.questions.map((question) =>
-      fetch(`${BASE_API_URL}/api/v1/answers/${question.id}`),
+      fetch(`${BASE_API_URL}/api/v1/answers/${question.uuid}`),
     ),
   );
   const answers = (await Promise.all(

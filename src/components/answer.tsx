@@ -101,7 +101,7 @@ const Answer: React.FC = (): React.ReactNode => {
               </div>
               <div className="mt-5 flex items-center gap-2.5">
                 <Link
-                  href={`/ask-question`}
+                  href={`/ask-question?to=${profileData?.drep_id}`}
                   className="flex items-center gap-2.5 rounded-lg bg-gradient-to-b from-[#FFC896] from-[-47.73%] to-[#FB652B] to-[78.41%] px-4 py-2.5 text-white"
                 >
                   <BsChatQuoteFill className="text-[24px]" />
