@@ -13,17 +13,17 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 
     const [isMounted, setIsMounted] = useState(false);
 
-    useEffect(() => {
-        const lenis = new Lenis();
+    // useEffect(() => {
+    //     const lenis = new Lenis();
 
-        function raf(time: number) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
-        requestAnimationFrame(raf);
-        setIsMounted(true);
-        return () => lenis.destroy();
-    }, []);
+    //     function raf(time: number) {
+    //         lenis.raf(time);
+    //         requestAnimationFrame(raf);
+    //     }
+    //     requestAnimationFrame(raf);
+    //     setIsMounted(true);
+    //     return () => lenis.destroy();
+    // }, []);
 
     return (
         <QueryClientProvider client={queryClient}>
