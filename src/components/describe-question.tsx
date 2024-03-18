@@ -6,6 +6,7 @@ import { BASE_API_URL } from "~/data/api";
 import { useRouter } from "next/router";
 import { useWalletStore } from "~/store/wallet";
 import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 interface QuestionsProps {
   question: {
@@ -42,12 +43,14 @@ const Questions = (): React.ReactNode => {
         { drep_id: query.to, ...quesData, user_id: stake_address },
       );
       console.log(response.data);
+      toast.success("Submitted Successfully");
     } catch (error: unknown) {
       if (
         error instanceof AxiosError &&
         error.response &&
         error.response.data
       ) {
+        toast.error("Failed to submit question");
         const responseData = error.response.data;
         console.log(responseData);
       }

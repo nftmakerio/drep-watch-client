@@ -12,11 +12,12 @@ import LetterAvatar from "./LetterAvartar";
 import Link from "next/link";
 import { getData } from "~/server";
 import Loader from "./loader";
+import ErrorCard from "./cards/Error";
 
 const Answer: React.FC = (): React.ReactNode => {
   const { query } = useRouter();
 
-  const { data } = useQuery({
+  const { data, error: err1 } = useQuery({
     queryKey: ["question-data", query.id],
     queryFn: async () => {
       try {
@@ -33,6 +34,8 @@ const Answer: React.FC = (): React.ReactNode => {
         );
 
         const answer = (await answerRes.json()) as Answer;
+
+        if (!question.question || !answer.drep_id) throw new Error("No data found");
 
         return {
           question: question.question,
@@ -69,7 +72,7 @@ const Answer: React.FC = (): React.ReactNode => {
     }
   };
 
-  const { data: profileData } = useQuery({
+  const { data: profileData, error: err2 } = useQuery({
     queryKey: ["drep-profile", data?.answer.drep_id],
     queryFn: () => fetchData(),
   });
@@ -78,6 +81,12 @@ const Answer: React.FC = (): React.ReactNode => {
     queryFn: () => getData(2),
     queryKey: ["latest_questions"],
   });
+
+  if (err1 || err2) return (
+    <section className="w-full pt-32 flex items-center justify-center">
+      <ErrorCard />
+    </section>
+  );
 
   return (
     <section className="flex w-full flex-col gap-[40px] pb-20 pt-[150px] md:gap-[90px] md:pt-[190px]">

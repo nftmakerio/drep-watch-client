@@ -1,4 +1,4 @@
-export default function Error() {
+export default function ErrorCard() {
     return (
         <div
             style={{ width: "calc(100% - 100px)" }}

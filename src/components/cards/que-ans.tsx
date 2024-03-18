@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import LetterAvatar from "../LetterAvartar";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 interface Question {
   theme: string;
@@ -147,13 +148,21 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
               </div>
             </div>
 
-            <motion.div
+            <motion.button
               className="cursor-pointer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText("/answer/" + id);
+                  toast.success('Copied the sharing link');
+                } catch (err) {
+                  toast.error('Failed to copy to clipboard');
+                }
+              }}
             >
               <MdShare className="text-lg text-[#8c8c8c] md:text-xl" />
-            </motion.div>
+            </motion.button>
           </div>
         </div>
       )}

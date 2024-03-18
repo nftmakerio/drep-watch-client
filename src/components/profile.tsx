@@ -23,6 +23,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getDrepQuestions } from "~/server";
 import { useRouter } from "next/router";
 import LetterAvatar from "./LetterAvartar";
+import ErrorCard from "./cards/Error";
 
 const Profile: React.FC = (): React.ReactNode => {
   const { query } = useRouter();
@@ -74,12 +75,12 @@ const Profile: React.FC = (): React.ReactNode => {
     }
   };
 
-  const { data: profileData } = useQuery({
+  const { data: profileData, error: err1 } = useQuery({
     queryKey: ["drep-profile", query?.id],
     queryFn: () => fetchData(),
   });
 
-  const { data: questions } = useQuery({
+  const { data: questions, error: err2 } = useQuery({
     queryKey: ["drep-profile-questions", query?.id],
     queryFn: () => (query.id ? getDrepQuestions(query?.id as string) : null),
   });
@@ -87,6 +88,12 @@ const Profile: React.FC = (): React.ReactNode => {
   // useEffect(() => {
   //   console.log(questions, "|fdsafdsafas")
   // }, [questions])
+
+  if (err1 || err2) return (
+    <section className="w-full pt-32 flex items-center justify-center">
+      <ErrorCard />
+    </section>
+  )
 
   return (
     <section className="flex w-full flex-col gap-[40px] pb-20 pt-[150px] md:gap-[90px] md:pt-[190px]">
