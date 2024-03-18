@@ -36,6 +36,31 @@ async function getLatestQuestions(): Promise<{
   };
 }
 
+async function getUserQuestions(wallet_address: string): Promise<{
+  answers: (Answer | undefined)[];
+  questionAnswers: true;
+  questions: Question[];
+}> {
+  const res = await fetch(`${BASE_API_URL}/api/v1/questions?wallet_address=${wallet_address}`);
+  const questions = (await res.json()) as Question[];
+  console.log(questions, "fdasdfasf")
+  const questionIds = await Promise.all(
+    questions.map((question) =>
+      fetch(`${BASE_API_URL}/api/v1/answers/${question.uuid}`),
+    ),
+  );
+  const answers = (await Promise.all(
+    questionIds.map((questionId) => questionId.json()),
+  )) as Answer[];
+
+  // console.log("GET LATEST QUESTIONS CALLED")
+  return {
+    answers: answers,
+    questionAnswers: true,
+    questions: questions,
+  };
+}
+
 async function getLatestAnswers(): Promise<{
   answers: Answer[];
   questionAnswers: true;
@@ -111,4 +136,5 @@ export {
   getLatestAnswers,
   getData,
   getDrepQuestions,
+  getUserQuestions
 };

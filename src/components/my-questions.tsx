@@ -5,9 +5,22 @@ import Image from "next/image";
 import QueAnsCard from "./cards/que-ans";
 
 import useInView from "~/hooks/use-in-view";
+import { useWalletStore } from "~/store/wallet";
+import LetterAvatar from "./LetterAvartar";
+import Link from "next/link";
+import { getData, getUserQuestions } from "~/server";
+import { useQuery } from "@tanstack/react-query";
+import Loader from "./loader";
 
 const MyQuestions: React.FC = (): React.ReactNode => {
   const { ref } = useInView();
+
+  const { stake_address, delegatedTo } = useWalletStore();
+
+  const { isLoading, data: pageData } = useQuery({
+    queryFn: () => (stake_address ? getUserQuestions(stake_address) : null),
+    queryKey: ["my_questions", stake_address],
+  });
 
   return (
     <section className="flex w-full flex-col gap-[40px] pb-20 pt-[120px] md:gap-[90px] md:pt-[190px]">
@@ -18,15 +31,10 @@ const MyQuestions: React.FC = (): React.ReactNode => {
         >
           <div className="flex flex-col divide-y divide-brd-clr md:flex-row md:divide-x ">
             <div className="flex flex-col items-center gap-3 p-8 pb-6 md:flex-row md:gap-6 md:pr-6 ">
-              <Image
-                src={"/assets/profile/user.png"}
-                width={1000}
-                height={1000}
-                className="aspect-square w-[140px] object-cover"
-                alt="img"
-              />
+              <LetterAvatar username={stake_address ?? "A"} dimension={140} />
+
               <div className="max-w-[290px] truncate font-neue-regrade text-[28px] font-medium text-black md:text-[36px]">
-                aspinnqenfnqwiaklasdkjf
+                {stake_address ?? "Connect Wallet"}
               </div>
             </div>
 
@@ -34,26 +42,28 @@ const MyQuestions: React.FC = (): React.ReactNode => {
               <div className="font-ibm-mono text-xs text-tertiary md:text-sm">
                 Delegated to
               </div>
-              <Image
+              {/* <Image
                 src={"/assets/profile/img.png"}
                 width={1000}
                 height={1000}
                 className="aspect-square w-[60px] object-cover"
                 alt="img"
-              />
+              /> */}
 
               <div className="rounded-lg bg-primary-light px-[18px] py-2  font-ibm-mono text-xs tracking-wide text-primary md:text-[13px]">
-                uqwdbd8271gd98n13241
+                {delegatedTo.pool_id
+                  ? `${delegatedTo.pool_id?.slice(0, 24)}...`
+                  : "Not Active"}
               </div>
 
-              <motion.button
+              <Link
+                href={`/profile/${delegatedTo.pool_id}`}
                 className="group mt-2 flex items-center gap-1 font-inter text-sm font-medium tracking-wide text-primary"
-                whileTap={{ scale: 0.995 }}
               >
                 <div>View profile</div>
 
                 <GoArrowRight className="text-lg transition-all duration-200 group-hover:translate-x-1 group-active:translate-x-0.5 md:text-xl" />
-              </motion.button>
+              </Link>
             </div>
           </div>
         </motion.div>
@@ -69,11 +79,20 @@ const MyQuestions: React.FC = (): React.ReactNode => {
           </div>
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-            {Array(1)
-              .fill(0)
-              .map((_, i) => (
-                <QueAnsCard id={i + 1} />
-              ))}
+              {pageData && pageData.questionAnswers ? (
+                pageData.questions.map((question, i) => (
+                  <div key={i}>
+                    <QueAnsCard
+                      asked_user={question.wallet_address}
+                      question={question}
+                      answer={pageData.answers[i]}
+                      id={i + 1}
+                    />
+                  </div>
+                ))
+              ) : (
+                <Loader />
+              )}
           </div>
         </div>
       </div>

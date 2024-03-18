@@ -12,6 +12,7 @@ import { BASE_API_URL } from "~/data/api";
 import { useState } from "react";
 import Link from "next/link";
 import { useWalletStore } from "~/store/wallet";
+import { AiOutlineDisconnect } from "react-icons/ai";
 
 const Navbar: React.FC = (): React.ReactNode => {
   const device = useDeviceType();
@@ -21,7 +22,7 @@ const Navbar: React.FC = (): React.ReactNode => {
 
   const { connect, disconnect, connected, name } = useWallet();
 
-  const { saveWallet } = useWalletStore();
+  const { saveWallet, stake_address } = useWalletStore();
 
   const handleClick = async (name: string) => {
     try {
@@ -40,15 +41,32 @@ const Navbar: React.FC = (): React.ReactNode => {
         wallet_address: address,
       };
 
-      const { data } = await axios.post(
-        `${BASE_API_URL}/api/v1/user/create`,
-        requestData,
-      );
+      const { data } = await axios.post<
+        | {
+            data: {
+              wallet_address: string;
+            };
+          }
+        | undefined
+      >(`${BASE_API_URL}/api/v1/user/create`, requestData);
 
-      saveWallet({
-        connected: true,
-        stake_address: address,
-      });
+      if (data?.data) {
+        const { data: wallet_data } = await axios.get<{
+          name: string;
+          email: string;
+          pool_id: string;
+          active: boolean;
+        }>(`${BASE_API_URL}/api/v1/user/${data.data.wallet_address}`);
+
+        saveWallet({
+          connected: true,
+          stake_address: address,
+          delegatedTo: {
+            active: wallet_data.active,
+            pool_id: wallet_data.pool_id,
+          },
+        });
+      }
 
       setConnecting(false);
 
@@ -88,7 +106,6 @@ const Navbar: React.FC = (): React.ReactNode => {
             whileHover={{ scaleX: 1.025 }}
             whileTap={{ scaleX: 0.995 }}
             className="flex items-center gap-2.5 rounded-lg bg-gradient-to-b from-[#FFC896] from-[-47.73%] to-[#FB652B] to-[78.41%] px-4 py-2.5  text-white md:px-6"
-            onClick={() => connected && disconnect()}
           >
             {connecting ? (
               <Loader colored={true} />
@@ -96,7 +113,7 @@ const Navbar: React.FC = (): React.ReactNode => {
               <Image
                 width={1000}
                 height={1000}
-                className="h-6 w-6  object-contain"
+                className="h-6 w-6 object-contain"
                 src={WALLETS[name.toLowerCase()]?.image ?? ""}
                 alt={WALLETS[name.toLowerCase()]?.title ?? ""}
               />
@@ -107,9 +124,15 @@ const Navbar: React.FC = (): React.ReactNode => {
               {connecting
                 ? "Connecting..."
                 : connected
-                  ? "Disconnect"
+                  ? <Link href="/my-questions">{(stake_address ?? "")?.slice(0, 10)}...</Link>
                   : "Connect wallet"}
+              
             </div>
+            {connected && (
+              <div onClick={() => disconnect()} className="">
+                <AiOutlineDisconnect className="h-6 w-6" color="white" />
+              </div>
+            )}
           </motion.button>
 
           <div className="absolute right-0 top-full max-h-0 w-full min-w-max translate-y-2 overflow-hidden rounded-lg bg-white/60 text-primary backdrop-blur transition-all duration-500 group-hover:max-h-[500px] ">
