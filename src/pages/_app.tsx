@@ -13,6 +13,10 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 
     const [isMounted, setIsMounted] = useState(false);
 
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     // useEffect(() => {
     //     const lenis = new Lenis();
 
