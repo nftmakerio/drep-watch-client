@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Transaction } from "@meshsdk/core";
 import { useWallet } from "@meshsdk/react";
-import LetterAvatar from "../LetterAvartar";
+import LetterAvatar from "../letter-avatar";
 import toast from "react-hot-toast";
 
 interface ProfileCardProps {
@@ -87,11 +87,12 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         <div className="h-full w-[1px] bg-[#0000002E]"></div>
         <motion.button
           onClick={() => onDelegate()}
-          className="flex w-full flex-1 items-center justify-center hover:text-primary "
+          className="flex w-full flex-1 items-center justify-center hover:text-primary disabled:hover:text-inherit disabled:opacity-65 disabled:cursor-not-allowed"
           whileHover={{ scaleX: 1.05 }}
           whileTap={{ scaleX: 0.95 }}
+          disabled={!connected}
         >
-          Delegate
+            {connected ? "Delegate" : "Please Connect Wallet First"}
         </motion.button>
       </div>
     </motion.div>

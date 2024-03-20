@@ -8,11 +8,11 @@ import { useRouter } from "next/router";
 import { BASE_API_URL } from "~/data/api";
 import { Answer, Question } from "~/types";
 import axios, { AxiosError } from "axios";
-import LetterAvatar from "./LetterAvartar";
+import LetterAvatar from "./letter-avatar";
 import Link from "next/link";
 import { getData } from "~/server";
 import Loader from "./loader";
-import ErrorCard from "./cards/Error";
+import ErrorCard from "./cards/erros";
 import { useWallet } from "@meshsdk/react";
 import { Transaction } from "@meshsdk/core"
 import toast from "react-hot-toast";
@@ -157,12 +157,13 @@ const Answer: React.FC = (): React.ReactNode => {
 
                 <motion.button
                   onClick={() => onDelegate()}
-                  className="flex items-center gap-2.5 rounded-lg bg-[#EAEAEA] px-4 py-2.5 text-secondary"
+                  className="flex items-center gap-2.5 rounded-lg bg-[#EAEAEA] px-4 py-2.5 text-secondary disabled:opacity-65 disabled:cursor-not-allowed"
                   whileHover={{ scaleX: 1.025 }}
                   whileTap={{ scaleX: 0.995 }}
+                  disabled={!connected}
                 >
                   <div className="font-inter text-xs font-medium md:text-sm ">
-                    Delegate
+                    {connected ? "Delegate" : "Please Connect Wallet First"}
                   </div>
                 </motion.button>
               </div>

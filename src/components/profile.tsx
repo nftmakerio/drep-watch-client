@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BsChatQuoteFill } from "react-icons/bs";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { Transaction } from "@meshsdk/core";
 
 import QueAnsCard from "./cards/que-ans";
 import Vote from "./cards/vote";
@@ -22,14 +23,14 @@ import { BASE_API_URL } from "~/data/api";
 import { useQuery } from "@tanstack/react-query";
 import { getDrepQuestions } from "~/server";
 import { useRouter } from "next/router";
-import LetterAvatar from "./LetterAvartar";
-import ErrorCard from "./cards/Error";
+import LetterAvatar from "./letter-avatar";
+import ErrorCard from "./cards/erros";
 import { useWallet } from "@meshsdk/react";
 import toast from "react-hot-toast";
 
 const Profile: React.FC = (): React.ReactNode => {
   const { query } = useRouter();
-  const { connected } = useWallet();
+  const { connected, wallet } = useWallet();
   // const [profileData, setProfileData] = useState<DrepType>();
   const [active, setActive] = useState<number>(
     P_FILTER_TYPES.QUESTIONS_ANSWERS,
@@ -98,9 +99,34 @@ const Profile: React.FC = (): React.ReactNode => {
     </section>
   )
 
-  const handleDelegate = () => {
-    if (!connected) {
-      toast.error("Please Connect Wallet First !!");
+  const onDelegate = async () => {
+    try {
+      if (!connected) {
+        return;
+      }
+
+      const address = (await wallet.getRewardAddresses())[0];
+
+      if (!address) {
+        return;
+      }
+
+      const poolId = query.id as string;
+
+      if (!poolId) {
+        return;
+      }
+
+      const tx = new Transaction({ initiator: wallet });
+      tx.delegateStake(address, poolId);
+
+      const unsignedTx = await tx.build();
+      const signedTx = await wallet.signTx(unsignedTx);
+      const txHash = await wallet.submitTx(signedTx);
+
+      toast.success(`Successfully delegated to ${query.id}`)
+    } catch (error) {
+      console.log(error);
     }
   };
   
@@ -141,15 +167,16 @@ const Profile: React.FC = (): React.ReactNode => {
                 </Link>
 
                 <motion.button
-                  className="flex items-center gap-2.5 rounded-lg bg-[#EAEAEA] px-4 py-2.5 text-secondary"
+                  className="flex items-center gap-2.5 rounded-lg bg-[#EAEAEA] px-4 py-2.5 text-secondary disabled:opacity-65 disabled:cursor-not-allowed"
                   whileHover={{ scaleX: 1.025 }}
                   whileTap={{ scaleX: 0.995 }}
+                  onClick={onDelegate}
+                  disabled={!connected}
                 >
                   <div
                     className="font-inter text-xs font-medium md:text-sm "
-                    onClick={handleDelegate}
                   >
-                    Delegate
+                    {connected ? "Delegate" : "Please Connect Wallet First"}
                   </div>
                 </motion.button>
               </div>

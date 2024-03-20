@@ -2,7 +2,7 @@ import { MdShare } from "react-icons/md";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import LetterAvatar from "../LetterAvartar";
+import LetterAvatar from "../letter-avatar";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -53,7 +53,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
             </div>
           </div>
 
-          <div className="grid h-10 w-10 place-items-center rounded-lg bg-tertiary-light text-tertiary">
+          <div className="grid h-10 w-10 place-items-center rounded-lg text-tertiary">
             <svg
               width="10"
               height="17"

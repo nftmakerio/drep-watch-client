@@ -6,7 +6,7 @@ import QueAnsCard from "./cards/que-ans";
 
 import useInView from "~/hooks/use-in-view";
 import { useWalletStore } from "~/store/wallet";
-import LetterAvatar from "./LetterAvartar";
+import LetterAvatar from "./letter-avatar";
 import Link from "next/link";
 import { getData, getUserQuestions } from "~/server";
 import { useQuery } from "@tanstack/react-query";

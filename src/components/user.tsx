@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { type UserType } from "~/types";
-import LetterAvatar from "./LetterAvartar";
+import LetterAvatar from "./letter-avatar";
 
 interface UserProps {
   user: UserType;

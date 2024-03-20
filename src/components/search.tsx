@@ -7,7 +7,7 @@ import Image from "next/image";
 import Loader from "./loader";
 import { BASE_API_URL } from "~/data/api";
 import Link from "next/link";
-import LetterAvatar from "./LetterAvartar";
+import LetterAvatar from "./letter-avatar";
 
 interface SearchResult {
   drep_id: string;
