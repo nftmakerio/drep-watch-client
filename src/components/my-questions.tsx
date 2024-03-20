@@ -69,16 +69,17 @@ const MyQuestions: React.FC = (): React.ReactNode => {
         </motion.div>
       </div>
 
-      <div className="flex  w-full items-center justify-center bg-white px-[5%] py-7 pb-12 shadow-[-5px_0px_13px_0px_#0000001A]">
-        <div
-          ref={ref}
-          className="flex w-full max-w-[1600px] flex-col gap-6 md:gap-10"
-        >
-          <div className="flex w-full flex-col items-start justify-between gap-2 font-inter font-medium tracking-wide text-secondary-dark md:flex-row md:items-center ">
-            <div className="text-base md:text-xl">Your Question answers</div>
-          </div>
+      {stake_address && (
+        <div className="flex  w-full items-center justify-center bg-white px-[5%] py-7 pb-12 shadow-[-5px_0px_13px_0px_#0000001A]">
+          <div
+            ref={ref}
+            className="flex w-full max-w-[1600px] flex-col gap-6 md:gap-10"
+          >
+            <div className="flex w-full flex-col items-start justify-between gap-2 font-inter font-medium tracking-wide text-secondary-dark md:flex-row md:items-center ">
+              <div className="text-base md:text-xl">Your Question answers</div>
+            </div>
 
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               {pageData && pageData.questionAnswers ? (
                 pageData.questions.map((question, i) => (
                   <div key={i}>
@@ -93,9 +94,10 @@ const MyQuestions: React.FC = (): React.ReactNode => {
               ) : (
                 <Loader />
               )}
-          </div> 
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 };

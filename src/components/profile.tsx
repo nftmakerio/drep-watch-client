@@ -89,7 +89,7 @@ const Profile: React.FC = (): React.ReactNode => {
   //   console.log(questions, "|fdsafdsafas")
   // }, [questions])
 
-  if (err1 || err2) return (
+  if (query?.id && err1) return (
     <section className="w-full pt-32 flex items-center justify-center">
       <ErrorCard />
     </section>
@@ -120,18 +120,16 @@ const Profile: React.FC = (): React.ReactNode => {
                 {profileData?.name}
               </div>
               <div className="mt-5 flex items-center gap-2.5">
-                <motion.button
+                <Link href={`/ask-question?to=${query?.id}`}
                   className="flex items-center gap-2.5 rounded-lg bg-gradient-to-b from-[#FFC896] from-[-47.73%] to-[#FB652B] to-[78.41%] px-4 py-2.5 text-white"
-                  whileHover={{ scaleX: 1.025 }}
-                  whileTap={{ scaleX: 0.995 }}
                 >
                   <BsChatQuoteFill className="text-[24px]" />
-                  <Link href={`/ask-question?to=${query?.id}`}>
+                  <>
                     <div className="text-shadow font-inter text-xs font-medium md:text-sm ">
                       Ask question
                     </div>
-                  </Link>
-                </motion.button>
+                  </>
+                </Link>
 
                 <motion.button
                   className="flex items-center gap-2.5 rounded-lg bg-[#EAEAEA] px-4 py-2.5 text-secondary"

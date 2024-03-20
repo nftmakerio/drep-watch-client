@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Transaction } from "@meshsdk/core";
 import { useWallet } from "@meshsdk/react";
 import LetterAvatar from "../LetterAvartar";
+import toast from "react-hot-toast";
 
 interface ProfileCardProps {
   test?: string;
@@ -46,7 +47,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       const signedTx = await wallet.signTx(unsignedTx);
       const txHash = await wallet.submitTx(signedTx);
 
-      console.log(txHash);
+      toast.success(`Successfully delegated to ${drep?.drep_id}`)
     } catch (error) {
       console.log(error);
     }

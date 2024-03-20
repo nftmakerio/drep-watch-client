@@ -13,9 +13,14 @@ import Link from "next/link";
 import { getData } from "~/server";
 import Loader from "./loader";
 import ErrorCard from "./cards/Error";
+import { useWallet } from "@meshsdk/react";
+import { Transaction } from "@meshsdk/core"
+import toast from "react-hot-toast";
 
 const Answer: React.FC = (): React.ReactNode => {
   const { query } = useRouter();
+
+  const { connected, wallet } = useWallet();
 
   const { data, error: err1 } = useQuery({
     queryKey: ["question-data", query.id],
@@ -82,6 +87,37 @@ const Answer: React.FC = (): React.ReactNode => {
     queryKey: ["latest_questions"],
   });
 
+  const onDelegate = async () => {
+    try {
+      if (!connected || !data?.answer) {
+        return;
+      }
+
+      const address = (await wallet.getRewardAddresses())[0];
+
+      if (!address) {
+        return;
+      }
+
+      const poolId = data?.answer.drep_id;
+
+      if (!poolId) {
+        return;
+      }
+
+      const tx = new Transaction({ initiator: wallet });
+      tx.delegateStake(address, poolId);
+
+      const unsignedTx = await tx.build();
+      const signedTx = await wallet.signTx(unsignedTx);
+      const txHash = await wallet.submitTx(signedTx);
+
+      toast.success(`Successfully delegated to ${data?.answer.drep_id}`)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   if (err1 || err2) return (
     <section className="w-full pt-32 flex items-center justify-center">
       <ErrorCard />
@@ -120,6 +156,7 @@ const Answer: React.FC = (): React.ReactNode => {
                 </Link>
 
                 <motion.button
+                  onClick={() => onDelegate()}
                   className="flex items-center gap-2.5 rounded-lg bg-[#EAEAEA] px-4 py-2.5 text-secondary"
                   whileHover={{ scaleX: 1.025 }}
                   whileTap={{ scaleX: 0.995 }}

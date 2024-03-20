@@ -49,6 +49,7 @@ async function getUserQuestions(wallet_address: string): Promise<{
       fetch(`${BASE_API_URL}/api/v1/answers/${question.uuid}`),
     ),
   );
+  console.log(questionIds)
   const answers = (await Promise.all(
     questionIds.map((questionId) => questionId.json()),
   )) as Answer[];

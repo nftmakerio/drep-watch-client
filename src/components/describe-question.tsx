@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useWalletStore } from "~/store/wallet";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { useWallet } from "@meshsdk/react";
 
 interface QuestionsProps {
   question: {
@@ -17,7 +18,7 @@ interface QuestionsProps {
 }
 
 const Questions = (): React.ReactNode => {
-  const { query } = useRouter();
+  const { query, push } = useRouter();
   const [quesData, setQuesData] = useState({
     question_description: "",
     question_title: "",
@@ -27,6 +28,8 @@ const Questions = (): React.ReactNode => {
   const [preview, setPreview] = useState<boolean>(false);
 
   const { stake_address } = useWalletStore();
+
+  const { connected } = useWallet();
 
   const handleInputChange = (fieldName: string, value: string) => {
     setQuesData((prevState) => ({
@@ -40,10 +43,11 @@ const Questions = (): React.ReactNode => {
     try {
       const response = await axios.post(
         `${BASE_API_URL}/api/v1/questions/ask-question`,
-        { drep_id: query.to, ...quesData, user_id: stake_address },
+        { drep_id: query.to, ...quesData, wallet_address: stake_address },
       );
       console.log(response.data);
       toast.success("Submitted Successfully");
+      void push("/my-questions")
     } catch (error: unknown) {
       if (
         error instanceof AxiosError &&
@@ -60,7 +64,7 @@ const Questions = (): React.ReactNode => {
 
   const handleNextButtonClick = () => {
     const { theme, question_title, question_description } = quesData;
-    if (theme && question_title && question_description) {
+    if (theme && question_title && question_description && connected) {
       setPreview(true);
     }
   };
@@ -96,6 +100,7 @@ const Questions = (): React.ReactNode => {
     queryKey: ["drep-profile", query.to],
     queryFn: () => fetchData(),
   });
+
 
   return (
     <div className="flex w-full max-w-[1318px] flex-col gap-4 rounded-xl bg-[#FAFAFA] shadow lg:flex-row lg:pr-12">
@@ -195,7 +200,7 @@ const Questions = (): React.ReactNode => {
               whileTap={{ scaleX: 0.995 }}
               onClick={handleNextButtonClick}
             >
-              Next &nbsp; &#10003;
+              {connected ? "Next" : "Connect wallet to submit"} &nbsp; &#10003;
             </motion.button>
           </div>
         )}
