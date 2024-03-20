@@ -12,7 +12,7 @@ import LetterAvatar from "./letter-avatar";
 import Link from "next/link";
 import { getData } from "~/server";
 import Loader from "./loader";
-import ErrorCard from "./cards/erros";
+import ErrorCard from "./cards/error";
 import { useWallet } from "@meshsdk/react";
 import { Transaction } from "@meshsdk/core"
 import toast from "react-hot-toast";

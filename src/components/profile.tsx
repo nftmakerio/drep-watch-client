@@ -24,7 +24,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getDrepQuestions } from "~/server";
 import { useRouter } from "next/router";
 import LetterAvatar from "./letter-avatar";
-import ErrorCard from "./cards/erros";
+import ErrorCard from "./cards/error";
 import { useWallet } from "@meshsdk/react";
 import toast from "react-hot-toast";
 
