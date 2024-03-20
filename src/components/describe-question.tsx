@@ -63,6 +63,9 @@ const Questions = (): React.ReactNode => {
   };
 
   const handleNextButtonClick = () => {
+    if (!connected) {
+      toast.error("Please Connect Wallet First !!");
+    }
     const { theme, question_title, question_description } = quesData;
     if (theme && question_title && question_description && connected) {
       setPreview(true);
@@ -191,6 +194,7 @@ const Questions = (): React.ReactNode => {
                 className="flex h-11 items-center justify-center rounded-lg bg-tertiary-light px-8 text-sm text-secondary"
                 whileHover={{ scaleX: 1.025 }}
                 whileTap={{ scaleX: 0.995 }}
+                onClick={() => push("/")} // change if u need another state
               >
                 Cancel
               </motion.button>

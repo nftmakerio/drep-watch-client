@@ -24,9 +24,12 @@ import { getDrepQuestions } from "~/server";
 import { useRouter } from "next/router";
 import LetterAvatar from "./LetterAvartar";
 import ErrorCard from "./cards/Error";
+import { useWallet } from "@meshsdk/react";
+import toast from "react-hot-toast";
 
 const Profile: React.FC = (): React.ReactNode => {
   const { query } = useRouter();
+  const { connected } = useWallet();
   // const [profileData, setProfileData] = useState<DrepType>();
   const [active, setActive] = useState<number>(
     P_FILTER_TYPES.QUESTIONS_ANSWERS,
@@ -95,6 +98,12 @@ const Profile: React.FC = (): React.ReactNode => {
     </section>
   )
 
+  const handleDelegate = () => {
+    if (!connected) {
+      toast.error("Please Connect Wallet First !!");
+    }
+  };
+  
   return (
     <section className="flex w-full flex-col gap-[40px] pb-20 pt-[150px] md:gap-[90px] md:pt-[190px]">
       <div className="">
@@ -136,7 +145,10 @@ const Profile: React.FC = (): React.ReactNode => {
                   whileHover={{ scaleX: 1.025 }}
                   whileTap={{ scaleX: 0.995 }}
                 >
-                  <div className="font-inter text-xs font-medium md:text-sm ">
+                  <div
+                    className="font-inter text-xs font-medium md:text-sm "
+                    onClick={handleDelegate}
+                  >
                     Delegate
                   </div>
                 </motion.button>
