@@ -18,7 +18,7 @@ interface QuestionsProps {
 }
 
 const Questions = (): React.ReactNode => {
-  const { query, push } = useRouter();
+  const { query, push, back } = useRouter();
   const [quesData, setQuesData] = useState({
     question_description: "",
     question_title: "",
@@ -111,6 +111,7 @@ const Questions = (): React.ReactNode => {
               className="flex h-10 w-10 items-center justify-center rounded-lg bg-tertiary-light text-tertiary"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={back}
             >
               <LeftArrow />
             </motion.button>

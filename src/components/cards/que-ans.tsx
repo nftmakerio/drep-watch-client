@@ -75,7 +75,9 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
           ) : (
             <>
               {question?.question_title}
-              <span className="ml-2 text-[#cbcbcb]">read more...</span>
+              {
+                (question && question.question_title.length > 60) && <span className="ml-2 text-[#cbcbcb]">read more...</span>
+              }
             </>
           )}
         </div>
@@ -108,7 +110,16 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
                 <>
                   {answer?.answer
                     .split("\n\n")
-                    .map((text) => <div className="py-4">{text}</div>)}
+                    .map((text, i, a) => (
+                        <span className="py-4">
+                            {text} 
+                            {i!==a.length-1 && 
+                                <>
+                                    <br /> <br />
+                                </>
+                            }
+                        </span>
+                    ))}
                   <span
                     onClick={() => setEnlargeText((prev) => !prev)}
                     className="ml-2 text-[#cbcbcb]"
@@ -131,15 +142,16 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-5">
             <div className="flex items-center gap-2">
               <div className="font-ibm-mono text-xs font-medium uppercase text-tertiary md:text-sm">
                 Tags
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 flex-wrap">
                 {[question?.theme].map((i) => (
                   <div
-                    className="rounded-full bg-white px-3 py-1 font-inter text-xs font-medium text-[#444] md:text-[13px]"
+                    className="rounded-full bg-white px-3 py-1 font-inter text-xs font-medium text-[#444] md:text-[13px] max-w-[200px] truncate"
+                    title={i}
                     key={i}
                   >
                     {i}
