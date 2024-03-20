@@ -93,7 +93,7 @@ const MyQuestions: React.FC = (): React.ReactNode => {
               ) : (
                 <Loader />
               )}
-          </div>
+          </div> 
         </div>
       </div>
     </section>
