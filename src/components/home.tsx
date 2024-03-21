@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 import ProfileCard from "./cards/profile";
-import QueAnsCard from "./cards/que-ans";
+import QueAnsCard, { AdminQueAnsCard } from "./cards/que-ans";
 import Search from "./search";
 
 import { FILTER_TYPES, FILTERS, SMALL_WIDTHS, WIDTHS } from "~/constants";
@@ -135,6 +135,7 @@ const Home: React.FC = (): React.ReactNode => {
                       id={i + 1}
                     />
                   </Link>
+                    // <AdminQueAnsCard />
                 ))
               ) : (
                 <Loader />
