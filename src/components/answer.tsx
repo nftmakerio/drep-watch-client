@@ -14,7 +14,7 @@ import { getData } from "~/server";
 import Loader from "./loader";
 import ErrorCard from "./cards/error";
 import { useWallet } from "@meshsdk/react";
-import { Transaction } from "@meshsdk/core"
+import { Transaction } from "@meshsdk/core";
 import toast from "react-hot-toast";
 
 const Answer: React.FC = (): React.ReactNode => {
@@ -40,7 +40,8 @@ const Answer: React.FC = (): React.ReactNode => {
 
         const answer = (await answerRes.json()) as Answer;
 
-        if (!question.question || !answer.drep_id) throw new Error("No data found");
+        if (!question.question || !answer.drep_id)
+          throw new Error("No data found");
 
         return {
           question: question.question,
@@ -112,65 +113,78 @@ const Answer: React.FC = (): React.ReactNode => {
       const signedTx = await wallet.signTx(unsignedTx);
       const txHash = await wallet.submitTx(signedTx);
 
-      toast.success(`Successfully delegated to ${data?.answer.drep_id}`)
+      toast.success(`Successfully delegated to ${data?.answer.drep_id}`);
     } catch (error) {
       console.log(error);
     }
   };
 
-  if (err1 || err2) return (
-    <section className="w-full pt-32 flex items-center justify-center">
-      <ErrorCard />
-    </section>
-  );
+  if (data?.answer.drep_id && err1)
+    return (
+      <section className="flex w-full items-center justify-center pt-32">
+        <ErrorCard />
+      </section>
+    );
+
+  if (!data) {
+    return (
+      <section className="flex w-full flex-col gap-[40px] pb-20 pt-[150px] md:gap-[90px] md:pt-[190px]">
+        <Loader />
+      </section>
+    );
+  }
 
   return (
     <section className="flex w-full flex-col gap-[40px] pb-20 pt-[150px] md:gap-[90px] md:pt-[190px]">
-      <div className="">
-        <div className="relative flex items-center justify-center">
-          <div className="absolute top-0 -translate-y-1/2 rounded-[10px] bg-primary-light px-5 py-3 font-ibm-mono text-xs text-primary md:text-[13px]">
-            {profileData?.questionsAnswers}/{profileData?.questionsAsked}{" "}
-            Question answered
-          </div>
-
-          <div className="flex w-[90%] flex-col items-center gap-6 rounded-xl border border-primary-light bg-white px-5  pb-7  pt-9 shadow-color md:w-auto md:flex-row ">
-            <div>
-              <LetterAvatar username={profileData?.name} dimension={130} />
+      {profileData ? (
+        <div className="">
+          <div className="relative flex items-center justify-center">
+            <div className="absolute top-0 -translate-y-1/2 rounded-[10px] bg-primary-light px-5 py-3 font-ibm-mono text-xs text-primary md:text-[13px]">
+              {profileData?.questionsAnswers}/{profileData?.questionsAsked}{" "}
+              Question answered
             </div>
-            <div className="flex flex-col">
-              <div className="text-center font-ibm-mono text-xs tracking-wide text-tertiary md:text-left md:text-sm">
-                {profileData?.drep_id}
-              </div>
-              <div className="font-neue-regrade text-[36px] font-semibold text-black ">
-                {profileData?.name}
-              </div>
-              <div className="mt-5 flex items-center gap-2.5">
-                <Link
-                  href={`/ask-question?to=${profileData?.drep_id}`}
-                  className="flex items-center gap-2.5 rounded-lg bg-gradient-to-b from-[#FFC896] from-[-47.73%] to-[#FB652B] to-[78.41%] px-4 py-2.5 text-white"
-                >
-                  <BsChatQuoteFill className="text-[24px]" />
-                  <div className="text-shadow font-inter text-xs font-medium md:text-sm ">
-                    Ask question
-                  </div>
-                </Link>
 
-                <motion.button
-                  onClick={() => onDelegate()}
-                  className="flex items-center gap-2.5 rounded-lg bg-[#EAEAEA] px-4 py-2.5 text-secondary disabled:opacity-65 disabled:cursor-not-allowed"
-                  whileHover={{ scaleX: 1.025 }}
-                  whileTap={{ scaleX: 0.995 }}
-                  disabled={!connected}
-                >
-                  <div className="font-inter text-xs font-medium md:text-sm ">
-                    {connected ? "Delegate" : "Please Connect Wallet First"}
-                  </div>
-                </motion.button>
+            <div className="flex w-[90%] flex-col items-center gap-6 rounded-xl border border-primary-light bg-white px-5  pb-7  pt-9 shadow-color md:w-auto md:flex-row ">
+              <div>
+                <LetterAvatar username={profileData?.name} dimension={130} />
+              </div>
+              <div className="flex flex-col">
+                <div className="text-center font-ibm-mono text-xs tracking-wide text-tertiary md:text-left md:text-sm">
+                  {profileData?.drep_id}
+                </div>
+                <div className="font-neue-regrade text-[36px] font-semibold text-black ">
+                  {profileData?.name}
+                </div>
+                <div className="mt-5 flex items-center gap-2.5">
+                  <Link
+                    href={`/ask-question?to=${profileData?.drep_id}`}
+                    className="flex items-center gap-2.5 rounded-lg bg-gradient-to-b from-[#FFC896] from-[-47.73%] to-[#FB652B] to-[78.41%] px-4 py-2.5 text-white"
+                  >
+                    <BsChatQuoteFill className="text-[24px]" />
+                    <div className="text-shadow font-inter text-xs font-medium md:text-sm ">
+                      Ask question
+                    </div>
+                  </Link>
+
+                  <motion.button
+                    onClick={() => onDelegate()}
+                    className="flex items-center gap-2.5 rounded-lg bg-[#EAEAEA] px-4 py-2.5 text-secondary disabled:cursor-not-allowed disabled:opacity-65"
+                    whileHover={{ scaleX: 1.025 }}
+                    whileTap={{ scaleX: 0.995 }}
+                    disabled={!connected}
+                  >
+                    <div className="font-inter text-xs font-medium md:text-sm ">
+                      {connected ? "Delegate" : "Please Connect Wallet First"}
+                    </div>
+                  </motion.button>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <Loader />
+      )}
 
       {data && (
         <div className="flex  w-full items-center justify-center bg-white px-[5%] py-7 pb-12 shadow-[-5px_0px_13px_0px_#0000001A]">
