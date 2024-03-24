@@ -19,27 +19,25 @@ import { useQuery } from "@tanstack/react-query";
 import { Notification } from "~/types";
 import moment from "moment";
 import { useRouter } from "next/router";
+import { LOCALSTORAGE_WALLET_KEY } from "~/constants/wallet";
 
 const Navbar: React.FC = (): React.ReactNode => {
   const [active, setActive] = useState<number>(0);
 
   const device = useDeviceType();
   const supportedWallets = useWalletList();
-  // const supportedWallets: any[] = [];
-
-  const [connecting, setConnecting] = useState(false);
 
   const { connect, disconnect, connected, name } = useWallet();
-  // function connect() {}
-  // function disconnect() {}
-  // let connected=true, name="Nami"
 
-  const { saveWallet, stake_address } = useWalletStore();
+  const { saveWallet, stake_address, connecting, setConnecting } = useWalletStore();
 
   const handleClick = async (name: string) => {
     try {
       setConnecting(true);
       await connect(name);
+
+      localStorage.setItem(LOCALSTORAGE_WALLET_KEY, name);
+
       const wallet = await BrowserWallet.enable(name);
       const address = (await wallet.getRewardAddresses())[0];
 
@@ -229,7 +227,10 @@ const Navbar: React.FC = (): React.ReactNode => {
                       Inbox
                     </div>
                     <div className="rounded-sm bg-primary p-0.5 px-1 leading-[1] text-white">
-                      2
+                      {data
+                        ? data?.notifications.filter((notify) => !notify.opened)
+                            .length
+                        : 0}
                     </div>
                   </div>
                 </div>
@@ -281,7 +282,9 @@ function NotificationItem({
   const onOpen = async () => {
     try {
       await push(`/answer/${props.uuid}`);
-      await axios.post(`${BASE_API_URL}/api/v1/notifications/${props.notification_id}/opened`);
+      await axios.post(
+        `${BASE_API_URL}/api/v1/notifications/${props.notification_id}/opened`,
+      );
     } catch (error) {
       console.log(error);
     }
