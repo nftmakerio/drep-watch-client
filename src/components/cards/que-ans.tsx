@@ -16,7 +16,7 @@ interface Question {
 interface Answer {
     id: number;
     answer: string;
-    question_id: number;
+    uuid: string;
     drep_id: string;
     drep_name?: string | undefined;
 }
@@ -75,7 +75,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
                         <>
                             {question?.question_title}
                             {
-                                (question && question.question_title.length > 60) && <span className="ml-2 text-[#cbcbcb]">read more...</span>
+                                (question?.question_title && question.question_title?.length > 60) && <span className="ml-2 text-[#cbcbcb]">read more...</span>
                             }
                         </>
                     )}

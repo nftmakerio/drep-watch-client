@@ -127,7 +127,7 @@ const Home: React.FC = (): React.ReactNode => {
             >
               {pageData && pageData.questionAnswers ? (
                 pageData.questions.map((question, i) => (
-                  <Link href={`/answer/${pageData.answers[i]?.question_id}`} key={i}>
+                  <Link href={`/answer/${pageData.answers[i]?.uuid}`} key={i}>
                     <QueAnsCard
                       asked_user={question.wallet_address}
                       question={question}

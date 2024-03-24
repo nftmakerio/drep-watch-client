@@ -72,7 +72,7 @@ async function getLatestAnswers(): Promise<{
   // console.log(resJson.answers)
   const questionsRes = await Promise.all(
     resJson.answers.map((ans) =>
-      fetch(`${BASE_API_URL}/api/v1/questions/${ans.question_id}`),
+      fetch(`${BASE_API_URL}/api/v1/questions/${ans.uuid}`),
     ),
   );
   const questions = (await Promise.all(
