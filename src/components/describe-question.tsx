@@ -8,6 +8,7 @@ import { useWalletStore } from "~/store/wallet";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useWallet } from "@meshsdk/react";
+import Loader from "./loader";
 
 interface QuestionsProps {
   question: {
@@ -31,6 +32,8 @@ const Questions = (): React.ReactNode => {
 
   const { connected } = useWallet();
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   const handleInputChange = (fieldName: string, value: string) => {
     setQuesData((prevState) => ({
       ...prevState,
@@ -40,6 +43,7 @@ const Questions = (): React.ReactNode => {
 
   const handleSubmit = async () => {
     console.log(query);
+    setLoading(true);
     try {
       const response = await axios.post(
         `${BASE_API_URL}/api/v1/questions/ask-question`,
@@ -47,7 +51,7 @@ const Questions = (): React.ReactNode => {
       );
       console.log(response.data);
       toast.success("Submitted Successfully");
-      void push("/my-questions")
+      void push("/my-questions");
     } catch (error: unknown) {
       if (
         error instanceof AxiosError &&
@@ -60,6 +64,7 @@ const Questions = (): React.ReactNode => {
       }
       console.log(error);
     }
+    setLoading(false);
   };
 
   const handleNextButtonClick = () => {
@@ -103,7 +108,6 @@ const Questions = (): React.ReactNode => {
     queryKey: ["drep-profile", query.to],
     queryFn: () => fetchData(),
   });
-
 
   return (
     <div className="flex w-full max-w-[1318px] flex-col gap-4 rounded-xl bg-[#FAFAFA] shadow lg:flex-row lg:pr-12">
@@ -179,12 +183,19 @@ const Questions = (): React.ReactNode => {
               Back
             </motion.button>
             <motion.button
-              className="text-shadow flex h-11 items-center justify-center rounded-lg bg-gradient-to-b from-[#FFC896] from-[-47.73%] to-[#FB652B]  to-[78.41%] px-8 text-sm text-white"
+              className={`text-shadow flex h-11 items-center justify-center rounded-lg bg-gradient-to-b from-[#FFC896] from-[-47.73%] to-[#FB652B]  to-[78.41%] px-8 text-sm text-white ${loading ? "cursor-not-allowed" : "cursor-pointer"}`}
               whileHover={{ scaleX: 1.025 }}
               whileTap={{ scaleX: 0.995 }}
               onClick={handleSubmit}
+              disabled={loading}
             >
-              Submit &nbsp; &#10003;
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  Submitting <Loader colored={true} />
+                </span>
+              ) : (
+                <>Submit &nbsp; &#10003;</>
+              )}
             </motion.button>
           </div>
         ) : (
