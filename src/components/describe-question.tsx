@@ -293,8 +293,12 @@ function TitleAndInput({
   const handleOnChange = (
     e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ) => {
-    setInpVal(e.target.value);
-    onChange(e.target.value);
+    let newValue = e.target.value;
+    if (e.target.name === "theme") {
+      newValue = newValue.replace(/\s/g, ",");
+    }
+    setInpVal(newValue);
+    onChange(newValue);
   };
 
   return (
@@ -319,6 +323,7 @@ function TitleAndInput({
             value={inpVal ?? ""}
             onChange={handleOnChange}
             readOnly={preview}
+            name={title?.toLowerCase()}
           />
         )}
 
