@@ -209,19 +209,21 @@ const Navbar: React.FC = (): React.ReactNode => {
           </div>
 
           <div className="group relative">
-            <motion.button
-              whileHover={{ scaleX: 1.025 }}
-              whileTap={{ scaleX: 0.995 }}
-              className="relative mr-4 rounded-lg   py-2.5 text-white"
-            >
-              <FaBell className="text-2xl" />
+            {connected && (
+              <motion.button
+                whileHover={{ scaleX: 1.025 }}
+                whileTap={{ scaleX: 0.995 }}
+                className="relative mr-4 rounded-lg   py-2.5 text-white"
+              >
+                <FaBell className="text-2xl" />
 
-              {data &&
-                data?.notifications.filter((notify) => !notify.opened).length >
-                  0 && (
-                  <div className="absolute right-1 top-2 aspect-square w-1.5 rounded-full bg-primary "></div>
-                )}
-            </motion.button>
+                {data &&
+                  data?.notifications.filter((notify) => !notify.opened)
+                    .length > 0 && (
+                    <div className="absolute right-1 top-2 aspect-square w-1.5 rounded-full bg-primary "></div>
+                  )}
+              </motion.button>
+            )}
 
             <div className="absolute right-0 top-full max-h-0 w-full min-w-max translate-y-2 overflow-hidden rounded-lg bg-white/60 font-inter text-xs tracking-wide backdrop-blur  transition-all duration-500 group-hover:max-h-[500px] md:left-0 md:text-sm ">
               <div className="flex flex-col gap-1 ">
@@ -247,7 +249,9 @@ const Navbar: React.FC = (): React.ReactNode => {
                 <div className="max-h-[400px] w-full  overflow-auto ">
                   <div className="flex w-full flex-col items-start gap-1.5 ">
                     {data && data.notifications.length === 0 ? (
-                      <>No Notifications</>
+                      <div className="flex w-full max-w-[330px] items-start gap-3 border-b border-brd-clr px-4 py-5 md:max-w-[450px]">
+                        No Notifications
+                      </div>
                     ) : (
                       data?.notifications.map((notification) => (
                         <NotificationItem

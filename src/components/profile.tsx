@@ -28,11 +28,13 @@ import ErrorCard from "./cards/error";
 import { useWallet } from "@meshsdk/react";
 import toast from "react-hot-toast";
 import Masonry from "react-masonry-css";
+import { useWalletStore } from "~/store/wallet";
 
 const Profile: React.FC = (): React.ReactNode => {
   const { query } = useRouter();
   const { connected, wallet } = useWallet();
-  // const [profileData, setProfileData] = useState<DrepType>();
+  const { delegatedTo } = useWalletStore();
+
   const [active, setActive] = useState<number>(
     P_FILTER_TYPES.QUESTIONS_ANSWERS,
   );
@@ -94,15 +96,18 @@ const Profile: React.FC = (): React.ReactNode => {
   //   console.log(questions, "|fdsafdsafas")
   // }, [questions])
 
-  if (query?.id && err1) return (
-    <section className="w-full pt-32 flex items-center justify-center">
-      <ErrorCard />
-    </section>
-  )
+  if (query?.id && err1)
+    return (
+      <section className="flex w-full items-center justify-center pt-32">
+        <ErrorCard />
+      </section>
+    );
 
   const onDelegate = async () => {
     try {
       if (!connected) {
+        toast.error("Please connect your wallet to delegate.")
+
         return;
       }
 
@@ -119,18 +124,23 @@ const Profile: React.FC = (): React.ReactNode => {
       }
 
       const tx = new Transaction({ initiator: wallet });
+
+      if (!delegatedTo.active) {
+        tx.registerStake(address);
+      }
+
       tx.delegateStake(address, poolId);
 
       const unsignedTx = await tx.build();
       const signedTx = await wallet.signTx(unsignedTx);
       const txHash = await wallet.submitTx(signedTx);
 
-      toast.success(`Successfully delegated to ${query.id}`)
+      toast.success(`Successfully delegated to ${query.id}`);
     } catch (error) {
       console.log(error);
     }
   };
-  
+
   return (
     <section className="flex w-full flex-col gap-[40px] pb-20 pt-[150px] md:gap-[90px] md:pt-[190px]">
       <div className="">
@@ -156,7 +166,8 @@ const Profile: React.FC = (): React.ReactNode => {
                 {profileData?.name}
               </div>
               <div className="mt-5 flex items-center gap-2.5">
-                <Link href={`/ask-question?to=${query?.id}`}
+                <Link
+                  href={`/ask-question?to=${query?.id}`}
                   className="flex items-center gap-2.5 rounded-lg bg-gradient-to-b from-[#FFC896] from-[-47.73%] to-[#FB652B] to-[78.41%] px-4 py-2.5 text-white"
                 >
                   <BsChatQuoteFill className="text-[24px]" />
@@ -168,16 +179,13 @@ const Profile: React.FC = (): React.ReactNode => {
                 </Link>
 
                 <motion.button
-                  className="flex items-center gap-2.5 rounded-lg bg-[#EAEAEA] px-4 py-2.5 text-secondary disabled:opacity-65 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2.5 rounded-lg bg-[#EAEAEA] px-4 py-2.5 text-secondary disabled:cursor-not-allowed disabled:opacity-65"
                   whileHover={{ scaleX: 1.025 }}
                   whileTap={{ scaleX: 0.995 }}
                   onClick={onDelegate}
-                  disabled={!connected}
                 >
-                  <div
-                    className="font-inter text-xs font-medium md:text-sm "
-                  >
-                    {connected ? "Delegate" : "Please Connect Wallet First"}
+                  <div className="font-inter text-xs font-medium md:text-sm ">
+                    Delegate
                   </div>
                 </motion.button>
               </div>
@@ -241,7 +249,7 @@ const Profile: React.FC = (): React.ReactNode => {
                         asked_user={question.wallet_address}
                         question={question}
                         answer={questions.answers[i]}
-                        id={i + 1}
+                        id={questions.answers[i]?.uuid}
                       />
                     </div>
                   ))}

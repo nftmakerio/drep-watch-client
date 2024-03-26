@@ -137,14 +137,14 @@ const Home: React.FC = (): React.ReactNode => {
                   columnClassName="masonry-column"
                 >
                   {pageData.questions.map((question, i) => (
-                    <Link href={`/answer/${pageData.answers[i]?.uuid}`} key={i} className="masonry-item">
+                    <div className="masonry-item">
                       <QueAnsCard
                         asked_user={question.wallet_address}
                         question={question}
                         answer={pageData.answers[i]}
-                        id={i + 1}
+                        id={pageData.answers[i]?.uuid}
                       />
-                    </Link>
+                    </div>
                     // <AdminQueAnsCard />
                   ))}
                 </Masonry>
@@ -170,7 +170,7 @@ const Home: React.FC = (): React.ReactNode => {
                         asked_user={question.wallet_address}
                         question={question}
                         answer={pageData.answers[i]}
-                        id={i + 1}
+                        id={question.uuid}
                       />
                     </div>
                   ))}

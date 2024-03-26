@@ -30,7 +30,7 @@ interface QueAnsCardProps {
   large?: boolean;
   id?: string;
   question?: Question;
-  answer: Answer;
+  answer?: Answer;
   asked_user?: string;
 }
 
@@ -50,8 +50,8 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
 
   // add from here
   const MAX_LIMIT = 6000;
-  const [value, setValue] = useState<string>(answer?.answer);
-  const [newValue, setNewValue] = useState<string>(answer?.answer);
+  const [value, setValue] = useState<string>(answer?.answer ?? "");
+  const [newValue, setNewValue] = useState<string>(answer?.answer ?? "");
 
   const [currentLimit, setCurrentLimit] = useState<number>(
     MAX_LIMIT - value?.length,
@@ -75,13 +75,16 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
     setNewValue(value); // Revert to original value
     setIsEdit(false); // Exit edit mode
   };
+
   const { is_admin } = useWalletStore();
+
   const handleSave = async () => {
     try {
       setIsEdit(false); // Exit edit mode
       setValue(newValue);
 
       if (!is_admin?.drep_id || !id) {
+        console.log(is_admin, id);
         return;
       }
 
@@ -172,11 +175,15 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
             <div className="text-xl">{question?.question_title}</div>
           ) : (
             <>
-              {question?.question_title}
               {question?.question_title &&
-                question.question_title?.length > 60 && (
+              question?.question_title.length < 60 ? (
+                question?.question_title
+              ) : (
+                <>
+                  {question?.question_title.slice(0, 60)}...
                   <span className="ml-2 text-[#cbcbcb]">read more...</span>
-                )}
+                </>
+              )}
             </>
           )}
         </div>
@@ -188,39 +195,38 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
 
         {/*  change is_admin to original var */}
         {large && is_admin && (
-          <div className="flex w-full flex-col gap-1.5">
-            <div className="flex w-full items-center justify-between">
-              <div className="text-primary">Answer</div>
-
-              <div className="flex items-center gap-5 text-base">
-                <div
-                  onClick={toggleEditMode}
-                  className="cursor-pointer text-[#006AB5]"
-                >
-                  <FiEdit2 />
+          <>
+            <div className="flex w-full flex-col gap-1.5">
+              <div className="flex w-full items-center justify-between">
+                <div className="text-primary">Answer</div>
+                <div className="flex items-center gap-5 text-base">
+                  <div
+                    onClick={toggleEditMode}
+                    className="cursor-pointer text-[#006AB5]"
+                  >
+                    <FiEdit2 />
+                  </div>
                 </div>
               </div>
+              <div
+                onClick={() => setIsEdit(true)}
+                className="cursor-pointer rounded-lg border border-brd-clr px-3.5 py-2.5 font-normal text-secondary"
+              >
+                <textarea
+                  ref={textAreaRef}
+                  className="w-full resize-y outline-none disabled:bg-transparent"
+                  value={newValue}
+                  onChange={handleChange}
+                  placeholder="Type your answer"
+                  rows={5}
+                //   disabled={!isEdit}
+                />
+              </div>
+              {renderCharacterLimit()}
             </div>
-
-            <div
-              onClick={() => setIsEdit(true)}
-              className="cursor-pointer rounded-lg border border-brd-clr px-3.5 py-2.5 font-normal text-secondary"
-            >
-              <textarea
-                ref={textAreaRef}
-                className="w-full resize-y outline-none disabled:bg-transparent"
-                value={newValue}
-                onChange={handleChange}
-                placeholder="Type your answer"
-                rows={5}
-                disabled={!isEdit}
-              />
-            </div>
-
-            {renderCharacterLimit()}
-          </div>
+            {isEdit && renderButtons()}
+          </>
         )}
-        {isEdit && renderButtons()}
       </div>
 
       {answer?.answer && (
@@ -263,14 +269,19 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
                 </>
               ) : (
                 <>
-                  {answer?.answer.slice(0, 60)}
-                  ...
-                  <span
-                    onClick={() => setEnlargeText((prev) => !prev)}
-                    className="ml-2 text-[#cbcbcb]"
-                  >
-                    Read more...
-                  </span>
+                  {answer?.answer.length < 60 ? (
+                    answer.answer
+                  ) : (
+                    <div className="">
+                      {answer.answer.slice(0, 60)}...
+                      <span
+                        onClick={() => setEnlargeText((prev) => !prev)}
+                        className="ml-2 text-[#cbcbcb]"
+                      >
+                        Read more...
+                      </span>
+                    </div>
+                  )}
                 </>
               )}
             </div>

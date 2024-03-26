@@ -17,11 +17,14 @@ import { useWallet } from "@meshsdk/react";
 import { Transaction } from "@meshsdk/core";
 import toast from "react-hot-toast";
 import Masonry from "react-masonry-css";
+import { useWalletStore } from "~/store/wallet";
 
 const Answer: React.FC = (): React.ReactNode => {
   const { query } = useRouter();
 
   const { connected, wallet } = useWallet();
+
+  const { delegatedTo } = useWalletStore();
 
   const { data, error: err1 } = useQuery({
     queryKey: ["question-data", query.id],
@@ -47,15 +50,13 @@ const Answer: React.FC = (): React.ReactNode => {
     queryKey: ["question-data", query.id],
     queryFn: async () => {
       try {
-
         const answerRes = await fetch(
           `${BASE_API_URL}/api/v1/answers/${query.id}`,
         );
 
         const answer = (await answerRes.json()) as Answer;
 
-        if (!answer.drep_id)
-          throw new Error("No data found");
+        if (!answer.drep_id) throw new Error("No data found");
 
         return {
           answer,
@@ -104,6 +105,7 @@ const Answer: React.FC = (): React.ReactNode => {
   const onDelegate = async () => {
     try {
       if (!connected || !answerData?.answer) {
+        toast.error("Please connect your wallet to delegate.");
         return;
       }
 
@@ -120,6 +122,11 @@ const Answer: React.FC = (): React.ReactNode => {
       }
 
       const tx = new Transaction({ initiator: wallet });
+
+      if (!delegatedTo.active) {
+        tx.registerStake(address);
+      }
+
       tx.delegateStake(address, poolId);
 
       const unsignedTx = await tx.build();
@@ -184,10 +191,9 @@ const Answer: React.FC = (): React.ReactNode => {
                     className="flex items-center gap-2.5 rounded-lg bg-[#EAEAEA] px-4 py-2.5 text-secondary disabled:cursor-not-allowed disabled:opacity-65"
                     whileHover={{ scaleX: 1.025 }}
                     whileTap={{ scaleX: 0.995 }}
-                    disabled={!connected}
                   >
                     <div className="font-inter text-xs font-medium md:text-sm ">
-                      {connected ? "Delegate" : "Please Connect Wallet First"}
+                      Delegate
                     </div>
                   </motion.button>
                 </div>
@@ -208,6 +214,7 @@ const Answer: React.FC = (): React.ReactNode => {
                 asked_user={data?.question.wallet_address}
                 question={data.question}
                 large={true}
+                id={query.id as string}
               />
             </div>
 
@@ -232,7 +239,7 @@ const Answer: React.FC = (): React.ReactNode => {
                         asked_user={question.wallet_address}
                         question={question}
                         answer={pageData.answers[i]}
-                        id={i + 1}
+                        id={question.uuid}
                       />
                     </div>
                   ))}

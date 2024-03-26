@@ -71,6 +71,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           };
         }>(`${BASE_API_URL}/api/v1/user/${data.data.wallet_address}`);
 
+        console.log(wallet_data.is_admin)
+
         saveWallet({
           connected: true,
           stake_address: address,

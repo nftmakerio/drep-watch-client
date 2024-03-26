@@ -6,6 +6,7 @@ import { Transaction } from "@meshsdk/core";
 import { useWallet } from "@meshsdk/react";
 import LetterAvatar from "../letter-avatar";
 import toast from "react-hot-toast";
+import { useWalletStore } from "~/store/wallet";
 
 interface ProfileCardProps {
   test?: string;
@@ -22,9 +23,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   drep,
 }: ProfileCardProps): React.ReactNode => {
   const { wallet, connected } = useWallet();
+  const { delegatedTo } = useWalletStore();
   const onDelegate = async () => {
     try {
       if (!connected) {
+        toast.error("Please connect your wallet to delegate.");
         return;
       }
 
@@ -41,13 +44,18 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       }
 
       const tx = new Transaction({ initiator: wallet });
+
+      if (!delegatedTo.active) {
+        tx.registerStake(address);
+      }
+
       tx.delegateStake(address, poolId);
 
       const unsignedTx = await tx.build();
       const signedTx = await wallet.signTx(unsignedTx);
       const txHash = await wallet.submitTx(signedTx);
 
-      toast.success(`Successfully delegated to ${drep?.drep_id}`)
+      toast.success(`Successfully delegated to ${drep?.drep_id}`);
     } catch (error) {
       console.log(error);
     }
@@ -87,12 +95,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         <div className="h-full w-[1px] bg-[#0000002E]"></div>
         <motion.button
           onClick={() => onDelegate()}
-          className="flex w-full flex-1 items-center justify-center hover:text-primary disabled:hover:text-inherit disabled:opacity-65 disabled:cursor-not-allowed"
+          className="flex w-full flex-1 items-center justify-center hover:text-primary disabled:cursor-not-allowed disabled:opacity-65 disabled:hover:text-inherit"
           whileHover={{ scaleX: 1.05 }}
           whileTap={{ scaleX: 0.95 }}
-          disabled={!connected}
         >
-            {connected ? "Delegate" : "Please Connect Wallet First"}
+          Delegate
         </motion.button>
       </div>
     </motion.div>

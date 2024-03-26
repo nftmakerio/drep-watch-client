@@ -64,7 +64,7 @@ const Questions = (): React.ReactNode => {
 
   const handleNextButtonClick = () => {
     if (!connected) {
-      toast.error("Please Connect Wallet First !!");
+      toast.error("Please connect your wallet to submit.");
     }
     const { theme, question_title, question_description } = quesData;
     if (theme && question_title && question_description && connected) {
