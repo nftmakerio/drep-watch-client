@@ -181,7 +181,6 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
               ) : (
                 <>
                   {question?.question_title.slice(0, 60)}...
-                  <span className="ml-2 text-[#cbcbcb]">read more...</span>
                 </>
               )}
             </>
@@ -289,7 +288,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
 
           <div className="flex items-center justify-between gap-5">
             <div className="flex items-center gap-2">
-              <div className="font-ibm-mono text-xs font-medium uppercase text-tertiary md:text-sm">
+              <div className="font-ibm-mono text-xs font-medium text-tertiary md:text-sm">
                 Tags
               </div>
               <div className="flex flex-wrap items-center gap-1">

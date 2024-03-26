@@ -47,7 +47,7 @@ const Answer: React.FC = (): React.ReactNode => {
   });
 
   const { data: answerData, error } = useQuery({
-    queryKey: ["question-data", query.id],
+    queryKey: ["answer-data", query.id],
     queryFn: async () => {
       try {
         const answerRes = await fetch(
