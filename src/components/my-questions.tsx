@@ -57,14 +57,16 @@ const MyQuestions: React.FC = (): React.ReactNode => {
                   : "Not Active"}
               </div>
 
-              <Link
-                href={`/profile/${delegatedTo.pool_id}`}
-                className="group mt-2 flex items-center gap-1 font-inter text-sm font-medium tracking-wide text-primary"
-              >
-                <div>View profile</div>
+              {delegatedTo.pool_id && (
+                <Link
+                  href={`/profile/${delegatedTo.pool_id}`}
+                  className="group mt-2 flex items-center gap-1 font-inter text-sm font-medium tracking-wide text-primary"
+                >
+                  <div>View profile</div>
 
-                <GoArrowRight className="text-lg transition-all duration-200 group-hover:translate-x-1 group-active:translate-x-0.5 md:text-xl" />
-              </Link>
+                  <GoArrowRight className="text-lg transition-all duration-200 group-hover:translate-x-1 group-active:translate-x-0.5 md:text-xl" />
+                </Link>
+              )}
             </div>
           </div>
         </motion.div>
