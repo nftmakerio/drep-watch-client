@@ -29,7 +29,7 @@ const neue_regrade_font = localFont({
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { connect } = useWallet();
 
-  const { saveWallet, stake_address, setConnecting } = useWalletStore();
+  const { saveWallet, stake_address, setConnecting, connected } = useWalletStore();
 
   const handleClick = async (name: string) => {
     try {
@@ -96,7 +96,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const is_prev_wallet = localStorage.getItem(LOCALSTORAGE_WALLET_KEY);
 
-    if (is_prev_wallet) {
+    if (is_prev_wallet && !connected) {
       void handleClick(is_prev_wallet);
     }
   }, []);
