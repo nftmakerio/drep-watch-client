@@ -26,6 +26,8 @@ const Navbar: React.FC = (): React.ReactNode => {
 
   const device = useDeviceType();
   const supportedWallets = useWalletList();
+  const [isVisibleGrp1, setIsVisibleGrp1] = useState(false);
+  const [isVisibleGrp2, setIsVisibleGrp2] = useState(false);
 
   const { connect, disconnect, connected, name } = useWallet();
 
@@ -133,7 +135,13 @@ const Navbar: React.FC = (): React.ReactNode => {
         </Link>
 
         <div className="flex items-center gap-4">
-          <div className="group relative">
+          <div className="group relative"
+            onMouseLeave={() => {
+              setTimeout(() => {
+                setIsVisibleGrp1(false);
+              }, 1000);
+            }}
+            onMouseEnter={() => setIsVisibleGrp1(true)}>
             <motion.button
               whileHover={{ scaleX: 1.025 }}
               whileTap={{ scaleX: 0.995 }}
@@ -170,7 +178,8 @@ const Navbar: React.FC = (): React.ReactNode => {
               )}
             </motion.button>
 
-            <div className="absolute right-0 top-full max-h-0 w-full min-w-max translate-y-2 overflow-hidden rounded-lg bg-white/60 text-primary backdrop-blur transition-all duration-500 group-hover:max-h-[500px] ">
+            <div className={`absolute right-0 top-full max-h-0 w-full min-w-max translate-y-2 overflow-hidden rounded-lg bg-white/60 text-primary backdrop-blur transition-all duration-500 ${isVisibleGrp1 ? 'max-h-[500px]' : 'max-h-0'}`}
+            >
               <div className="flex flex-col gap-3 p-3 ">
                 {supportedWallets.length > 0 ? (
                   supportedWallets.map((w, i) => (
@@ -208,7 +217,14 @@ const Navbar: React.FC = (): React.ReactNode => {
             </div>
           </div>
 
-          <div className="group relative">
+          <div className="group relative"
+            onMouseLeave={() => {
+              setTimeout(() => {
+                setIsVisibleGrp2(false);
+              }, 1000);
+            }}
+            onMouseEnter={() => setIsVisibleGrp2(true)}
+          >
             {connected && (
               <motion.button
                 whileHover={{ scaleX: 1.025 }}
@@ -225,7 +241,7 @@ const Navbar: React.FC = (): React.ReactNode => {
               </motion.button>
             )}
 
-            <div className="absolute right-0 top-full max-h-0 w-full min-w-max translate-y-2 overflow-hidden rounded-lg bg-white/60 font-inter text-xs tracking-wide backdrop-blur  transition-all duration-500 group-hover:max-h-[500px] md:left-0 md:text-sm ">
+            <div className={`absolute right-0 top-full max-h-0 w-full min-w-max translate-y-2 overflow-hidden rounded-lg bg-white/60 font-inter text-xs tracking-wide backdrop-blur transition-all duration-500 ${isVisibleGrp2 ? 'max-h-[500px]' : 'max-h-0'} md:left-0 md:text-sm `}>
               <div className="flex flex-col gap-1 ">
                 <div className="flex max-w-min items-center gap-5 border-b border-brd-clr px-5">
                   <div
@@ -240,7 +256,7 @@ const Navbar: React.FC = (): React.ReactNode => {
                     <div className="rounded-sm bg-primary p-0.5 px-1 leading-[1] text-white">
                       {data
                         ? data?.notifications.filter((notify) => !notify.opened)
-                            .length
+                          .length
                         : 0}
                     </div>
                   </div>
