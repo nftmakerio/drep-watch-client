@@ -66,6 +66,9 @@ const Navbar: React.FC = (): React.ReactNode => {
           email: string;
           pool_id: string;
           active: boolean;
+          is_admin?: {
+            drep_id: string
+          }
         }>(`${BASE_API_URL}/api/v1/user/${data.data.wallet_address}`);
 
         saveWallet({
@@ -75,6 +78,7 @@ const Navbar: React.FC = (): React.ReactNode => {
             active: wallet_data.active,
             pool_id: wallet_data.pool_id,
           },
+          is_admin: wallet_data.is_admin ?? null
         });
       }
 

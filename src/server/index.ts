@@ -43,13 +43,11 @@ async function getUserQuestions(wallet_address: string): Promise<{
 }> {
   const res = await fetch(`${BASE_API_URL}/api/v1/questions?wallet_address=${wallet_address}`);
   const questions = (await res.json()) as Question[];
-  console.log(questions, "fdasdfasf")
   const questionIds = await Promise.all(
     questions.map((question) =>
       fetch(`${BASE_API_URL}/api/v1/answers/${question.uuid}`),
     ),
   );
-  console.log(questionIds)
   const answers = (await Promise.all(
     questionIds.map((questionId) => questionId.json()),
   )) as Answer[];
@@ -99,7 +97,7 @@ async function getDrepQuestions(drep_id: string): Promise<
       `${BASE_API_URL}/api/v1/questions?drep_id=${drep_id}`,
     );
     const questions = (await res.json()) as Question[];
-    console.log(questions, "resJson");
+    // console.log(questions, "resJson");
 
     // console.log(resJson.questions)
     const answers = await Promise.all(

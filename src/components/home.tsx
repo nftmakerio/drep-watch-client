@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 import ProfileCard from "./cards/profile";
-import QueAnsCard, { AdminQueAnsCard } from "./cards/que-ans";
+import QueAnsCard from "./cards/que-ans";
 import Search from "./search";
 
 import { FILTER_TYPES, FILTERS, SMALL_WIDTHS, WIDTHS } from "~/constants";
@@ -14,6 +14,8 @@ import { getData } from "~/server";
 import Loader from "./loader";
 import Link from "next/link";
 import { BASE_API_URL } from "~/data/api";
+import { AdminQueAnsCard } from "./cards/AdminQueAnsCard";
+import { useWalletStore } from "~/store/wallet";
 
 const Home: React.FC = (): React.ReactNode => {
   const [active, setActive] = useState<number>(FILTER_TYPES.LATEST_ANSWERS);
@@ -42,10 +44,12 @@ const Home: React.FC = (): React.ReactNode => {
     return ACTIVE_WIDTHS[active];
   };
 
+  const { is_admin } = useWalletStore();
+
   return (
     <section className="flex w-full flex-col gap-[40px] pb-20 pt-[150px] md:gap-[90px] md:pt-[190px]">
       <div className="flex w-full flex-col items-center justify-center">
-        <motion.div
+        {/* <motion.div
           className="flex items-center gap-2 rounded-[10px] bg-primary-light p-2 text-primary"
           initial={{ opacity: 0, y: -60 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -64,7 +68,7 @@ const Home: React.FC = (): React.ReactNode => {
           <div className="font-ibm-mono text-[13px] ">
             over 100+ dreps available here
           </div>
-        </motion.div>
+        </motion.div> */}
 
         <motion.div
           className="mt-5 flex flex-col items-center gap-1 font-neue-regrade text-[10vw] font-semibold leading-[1] md:flex-row md:gap-5 md:text-[5vw] md:leading-normal"
@@ -127,19 +131,30 @@ const Home: React.FC = (): React.ReactNode => {
             >
               {pageData && pageData.questionAnswers ? (
                 pageData.questions.map((question, i) => (
-                  <Link href={`/answer/${pageData.answers[i]?.uuid}`} key={i}>
-                    <QueAnsCard
-                      asked_user={question.wallet_address}
-                      question={question}
-                      answer={pageData.answers[i]}
-                      id={i + 1}
-                    />
-                  </Link>
-                    // <AdminQueAnsCard />
+                  <>
+                    {question.drep_id === is_admin?.drep_id ? (
+                      <AdminQueAnsCard
+                        asked_user={question.wallet_address}
+                        id={pageData.answers[i]?.uuid}
+                        question={{
+                          question_title: question.question_title,
+                          answer: pageData.answers[i]?.answer ?? "",
+                        }}
+                      />
+                    ) : (
+                      <QueAnsCard
+                        asked_user={question.wallet_address}
+                        question={question}
+                        answer={pageData.answers[i]}
+                        id={pageData.answers[i]?.uuid}
+                      />
+                    )}
+                  </>
                 ))
               ) : (
                 <Loader />
               )}
+              {/* <AdminQueAnsCard /> */}
             </div>
           )}
 
@@ -150,12 +165,20 @@ const Home: React.FC = (): React.ReactNode => {
               {pageData && pageData.questionAnswers ? (
                 pageData.questions.map((question, i) => (
                   <div key={i}>
-                    <QueAnsCard
-                      asked_user={question.wallet_address}
-                      question={question}
-                      answer={pageData.answers[i]}
-                      id={i + 1}
-                    />
+                    {question.drep_id === is_admin?.drep_id ? (
+                      <AdminQueAnsCard
+                        asked_user={question.wallet_address}
+                        id={question.uuid}
+                        question={{ question_title: question.question_title, answer: "" }}
+                      />
+                    ) : (
+                      <QueAnsCard
+                        asked_user={question.wallet_address}
+                        question={question}
+                        answer={pageData.answers[i]}
+                        id={question.uuid}
+                      />
+                    )}
                   </div>
                 ))
               ) : (

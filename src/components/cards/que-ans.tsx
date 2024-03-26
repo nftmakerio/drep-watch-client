@@ -4,6 +4,8 @@ import LetterAvatar from "../letter-avatar";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { FiEdit2 } from "react-icons/fi";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 interface Question {
     theme: string;
@@ -36,6 +38,10 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
     answer,
     asked_user,
 }: QueAnsCardProps): React.ReactNode => {
+    const { route } = useRouter();
+
+    console.log(route)
+
     console.log(answer, "answer");
     const [enlargeText, setEnlargeText] = useState(false);
     return (
@@ -47,12 +53,12 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
                 <div className="flex w-full items-center justify-between font-ibm-mono">
                     <div className="flex items-center gap-3 font-ibm-mono text-xs font-medium text-tertiary md:text-sm ">
                         <div>Question asked by</div>
-                        <div className="w-[200px] overflow-hidden text-ellipsis text-black">
+                        <div className="w-[200px] overflow-hidden text-ellipsis text-black hover:underline">
                             {asked_user}
                         </div>
                     </div>
 
-                    <div className="grid h-10 w-10 place-items-center rounded-lg text-tertiary">
+                    <Link href={`/answer/${id}`} className="grid h-10 w-10 place-items-center rounded-lg text-tertiary hover:bg-black hover:bg-opacity-20 transition-all">
                         <svg
                             width="10"
                             height="17"
@@ -65,7 +71,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
                                 fill="#8C8C8C"
                             />
                         </svg>
-                    </div>
+                    </Link>
                 </div>
 
                 <div className="font-inter text-sm font-medium tracking-wide text-secondary md:text-base">
@@ -165,7 +171,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
                             whileTap={{ scale: 0.95 }}
                             onClick={async () => {
                                 try {
-                                    await navigator.clipboard.writeText("/answer/" + id);
+                                    await navigator.clipboard.writeText(`${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/answer/` + id);
                                     toast.success('Copied the sharing link');
                                 } catch (err) {
                                     toast.error('Failed to copy to clipboard');
@@ -182,133 +188,4 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
 };
 
 export default QueAnsCard;
-
-
-const AdminQueAnsCard = () => {
-    const initialValue = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur a accumsan. Etiam commodo, massa ultrices elementum sagittis, nisl arcu lobortis eros, nec consectetur lacus diam eget massa. Suspendisse potenti. Donec sed finibus purus. Aliquam facilisis.";
-
-    const MAX_LIMIT = 270;
-
-    const [value, setValue] = useState<string>(initialValue);
-    const [currentLimit, setCurrentLimit] = useState<number>(MAX_LIMIT - value.length);
-    const [isEdit, setIsEdit] = useState<boolean>(false);
-    const [originalValue, setOriginalValue] = useState<string>(initialValue);
-
-    const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
-    useEffect(() => {
-        if (isEdit && textAreaRef.current) {
-            const textLength = value.length;
-            textAreaRef.current.focus();
-            textAreaRef.current.setSelectionRange(textLength, textLength);
-        }
-    }, [isEdit, value]);
-
-    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const inputValue = e.target.value;
-        if (inputValue.length <= MAX_LIMIT) {
-            setValue(inputValue);
-            setCurrentLimit(MAX_LIMIT - inputValue.length);
-        }
-    };
-
-    const toggleEditMode = () => {
-        if (!isEdit) {
-            setOriginalValue(value); // Save the original value when entering edit mode
-        }
-        setIsEdit(!isEdit);
-    };
-
-    const handleSave = () => {
-        setIsEdit(false); // Exit edit mode
-    };
-
-    const handleCancel = () => {
-        setValue(originalValue); // Revert to original value
-        setIsEdit(false); // Exit edit mode
-    };
-
-    const renderTextArea = () => {
-        return (
-            <textarea
-                ref={textAreaRef}
-                className="outline-none w-full resize-y"
-                value={value}
-                onChange={handleChange}
-                rows={5}
-            />
-        );
-    };
-
-    const renderContent = () => {
-        return (
-            <div onClick={() => setIsEdit(true)}>
-                {value}
-            </div>
-        );
-    };
-
-    const renderCharacterLimit = () => {
-        const characterLimitText = `${currentLimit} Characters left`;
-        const textColor = currentLimit < 10 ? "text-red-600" : "text-secondary/60";
-        return isEdit ? <div className={textColor + " text-sm"}>{characterLimitText}</div> : null;
-    };
-
-    const renderButtons = () => {
-        return (
-            <div className="flex gap-3 items-center justify-end w-full">
-                <button className="py-2.5 px-4 border border-brd-clr font-semibold rounded-lg text-secondary-dark" onClick={handleCancel}>
-                    Cancel
-                </button>
-                <button className="py-2.5 px-4 border border-primary bg-primary font-semibold rounded-lg text-white" onClick={handleSave}>
-                    Save
-                </button>
-            </div>
-        );
-    };
-
-    return (
-        <motion.div
-            className="flex flex-col overflow-hidden rounded-xl border border-brd-clr cursor-pointer"
-            whileHover={{ y: -6 }}
-        >
-            <div className="flex flex-col items-start justify-start gap-4 border-b border-brd-clr px-[18px] py-4">
-                <div className="font-inter text-xs font-medium tracking-wide md:text-sm w-full">
-                    <div className="flex flex-col w-full justify-start items-start gap-4">
-                        <div className="text-secondary-dark">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit?
-                        </div>
-
-                        <div className="flex gap-1.5 flex-col w-full">
-                            <div className="flex w-full justify-between items-center">
-                                <div className="text-primary">
-                                    Answer
-                                </div>
-
-                                <div className="flex gap-5 items-center text-base">
-                                    <div onClick={toggleEditMode} className="text-[#006AB5] cursor-pointer">
-                                        <FiEdit2 />
-                                    </div>
-                                    <div className="text-primary cursor-pointer">
-                                        <MdOutlineDeleteOutline />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="border border-brd-clr px-3.5 py-2.5 rounded-lg text-secondary font-normal">
-                                {isEdit ? renderTextArea() : renderContent()}
-                            </div>
-
-                            {renderCharacterLimit()}
-                        </div>
-
-                        {isEdit && renderButtons()}
-                    </div>
-                </div>
-            </div>
-        </motion.div>
-    );
-};
-
-export { AdminQueAnsCard };
 

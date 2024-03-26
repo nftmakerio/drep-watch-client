@@ -27,8 +27,6 @@ const neue_regrade_font = localFont({
 });
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-
-
   const { connect } = useWallet();
 
   const { saveWallet, stake_address, setConnecting } = useWalletStore();
@@ -37,7 +35,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     try {
       setConnecting(true);
       await connect(name);
-      
+
       localStorage.setItem(LOCALSTORAGE_WALLET_KEY, name);
 
       const wallet = await BrowserWallet.enable(name);
@@ -68,6 +66,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           email: string;
           pool_id: string;
           active: boolean;
+          is_admin?: {
+            drep_id: string;
+          };
         }>(`${BASE_API_URL}/api/v1/user/${data.data.wallet_address}`);
 
         saveWallet({
@@ -77,6 +78,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             active: wallet_data.active,
             pool_id: wallet_data.pool_id,
           },
+          is_admin: wallet_data.is_admin ?? null,
         });
       }
 
@@ -94,8 +96,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const is_prev_wallet = localStorage.getItem(LOCALSTORAGE_WALLET_KEY);
 
-    if(is_prev_wallet){
-        void handleClick(is_prev_wallet)
+    if (is_prev_wallet) {
+      void handleClick(is_prev_wallet);
     }
   }, []);
 
