@@ -238,10 +238,12 @@ const Navbar: React.FC = (): React.ReactNode => {
                       Inbox
                     </div>
                     <div className="rounded-sm bg-primary p-0.5 px-1 leading-[1] text-white">
-                      {data
-                        ? data?.notifications.filter((notify) => !notify.opened)
-                            .length
-                        : 0}
+                      {data &&
+                      data?.notifications.filter((notify) => !notify.opened)
+                        .length > 10
+                        ? "9+"
+                        : data?.notifications.filter((notify) => !notify.opened)
+                            .length}
                     </div>
                   </div>
                 </div>
