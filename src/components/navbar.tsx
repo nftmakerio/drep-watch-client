@@ -29,7 +29,8 @@ const Navbar: React.FC = (): React.ReactNode => {
 
   const { connect, disconnect, connected, name } = useWallet();
 
-  const { saveWallet, stake_address, connecting, setConnecting } = useWalletStore();
+  const { saveWallet, stake_address, connecting, setConnecting, is_admin } =
+    useWalletStore();
 
   const handleClick = async (name: string) => {
     try {
@@ -67,8 +68,8 @@ const Navbar: React.FC = (): React.ReactNode => {
           pool_id: string;
           active: boolean;
           is_admin?: {
-            drep_id: string
-          }
+            drep_id: string;
+          };
         }>(`${BASE_API_URL}/api/v1/user/${data.data.wallet_address}`);
 
         saveWallet({
@@ -78,7 +79,7 @@ const Navbar: React.FC = (): React.ReactNode => {
             active: wallet_data.active,
             pool_id: wallet_data.pool_id,
           },
-          is_admin: wallet_data.is_admin ?? null
+          is_admin: wallet_data.is_admin ?? null,
         });
       }
 
@@ -96,13 +97,17 @@ const Navbar: React.FC = (): React.ReactNode => {
   const { data } = useQuery<{
     notifications: Notification[];
   } | null>({
-    queryKey: ["notifications", stake_address],
+    queryKey: ["notifications", stake_address, is_admin],
     queryFn: () =>
-      stake_address
+      is_admin
         ? fetch(
-            `${BASE_API_URL}/api/v1/notifications?userId=${stake_address}`,
+            `${BASE_API_URL}/api/v1/notifications?drepId=${is_admin.drep_id}`,
           ).then((res) => res.json())
-        : null,
+        : stake_address
+          ? fetch(
+              `${BASE_API_URL}/api/v1/notifications?userId=${stake_address}`,
+            ).then((res) => res.json())
+          : null,
   });
 
   return (
@@ -241,7 +246,9 @@ const Navbar: React.FC = (): React.ReactNode => {
 
                 <div className="max-h-[400px] w-full  overflow-auto ">
                   <div className="flex w-full flex-col items-start gap-1.5 ">
-                    {data &&
+                    {data && data.notifications.length === 0 ? (
+                      <>No Notifications</>
+                    ) : (
                       data?.notifications.map((notification) => (
                         <NotificationItem
                           answer={notification.answer}
@@ -252,7 +259,8 @@ const Navbar: React.FC = (): React.ReactNode => {
                           uuid={notification.uuid}
                           notification_id={notification.id}
                         />
-                      ))}
+                      ))
+                    )}
                     {/* <NotificationItem isNew={true} /> */}
                     {/* <NotificationItem />
                     <NotificationItem /> */}
@@ -277,11 +285,13 @@ function NotificationItem({
   username: string;
   question: string;
   created_at: string;
-  answer: string;
+  answer?: string;
   uuid: string;
   notification_id: string;
 }) {
   const { push } = useRouter();
+
+  const { is_admin } = useWalletStore();
 
   const onOpen = async () => {
     try {
@@ -311,7 +321,11 @@ function NotificationItem({
           <span className="mr-1 font-bold">
             {props.username.slice(0, 16)}...
           </span>
-          <span>answered your question</span>
+          <span>
+            {is_admin?.drep_id
+              ? "asked you a question"
+              : "answered your question"}
+          </span>
           <span className="ml-1 underline underline-offset-1">
             {props.question.slice(0, 32)}...
           </span>
@@ -321,27 +335,20 @@ function NotificationItem({
           {moment(new Date(props.created_at).getTime()).fromNow()}
         </div>
 
-        <div
-          className={`mt-1.5 ${isNew ? "text-[#00000099]" : "text-[#0000003e]"} line-clamp-2`}
-        >
-          {props.answer.slice(0, 180)}...
-        </div>
+        {props.answer && (
+          <div
+            className={`mt-1.5 ${isNew ? "text-[#00000099]" : "text-[#0000003e]"} line-clamp-2`}
+          >
+            {props.answer.slice(0, 180)}...
+          </div>
+        )}
 
         <div className="mt-3.5">
-          {/* {isNew ? (
-            <button className="rounded-lg border border-primary px-4 py-2 text-primary hover:bg-primary/5">
-              Read more
-            </button>
-          ) : (
-            <button className="rounded-lg border border-brd-clr px-4 py-2 text-secondary hover:bg-secondary/5">
-              Reply
-            </button>
-          )} */}
           <button
             onClick={onOpen}
             className="rounded-lg border border-primary px-4 py-2 text-primary hover:bg-primary/5"
           >
-            Read more
+            {is_admin?.drep_id ? "Answer" : "Read more"}
           </button>
         </div>
       </div>

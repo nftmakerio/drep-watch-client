@@ -32,7 +32,20 @@ const Answer: React.FC = (): React.ReactNode => {
 
         const question = (await questionRes.json()) as { question: Question };
 
-        console.log(question.question, "fasdfas");
+        return {
+          question: question.question,
+        };
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
+    },
+  });
+
+  const { data: answerData, error } = useQuery({
+    queryKey: ["question-data", query.id],
+    queryFn: async () => {
+      try {
 
         const answerRes = await fetch(
           `${BASE_API_URL}/api/v1/answers/${query.id}`,
@@ -40,11 +53,10 @@ const Answer: React.FC = (): React.ReactNode => {
 
         const answer = (await answerRes.json()) as Answer;
 
-        if (!question.question || !answer.drep_id)
+        if (!answer.drep_id)
           throw new Error("No data found");
 
         return {
-          question: question.question,
           answer,
         };
       } catch (error) {
@@ -56,10 +68,10 @@ const Answer: React.FC = (): React.ReactNode => {
 
   const fetchData = async () => {
     try {
-      if (!data?.answer.drep_id) return;
+      if (!data?.question.drep_id) return;
       const response = await axios.post(
         `${BASE_API_URL}/api/v1/drep/drep-profile`,
-        { drep_id: data?.answer.drep_id },
+        { drep_id: data?.question.drep_id },
       );
       // setProfileData(response.data);
 
@@ -79,7 +91,7 @@ const Answer: React.FC = (): React.ReactNode => {
   };
 
   const { data: profileData, error: err2 } = useQuery({
-    queryKey: ["drep-profile", data?.answer.drep_id],
+    queryKey: ["drep-profile", data?.question.drep_id],
     queryFn: () => fetchData(),
   });
 
@@ -90,7 +102,7 @@ const Answer: React.FC = (): React.ReactNode => {
 
   const onDelegate = async () => {
     try {
-      if (!connected || !data?.answer) {
+      if (!connected || !answerData?.answer) {
         return;
       }
 
@@ -100,7 +112,7 @@ const Answer: React.FC = (): React.ReactNode => {
         return;
       }
 
-      const poolId = data?.answer.drep_id;
+      const poolId = answerData?.answer.drep_id;
 
       if (!poolId) {
         return;
@@ -113,13 +125,13 @@ const Answer: React.FC = (): React.ReactNode => {
       const signedTx = await wallet.signTx(unsignedTx);
       const txHash = await wallet.submitTx(signedTx);
 
-      toast.success(`Successfully delegated to ${data?.answer.drep_id}`);
+      toast.success(`Successfully delegated to ${answerData?.answer.drep_id}`);
     } catch (error) {
       console.log(error);
     }
   };
 
-  if (data?.answer.drep_id && err1)
+  if (err1)
     return (
       <section className="flex w-full items-center justify-center pt-32">
         <ErrorCard />
@@ -191,7 +203,7 @@ const Answer: React.FC = (): React.ReactNode => {
           <div className="flex w-full max-w-[1600px] flex-col gap-6 md:gap-10">
             <div>
               <QueAnsCard
-                answer={data.answer}
+                answer={answerData?.answer}
                 asked_user={data?.question.wallet_address}
                 question={data.question}
                 large={true}
