@@ -144,12 +144,10 @@ const Navbar: React.FC = (): React.ReactNode => {
           <div
             className="group relative"
             onMouseLeave={() => {
-              setTimeout(() => {
-                setIsVisibleGrp1((prev) => ({
-                  icon: false,
-                  popup: prev.popup,
-                }));
-              }, 1000);
+              setIsVisibleGrp1((prev) => ({
+                icon: false,
+                popup: prev.popup,
+              }));
             }}
             onMouseEnter={() =>
               setIsVisibleGrp1((prev) => ({
