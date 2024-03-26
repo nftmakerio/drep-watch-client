@@ -128,6 +128,12 @@ const AdminQueAnsCard = ({ id, question, asked_user }: QueAnsCardProps) => {
       <div className="flex flex-col items-start justify-start gap-4 border-b border-brd-clr px-[18px] py-4">
         <div className="w-full font-inter text-xs font-medium tracking-wide md:text-sm">
           <div className="flex w-full flex-col items-start justify-start gap-4">
+            <div className="flex items-center gap-3 font-ibm-mono text-xs font-medium text-tertiary md:text-sm ">
+              <div>Question asked by</div>
+              <div className="w-[200px] overflow-hidden text-ellipsis text-black hover:underline">
+                {asked_user}
+              </div>
+            </div>
             <div className="text-secondary-dark">
               {question?.question_title}
             </div>
