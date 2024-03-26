@@ -295,15 +295,18 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
                 Tags
               </div>
               <div className="flex flex-wrap items-center gap-1">
-                {[question?.theme].map((i) => (
-                  <div
-                    className="max-w-[200px] truncate rounded-full bg-white px-3 py-1 font-inter text-xs font-medium text-[#444] md:text-[13px]"
-                    title={i}
-                    key={i}
-                  >
-                    {i}
-                  </div>
-                ))}
+                {question?.theme
+                  .split(",")
+                  .filter((word) => word.length > 0)
+                  .map((i) => (
+                    <div
+                      className="max-w-[200px] truncate rounded-full bg-white px-3 py-1 font-inter text-xs font-medium text-[#444] md:text-[13px]"
+                      title={i}
+                      key={i}
+                    >
+                      {i}
+                    </div>
+                  ))}
               </div>
             </div>
 

@@ -102,7 +102,7 @@ const Navbar: React.FC = (): React.ReactNode => {
     }
   };
 
-  const { data } = useQuery<{
+  const { data, refetch } = useQuery<{
     notifications: Notification[];
   } | null>({
     queryKey: ["notifications", stake_address, is_admin],
@@ -140,7 +140,7 @@ const Navbar: React.FC = (): React.ReactNode => {
           </div>
         </Link>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-8">
           <div
             className="group relative"
             onMouseLeave={() => {
@@ -332,6 +332,7 @@ const Navbar: React.FC = (): React.ReactNode => {
                           isNew={!notification.opened}
                           uuid={notification.uuid}
                           notification_id={notification.id}
+                          afterOpen={() => refetch()}
                         />
                       ))
                     )}
@@ -362,6 +363,7 @@ function NotificationItem({
   answer?: string;
   uuid: string;
   notification_id: string;
+  afterOpen: () => void;
 }) {
   const { push } = useRouter();
 
@@ -373,6 +375,7 @@ function NotificationItem({
       await axios.post(
         `${BASE_API_URL}/api/v1/notifications/${props.notification_id}/opened`,
       );
+      props.afterOpen();
     } catch (error) {
       console.log(error);
     }

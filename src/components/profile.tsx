@@ -137,6 +137,9 @@ const Profile: React.FC = (): React.ReactNode => {
 
       toast.success(`Successfully delegated to ${query.id}`);
     } catch (error) {
+      if(error instanceof Error){
+        toast.error(error.message)
+      }
       console.log(error);
     }
   };

@@ -57,6 +57,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 
       toast.success(`Successfully delegated to ${drep?.drep_id}`);
     } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
       console.log(error);
     }
   };
