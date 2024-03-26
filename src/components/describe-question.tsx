@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useWallet } from "@meshsdk/react";
 import Loader from "./loader";
+import ErrorCard from "./cards/error";
 
 interface QuestionsProps {
   question: {
@@ -104,10 +105,28 @@ const Questions = (): React.ReactNode => {
     }
   };
 
-  const { data: profileData } = useQuery({
+  const {
+    data: profileData,
+    error,
+    isLoading,
+  } = useQuery({
     queryKey: ["drep-profile", query.to],
     queryFn: () => fetchData(),
   });
+
+  if (query.to && error)
+    return (
+      <section className="flex w-full items-center justify-center pt-32">
+        <ErrorCard />
+      </section>
+    );
+
+  if (isLoading)
+    return (
+      <section className="flex w-full flex-col gap-[40px] pb-20 pt-[150px] md:gap-[90px] md:pt-[190px]">
+        <Loader />
+      </section>
+    );
 
   return (
     <div className="flex w-full max-w-[1318px] flex-col gap-4 rounded-xl bg-[#FAFAFA] shadow lg:flex-row lg:pr-12">
