@@ -11,6 +11,7 @@ import Link from "next/link";
 import { getData, getUserQuestions } from "~/server";
 import { useQuery } from "@tanstack/react-query";
 import Loader from "./loader";
+import Masonry from "react-masonry-css";
 
 const MyQuestions: React.FC = (): React.ReactNode => {
   const { ref } = useInView();
@@ -79,18 +80,24 @@ const MyQuestions: React.FC = (): React.ReactNode => {
               <div className="text-base md:text-xl">Your Question answers</div>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <div className="w-full">
               {pageData && pageData.questionAnswers ? (
-                pageData.questions.map((question, i) => (
-                  <div key={i}>
-                    <QueAnsCard
-                      asked_user={question.wallet_address}
-                      question={question}
-                      answer={pageData.answers[i]}
-                      id={i + 1}
-                    />
-                  </div>
-                ))
+                <Masonry
+                  breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
+                  className="masonry-grid"
+                  columnClassName="masonry-column"
+                >
+                  {pageData.questions.map((question, i) => (
+                    <div key={i} className="masonry-item">
+                      <QueAnsCard
+                        asked_user={question.wallet_address}
+                        question={question}
+                        answer={pageData.answers[i]}
+                        id={i + 1}
+                      />
+                    </div>
+                  ))}
+                </Masonry>
               ) : (
                 <Loader />
               )}

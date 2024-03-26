@@ -4,6 +4,7 @@
 
 /* @import url('lenis-scroll.css'); */
 @import url('custom-scrollbar.css');
+@import url('masonry.css');
 
 * {
     margin: 0;

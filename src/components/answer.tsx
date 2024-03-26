@@ -16,6 +16,7 @@ import ErrorCard from "./cards/error";
 import { useWallet } from "@meshsdk/react";
 import { Transaction } from "@meshsdk/core";
 import toast from "react-hot-toast";
+import Masonry from "react-masonry-css";
 
 const Answer: React.FC = (): React.ReactNode => {
   const { query } = useRouter();
@@ -217,19 +218,25 @@ const Answer: React.FC = (): React.ReactNode => {
             </div>
 
             <div
-              className={`${pageData && pageData.questionAnswers ? "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3" : "flex w-full items-center"}`}
+              className={`${pageData && pageData.questionAnswers ? "w-full" : "flex w-full items-center"}`}
             >
               {pageData && pageData.questionAnswers ? (
-                pageData.questions.map((question, i) => (
-                  <div key={i}>
-                    <QueAnsCard
-                      asked_user={question.wallet_address}
-                      question={question}
-                      answer={pageData.answers[i]}
-                      id={i + 1}
-                    />
-                  </div>
-                ))
+                <Masonry
+                  breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
+                  className="masonry-grid"
+                  columnClassName="masonry-column"
+                >
+                  {pageData.questions.map((question, i) => (
+                    <div key={i} className="masonry-item">
+                      <QueAnsCard
+                        asked_user={question.wallet_address}
+                        question={question}
+                        answer={pageData.answers[i]}
+                        id={i + 1}
+                      />
+                    </div>
+                  ))}
+                </Masonry>
               ) : (
                 <Loader />
               )}
