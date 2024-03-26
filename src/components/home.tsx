@@ -138,12 +138,23 @@ const Home: React.FC = (): React.ReactNode => {
                 >
                   {pageData.questions.map((question, i) => (
                     <div className="masonry-item">
-                      <QueAnsCard
-                        asked_user={question.wallet_address}
-                        question={question}
-                        answer={pageData.answers[i]}
-                        id={pageData.answers[i]?.uuid}
-                      />
+                      {question.drep_id === is_admin?.drep_id ? (
+                        <AdminQueAnsCard
+                          asked_user={question.wallet_address}
+                          id={pageData.answers[i]?.uuid}
+                          question={{
+                            question_title: question.question_title,
+                            answer: pageData.answers[i]?.answer ?? "",
+                          }}
+                        />
+                      ) : (
+                        <QueAnsCard
+                          asked_user={question.wallet_address}
+                          question={question}
+                          answer={pageData.answers[i]}
+                          id={pageData.answers[i]?.uuid}
+                        />
+                      )}
                     </div>
                     // <AdminQueAnsCard />
                   ))}
@@ -166,12 +177,23 @@ const Home: React.FC = (): React.ReactNode => {
                 >
                   {pageData.questions.map((question, i) => (
                     <div key={i} className="masonry-item">
-                      <QueAnsCard
-                        asked_user={question.wallet_address}
-                        question={question}
-                        answer={pageData.answers[i]}
-                        id={question.uuid}
-                      />
+                      {question.drep_id === is_admin?.drep_id ? (
+                        <AdminQueAnsCard
+                          asked_user={question.wallet_address}
+                          id={question.uuid}
+                          question={{
+                            question_title: question.question_title,
+                            answer: pageData.answers[i]?.answer ?? "",
+                          }}
+                        />
+                      ) : (
+                        <QueAnsCard
+                          asked_user={question.wallet_address}
+                          question={question}
+                          answer={pageData.answers[i]}
+                          id={question.uuid}
+                        />
+                      )}
                     </div>
                   ))}
                 </Masonry>

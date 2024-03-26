@@ -26,8 +26,14 @@ const Navbar: React.FC = (): React.ReactNode => {
 
   const device = useDeviceType();
   const supportedWallets = useWalletList();
-  const [isVisibleGrp1, setIsVisibleGrp1] = useState(false);
-  const [isVisibleGrp2, setIsVisibleGrp2] = useState(false);
+  const [isVisibleGrp1, setIsVisibleGrp1] = useState({
+    icon: false,
+    popup: false,
+  });
+  const [isVisibleGrp2, setIsVisibleGrp2] = useState({
+    icon: false,
+    popup: false,
+  });
 
   const { connect, disconnect, connected, name } = useWallet();
 
@@ -135,13 +141,23 @@ const Navbar: React.FC = (): React.ReactNode => {
         </Link>
 
         <div className="flex items-center gap-4">
-          <div className="group relative"
+          <div
+            className="group relative"
             onMouseLeave={() => {
               setTimeout(() => {
-                setIsVisibleGrp1(false);
+                setIsVisibleGrp1((prev) => ({
+                  icon: false,
+                  popup: prev.popup,
+                }));
               }, 1000);
             }}
-            onMouseEnter={() => setIsVisibleGrp1(true)}>
+            onMouseEnter={() =>
+              setIsVisibleGrp1((prev) => ({
+                icon: true,
+                popup: prev.popup,
+              }))
+            }
+          >
             <motion.button
               whileHover={{ scaleX: 1.025 }}
               whileTap={{ scaleX: 0.995 }}
@@ -178,7 +194,20 @@ const Navbar: React.FC = (): React.ReactNode => {
               )}
             </motion.button>
 
-            <div className={`absolute right-0 top-full max-h-0 w-full min-w-max translate-y-2 overflow-hidden rounded-lg bg-white/60 text-primary backdrop-blur transition-all duration-500 ${isVisibleGrp1 ? 'max-h-[500px]' : 'max-h-0'}`}
+            <div
+              onMouseEnter={() =>
+                setIsVisibleGrp1((prev) => ({
+                  icon: prev.icon,
+                  popup: true,
+                }))
+              }
+              onMouseLeave={() =>
+                setIsVisibleGrp1((prev) => ({
+                  icon: prev.icon,
+                  popup: false,
+                }))
+              }
+              className={`absolute right-0 top-full max-h-0 w-full min-w-max translate-y-2 overflow-hidden rounded-lg bg-white/60 text-primary backdrop-blur transition-all duration-500 ${isVisibleGrp1.icon || isVisibleGrp1.popup ? "max-h-[500px]" : "max-h-0"}`}
             >
               <div className="flex flex-col gap-3 p-3 ">
                 {supportedWallets.length > 0 ? (
@@ -217,13 +246,22 @@ const Navbar: React.FC = (): React.ReactNode => {
             </div>
           </div>
 
-          <div className="group relative"
+          <div
+            className="group relative"
             onMouseLeave={() => {
               setTimeout(() => {
-                setIsVisibleGrp2(false);
+                setIsVisibleGrp2((prev) => ({
+                  icon: false,
+                  popup: prev.popup,
+                }));
               }, 1000);
             }}
-            onMouseEnter={() => setIsVisibleGrp2(true)}
+            onMouseEnter={() =>
+              setIsVisibleGrp2((prev) => ({
+                icon: true,
+                popup: prev.popup,
+              }))
+            }
           >
             {connected && (
               <motion.button
@@ -241,7 +279,21 @@ const Navbar: React.FC = (): React.ReactNode => {
               </motion.button>
             )}
 
-            <div className={`absolute right-0 top-full max-h-0 w-full min-w-max translate-y-2 overflow-hidden rounded-lg bg-white/60 font-inter text-xs tracking-wide backdrop-blur transition-all duration-500 ${isVisibleGrp2 ? 'max-h-[500px]' : 'max-h-0'} md:left-0 md:text-sm `}>
+            <div
+              onMouseEnter={() =>
+                setIsVisibleGrp2((prev) => ({
+                  icon: prev.icon,
+                  popup: true,
+                }))
+              }
+              onMouseLeave={() =>
+                setIsVisibleGrp2((prev) => ({
+                  icon: prev.icon,
+                  popup: false,
+                }))
+              }
+              className={`absolute right-0 top-full max-h-0 w-full min-w-max translate-y-2 overflow-hidden rounded-lg bg-white/60 font-inter text-xs tracking-wide backdrop-blur transition-all duration-500 ${isVisibleGrp2.icon || isVisibleGrp2.popup ? "max-h-[500px]" : "max-h-0"} md:left-0 md:text-sm `}
+            >
               <div className="flex flex-col gap-1 ">
                 <div className="flex max-w-min items-center gap-5 border-b border-brd-clr px-5">
                   <div

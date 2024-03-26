@@ -118,6 +118,11 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
     ) : null;
   };
 
+  useEffect(() => {
+    setNewValue(answer?.answer ?? "");
+    setValue(answer?.answer ?? "");
+  }, [answer?.answer]);
+
   const renderButtons = () => {
     return (
       <div className="flex w-full items-center justify-end gap-3">
@@ -179,9 +184,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
               question?.question_title.length < 60 ? (
                 question?.question_title
               ) : (
-                <>
-                  {question?.question_title.slice(0, 60)}...
-                </>
+                <>{question?.question_title.slice(0, 60)}...</>
               )}
             </>
           )}
@@ -218,7 +221,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
                   onChange={handleChange}
                   placeholder="Type your answer"
                   rows={5}
-                //   disabled={!isEdit}
+                  //   disabled={!isEdit}
                 />
               </div>
               {renderCharacterLimit()}
@@ -228,7 +231,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
         )}
       </div>
 
-      {answer?.answer && (
+      {answer?.answer && !is_admin?.drep_id && (
         <div className="flex flex-col justify-start gap-11 bg-[#F5F5F5] px-[18px] py-5">
           <div className="flex flex-col items-start justify-start gap-5">
             <div className="flex items-center gap-3 rounded-[10px] bg-primary-light p-2 pl-3 text-primary">

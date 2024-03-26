@@ -102,7 +102,7 @@ async function getDrepQuestions(drep_id: string): Promise<
     // console.log(resJson.questions)
     const answers = await Promise.all(
       questions.map((question) =>
-        fetch(`${BASE_API_URL}/api/v1/answers/${question.id}`)
+        fetch(`${BASE_API_URL}/api/v1/answers/${question.uuid}`)
           .then((data) => data.json() as Promise<Answer>)
           .catch((e) => undefined),
       ),
