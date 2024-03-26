@@ -27,6 +27,7 @@ import LetterAvatar from "./letter-avatar";
 import ErrorCard from "./cards/error";
 import { useWallet } from "@meshsdk/react";
 import toast from "react-hot-toast";
+import Masonry from "react-masonry-css";
 
 const Profile: React.FC = (): React.ReactNode => {
   const { query } = useRouter();
@@ -227,19 +228,25 @@ const Profile: React.FC = (): React.ReactNode => {
           </div>
 
           {active === P_FILTER_TYPES.QUESTIONS_ANSWERS && (
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              {questions &&
-                questions.questions &&
-                questions.questions.map((question, i) => (
-                  <div key={i}>
-                    <QueAnsCard
-                      asked_user={question.wallet_address}
-                      question={question}
-                      answer={questions.answers[i]}
-                      id={i + 1}
-                    />
-                  </div>
-                ))}
+            <div className="w-full">
+              {questions && questions.questions && (
+                <Masonry
+                  breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
+                  className="masonry-grid"
+                  columnClassName="masonry-column"
+                >
+                  {questions.questions.map((question, i) => (
+                    <div key={i} className="masonry-item">
+                      <QueAnsCard
+                        asked_user={question.wallet_address}
+                        question={question}
+                        answer={questions.answers[i]}
+                        id={i + 1}
+                      />
+                    </div>
+                  ))}
+                </Masonry>
+              )}
             </div>
           )}
 

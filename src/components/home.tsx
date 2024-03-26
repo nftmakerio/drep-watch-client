@@ -16,6 +16,7 @@ import Link from "next/link";
 import { BASE_API_URL } from "~/data/api";
 import { AdminQueAnsCard } from "./cards/AdminQueAnsCard";
 import { useWalletStore } from "~/store/wallet";
+import Masonry from "react-masonry-css";
 
 const Home: React.FC = (): React.ReactNode => {
   const [active, setActive] = useState<number>(FILTER_TYPES.LATEST_ANSWERS);
@@ -127,60 +128,53 @@ const Home: React.FC = (): React.ReactNode => {
 
           {active === FILTER_TYPES.LATEST_ANSWERS && (
             <div
-              className={`${pageData && pageData.questionAnswers ? "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3" : "flex w-full items-center"}`}
+              className={`${pageData && pageData.questionAnswers ? "w-full" : "flex w-full items-center"}`}
             >
               {pageData && pageData.questionAnswers ? (
-                pageData.questions.map((question, i) => (
-                  <>
-                    {question.drep_id === is_admin?.drep_id ? (
-                      <AdminQueAnsCard
-                        asked_user={question.wallet_address}
-                        id={pageData.answers[i]?.uuid}
-                        question={{
-                          question_title: question.question_title,
-                          answer: pageData.answers[i]?.answer ?? "",
-                        }}
-                      />
-                    ) : (
+                <Masonry
+                  breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
+                  className="masonry-grid"
+                  columnClassName="masonry-column"
+                >
+                  {pageData.questions.map((question, i) => (
+                    <Link href={`/answer/${pageData.answers[i]?.uuid}`} key={i} className="masonry-item">
                       <QueAnsCard
                         asked_user={question.wallet_address}
                         question={question}
                         answer={pageData.answers[i]}
-                        id={pageData.answers[i]?.uuid}
+                        id={i + 1}
                       />
-                    )}
-                  </>
-                ))
+                    </Link>
+                    // <AdminQueAnsCard />
+                  ))}
+                </Masonry>
               ) : (
                 <Loader />
               )}
-              {/* <AdminQueAnsCard /> */}
             </div>
           )}
 
           {active === FILTER_TYPES.LATEST_QUESTIONS && (
             <div
-              className={`${pageData && pageData.questionAnswers ? "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3" : "flex w-full items-center"}`}
+              className={`${pageData && pageData.questionAnswers ? "w-full" : "flex w-full items-center"}`}
             >
               {pageData && pageData.questionAnswers ? (
-                pageData.questions.map((question, i) => (
-                  <div key={i}>
-                    {question.drep_id === is_admin?.drep_id ? (
-                      <AdminQueAnsCard
-                        asked_user={question.wallet_address}
-                        id={question.uuid}
-                        question={{ question_title: question.question_title, answer: "" }}
-                      />
-                    ) : (
+                <Masonry
+                  breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
+                  className="masonry-grid"
+                  columnClassName="masonry-column"
+                >
+                  {pageData.questions.map((question, i) => (
+                    <div key={i} className="masonry-item">
                       <QueAnsCard
                         asked_user={question.wallet_address}
                         question={question}
                         answer={pageData.answers[i]}
-                        id={question.uuid}
+                        id={i + 1}
                       />
-                    )}
-                  </div>
-                ))
+                    </div>
+                  ))}
+                </Masonry>
               ) : (
                 <Loader />
               )}
@@ -189,14 +183,20 @@ const Home: React.FC = (): React.ReactNode => {
 
           {active === FILTER_TYPES.EXPLORE_DREPS && (
             <div
-              className={`${pageData && !pageData.questionAnswers ? "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3" : "flex w-full items-center"}`}
+              className={`${pageData && !pageData.questionAnswers ? "w-full" : "flex w-full items-center"}`}
             >
               {pageData && !pageData.questionAnswers ? (
-                pageData.dreps.map((_, i) => (
-                  <div key={i}>
-                    <ProfileCard drep={pageData.dreps[i]} />
-                  </div>
-                ))
+                <Masonry
+                  breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
+                  className="masonry-grid"
+                  columnClassName="masonry-column"
+                >
+                  {pageData.dreps.map((drep, i) => (
+                    <div key={i} className="masonry-item">
+                      <ProfileCard drep={drep} />
+                    </div>
+                  ))}
+                </Masonry>
               ) : (
                 <Loader colored={false} />
               )}
