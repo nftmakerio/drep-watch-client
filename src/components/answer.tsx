@@ -171,8 +171,8 @@ const Answer: React.FC = (): React.ReactNode => {
               <div>
                 <LetterAvatar username={profileData?.name} dimension={130} />
               </div>
-              <div className="flex flex-col">
-                <div className="text-center font-ibm-mono text-xs tracking-wide text-tertiary md:text-left md:text-sm">
+              <div className="flex flex-col items-center md:items-start">
+                <div className="max-w-xs overflow-hidden text-ellipsis text-center font-ibm-mono text-xs tracking-wide text-tertiary md:max-w-max md:text-left md:text-sm">
                   {profileData?.drep_id}
                 </div>
                 <div className="font-neue-regrade text-[36px] font-semibold text-black ">
