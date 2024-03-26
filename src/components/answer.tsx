@@ -104,7 +104,7 @@ const Answer: React.FC = (): React.ReactNode => {
 
   const onDelegate = async () => {
     try {
-      if (!connected || !answerData?.answer) {
+      if (!connected) {
         toast.error("Please connect your wallet to delegate.");
         return;
       }
