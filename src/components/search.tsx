@@ -82,7 +82,7 @@ const Search: React.FC = (): React.ReactNode => {
         className={`absolute left-0 top-full w-full translate-y-4  overflow-hidden rounded-lg border-brd-clr bg-white ${searchText ? "max-h-[415px] border-b md:max-h-[350px] " : "max-h-0 border-0"} transition-all duration-300  `}
       >
         <div className="p-3 md:px-5 md:py-4">
-          {searchResults.map((el, i) => (
+          { searchResults.length > 0 ? searchResults.map((el, i) => (
             <div
               key={i}
               className={`flex flex-col items-center justify-between gap-2 border-b border-primary-light p-3 md:flex-row`}
@@ -110,15 +110,19 @@ const Search: React.FC = (): React.ReactNode => {
                 </div>
               </Link>
             </div>
-          ))}
+          )) : (
+            <div className="font-inter text-xs font-medium tracking-wide text-secondary md:text-sm">
+                No result found
+            </div>
+          )}
         </div>
-        <motion.div
+        {/* <motion.div
           className="mx-auto mb-3 max-w-max cursor-pointer px-4 font-inter text-xs font-semibold tracking-wide text-primary md:mb-4 md:text-sm"
           whileHover={{ scaleX: 1.05 }}
           whileTap={{ scaleX: 0.95 }}
         >
           View More
-        </motion.div>
+        </motion.div> */}
       </div>
     </motion.div>
   );

@@ -151,7 +151,9 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
         <div className="flex w-full items-center justify-between font-ibm-mono">
           <div className="flex items-center gap-3 font-ibm-mono text-xs font-medium text-tertiary md:text-sm ">
             <div>Question asked by</div>
-            <div className="w-[200px] overflow-hidden text-ellipsis text-black hover:underline">
+            <div
+                // href={`/profile/${id}`} 
+                className="w-[200px] overflow-hidden text-ellipsis text-black hover:underline">
               {asked_user}
             </div>
           </div>
