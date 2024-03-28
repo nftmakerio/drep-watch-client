@@ -68,4 +68,6 @@ export interface Proposal {
   not_agreed: string[];
   category: string;
   ada_amount: number;
+  catalyst_link: string;
+  fund_no: number;
 }

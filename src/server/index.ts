@@ -123,10 +123,10 @@ async function getDrepQuestions(drep_id: string): Promise<
   }
 }
 
-async function getDrepProposals(drep_id: string){
+async function getDrepProposals(drep_id: string, fund_no: number){
   try {
     const res = await fetch(
-      `${BASE_API_URL}/api/v1/drep/proposals/${drep_id}`,
+      `${BASE_API_URL}/api/v1/drep/proposals/${drep_id}?fund=${fund_no}`,
     );
     const proposals = (await res.json()) as Proposal[];
 

@@ -39,6 +39,13 @@ const Profile: React.FC = (): React.ReactNode => {
     P_FILTER_TYPES.QUESTIONS_ANSWERS,
   );
 
+  const [isFundsPopupVisible, setIsFundsPopupVisible] = useState({
+    icon: false,
+    popup: false,
+  });
+
+  const [selectedFund, setSelectedFund] = useState(12);
+
   const deviceType = useDeviceType();
   const { initialLoad, ref } = useInView();
 
@@ -93,8 +100,9 @@ const Profile: React.FC = (): React.ReactNode => {
   });
 
   const { data: proposals, error: err3 } = useQuery({
-    queryKey: ["drep-profile-proposals", query?.id],
-    queryFn: () => (query.id ? getDrepProposals(query?.id as string) : null),
+    queryKey: ["drep-profile-proposals", query?.id, selectedFund],
+    queryFn: () =>
+      query.id ? getDrepProposals(query?.id as string, selectedFund) : null,
   });
 
   // useEffect(() => {
@@ -208,7 +216,71 @@ const Profile: React.FC = (): React.ReactNode => {
           className="flex w-full max-w-[1600px] flex-col gap-6 md:gap-10"
         >
           <div className="flex w-full flex-col items-start justify-between gap-2 font-inter font-medium tracking-wide text-secondary-dark md:flex-row md:items-center ">
-            <div className="text-base md:text-xl">Questions and answers</div>
+            {/* Different Funds */}
+            <div className="flex items-center gap-x-4">
+              <div className="text-base md:text-xl">
+                {active === P_FILTER_TYPES.QUESTIONS_ANSWERS
+                  ? "Questions and answers"
+                  : "Voting Records:"}{" "}
+              </div>
+
+              {active === P_FILTER_TYPES.VOTES && (
+                <div className="relative">
+                  <div
+                    className="rounded-lg bg-[#EAEAEA] p-2 text-xs text-black md:text-sm"
+                    onMouseLeave={() => {
+                      setTimeout(
+                        () =>
+                          setIsFundsPopupVisible((prev) => ({
+                            icon: false,
+                            popup: prev.popup,
+                          })),
+                        1000,
+                      );
+                    }}
+                    onMouseEnter={() =>
+                      setIsFundsPopupVisible((prev) => ({
+                        icon: true,
+                        popup: prev.popup,
+                      }))
+                    }
+                  >
+                    Fund {selectedFund}
+                  </div>
+                  <div
+                    onMouseEnter={() =>
+                      setIsFundsPopupVisible((prev) => ({
+                        icon: prev.icon,
+                        popup: true,
+                      }))
+                    }
+                    onMouseLeave={() =>
+                      setIsFundsPopupVisible((prev) => ({
+                        icon: prev.icon,
+                        popup: false,
+                      }))
+                    }
+                    className={`absolute left-1/2 top-full max-h-0 w-full min-w-max -translate-x-1/2 translate-y-2 overflow-hidden overflow-y-scroll rounded-lg bg-white text-xs text-tertiary md:text-sm ${isFundsPopupVisible.icon || isFundsPopupVisible.popup ? "max-h-[150px]" : "max-h-0"}`}
+                  >
+                    <div className="flex flex-col gap-3 p-3">
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(
+                        (fund_no) => (
+                          <motion.button
+                            onClick={() => setSelectedFund(fund_no)}
+                            className={`flex w-full items-center gap-2 border-b-2 border-tertiary border-opacity-20 p-1 px-2`}
+                            whileHover={{ scaleX: 1.025 }}
+                            whileTap={{ scaleX: 0.995 }}
+                          >
+                            Fund {fund_no}
+                          </motion.button>
+                        ),
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <motion.div
               className="rounded-lg p-1.5 text-xs text-tertiary md:text-sm"
               initial={{ backgroundColor: "transparent", opacity: 0 }}
@@ -266,16 +338,20 @@ const Profile: React.FC = (): React.ReactNode => {
             </div>
           )}
 
-          {active === P_FILTER_TYPES.VOTES && (
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {proposals &&
-                proposals.proposals.map((_, i) => (
+          {active === P_FILTER_TYPES.VOTES &&
+            (proposals && proposals.proposals.length > 0 ? (
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+                {proposals.proposals.map((_, i) => (
                   <div key={i}>
                     <Vote {..._} />
                   </div>
                 ))}
-            </div>
-          )}
+              </div>
+            ) : (
+              <div className="w-full text-center text-sm text-tertiary">
+                No proposals to show for this fund {selectedFund}
+              </div>
+            ))}
         </div>
       </div>
     </section>
