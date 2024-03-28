@@ -68,13 +68,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       className="flex flex-col rounded-xl border border-brd-clr"
       whileHover={{ y: -6 }}
     >
-      <div className="mx-[18px] my-4 flex items-center justify-between">
+      <Link href={`/profile/${drep?.drep_id}`} className="mx-[18px] my-4 flex items-center justify-between">
         <LetterAvatar rounded username={drep?.name ?? ""} dimension={55} />
 
         <div className="w-[200px] overflow-hidden text-ellipsis rounded-[10px] bg-tertiary-light px-4 py-3 font-ibm-mono text-sm font-medium tracking-wide text-tertiary">
           {drep?.drep_id}
         </div>
-      </div>
+      </Link>
       <div className="border-y border-brd-clr bg-[#F5F5F5] p-3 text-center font-inter text-sm font-semibold tracking-wide text-secondary md:p-5 md:text-base">
         {drep?.name}
       </div>
