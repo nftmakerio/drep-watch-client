@@ -153,7 +153,7 @@ const MyQuestions: React.FC = (): React.ReactNode => {
                           asked_user={question.wallet_address}
                           question={question}
                           answer={pageData.answers[i]}
-                          id={pageData.answers[i]?.uuid}
+                          id={question.uuid}
                         />
                       )}
                     </div>

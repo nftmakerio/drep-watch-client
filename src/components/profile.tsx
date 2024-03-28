@@ -252,7 +252,7 @@ const Profile: React.FC = (): React.ReactNode => {
                         asked_user={question.wallet_address}
                         question={question}
                         answer={questions.answers[i]}
-                        id={question?.uuid}
+                        id={question.uuid}
                       />
                     </div>
                   ))}
