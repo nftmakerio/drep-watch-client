@@ -243,7 +243,7 @@ const Navbar: React.FC = (): React.ReactNode => {
               </div>
             </div>
           </div>
-
+          {connected && (
           <div
             className="group relative"
             onMouseLeave={() => {
@@ -261,7 +261,7 @@ const Navbar: React.FC = (): React.ReactNode => {
               }))
             }
           >
-            {connected && (
+            
               <motion.button
                 whileHover={{ scaleX: 1.025 }}
                 whileTap={{ scaleX: 0.995 }}
@@ -275,7 +275,6 @@ const Navbar: React.FC = (): React.ReactNode => {
                     <div className="absolute right-1 top-2 aspect-square w-1.5 rounded-full bg-primary "></div>
                   )}
               </motion.button>
-            )}
 
             <div
               onMouseEnter={() =>
@@ -342,6 +341,7 @@ const Navbar: React.FC = (): React.ReactNode => {
               </div>
             </div>
           </div>
+            )}
         </div>
       </motion.header>
     </div>
