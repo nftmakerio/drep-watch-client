@@ -164,7 +164,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
             href={`/answer/${id}`}
             className="grid h-10 w-10 place-items-center rounded-lg text-tertiary transition-all hover:bg-black hover:bg-opacity-20"
           >
-            <CgArrowsExpandRight size={40} />
+            <CgArrowsExpandRight size={20} />
             {/* <svg
               width="10"
               height="17"
