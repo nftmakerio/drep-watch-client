@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useWalletStore } from "~/store/wallet";
 import { BASE_API_URL } from "~/data/api";
 import axios from "axios";
-import { AiOutlineExpandAlt } from "react-icons/ai";
+import { CgArrowsExpandRight } from "react-icons/cg";
 
 interface Question {
   theme: string;
@@ -153,8 +153,9 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
           <div className="flex items-center gap-3 font-ibm-mono text-xs font-medium text-tertiary md:text-sm ">
             <div>Question asked by</div>
             <div
-                // href={`/profile/${id}`} 
-                className="w-[200px] overflow-hidden text-ellipsis text-black hover:underline">
+              // href={`/profile/${id}`}
+              className="w-[200px] overflow-hidden text-ellipsis text-black hover:underline"
+            >
               {asked_user}
             </div>
           </div>
@@ -163,7 +164,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
             href={`/answer/${id}`}
             className="grid h-10 w-10 place-items-center rounded-lg text-tertiary transition-all hover:bg-black hover:bg-opacity-20"
           >
-            <AiOutlineExpandAlt size={40} />
+            <CgArrowsExpandRight size={40} />
             {/* <svg
               width="10"
               height="17"
