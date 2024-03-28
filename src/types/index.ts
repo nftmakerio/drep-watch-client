@@ -58,3 +58,14 @@ export interface Notification {
   };
   answer: string;
 }
+
+export interface Proposal {
+  id: string;
+  created_at: string;
+  title: string;
+  description: string;
+  agreed: string[];
+  not_agreed: string[];
+  category: string;
+  ada_amount: number;
+}

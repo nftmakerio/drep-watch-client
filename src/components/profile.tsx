@@ -21,7 +21,7 @@ import { DrepType, UserType } from "~/types";
 import Link from "next/link";
 import { BASE_API_URL } from "~/data/api";
 import { useQuery } from "@tanstack/react-query";
-import { getDrepQuestions } from "~/server";
+import { getDrepQuestions, getDrepProposals } from "~/server";
 import { useRouter } from "next/router";
 import LetterAvatar from "./letter-avatar";
 import ErrorCard from "./cards/error";
@@ -92,6 +92,11 @@ const Profile: React.FC = (): React.ReactNode => {
     queryFn: () => (query.id ? getDrepQuestions(query?.id as string) : null),
   });
 
+  const { data: proposals, error: err3 } = useQuery({
+    queryKey: ["drep-profile-proposals", query?.id],
+    queryFn: () => (query.id ? getDrepProposals(query?.id as string) : null),
+  });
+
   // useEffect(() => {
   //   console.log(questions, "|fdsafdsafas")
   // }, [questions])
@@ -106,7 +111,7 @@ const Profile: React.FC = (): React.ReactNode => {
   const onDelegate = async () => {
     try {
       if (!connected) {
-        toast.error("Please connect your wallet to delegate.")
+        toast.error("Please connect your wallet to delegate.");
 
         return;
       }
@@ -137,8 +142,8 @@ const Profile: React.FC = (): React.ReactNode => {
 
       toast.success(`Successfully delegated to ${query.id}`);
     } catch (error) {
-      if(error instanceof Error){
-        toast.error(error.message)
+      if (error instanceof Error) {
+        toast.error(error.message);
       }
       console.log(error);
     }
@@ -263,11 +268,10 @@ const Profile: React.FC = (): React.ReactNode => {
 
           {active === P_FILTER_TYPES.VOTES && (
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {Array(6)
-                .fill(0)
-                .map((_, i) => (
+              {proposals &&
+                proposals.proposals.map((_, i) => (
                   <div key={i}>
-                    <Vote />
+                    <Vote {..._} />
                   </div>
                 ))}
             </div>

@@ -1,6 +1,6 @@
 import { FILTER_TYPES } from "~/constants";
 import { BASE_API_URL } from "~/data/api";
-import { Answer, Drep, Question } from "~/types";
+import { Answer, Drep, Proposal, Question } from "~/types";
 
 async function getDreps(): Promise<{
   dreps: Drep[];
@@ -123,6 +123,21 @@ async function getDrepQuestions(drep_id: string): Promise<
   }
 }
 
+async function getDrepProposals(drep_id: string){
+  try {
+    const res = await fetch(
+      `${BASE_API_URL}/api/v1/drep/proposals/${drep_id}`,
+    );
+    const proposals = (await res.json()) as Proposal[];
+
+    return {
+      proposals,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function getData(activeNum: number) {
   if (activeNum === FILTER_TYPES.LATEST_QUESTIONS) return getLatestQuestions();
   else if (activeNum === FILTER_TYPES.EXPLORE_DREPS) return getDreps();
@@ -135,5 +150,6 @@ export {
   getLatestAnswers,
   getData,
   getDrepQuestions,
-  getUserQuestions
+  getUserQuestions,
+  getDrepProposals
 };

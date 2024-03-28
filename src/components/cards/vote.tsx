@@ -1,41 +1,67 @@
 import { useState } from "react";
 import { FaThumbsUp } from "react-icons/fa6";
 import { motion } from "framer-motion";
+import { Proposal } from "~/types";
+import moment from "moment";
+import { useRouter } from "next/router";
 
 interface VoteProps {
-    test?: string;
-};
+  test?: string;
+}
 
-const Vote: React.FC<VoteProps> = ({  }: VoteProps): React.ReactNode => {
-    const [toggle, setToggle] = useState<boolean>(Math.random() < 0.5);
+const Vote = ({
+  ada_amount,
+  agreed,
+  category,
+  created_at,
+  description,
+  id,
+  not_agreed,
+  title,
+}: Proposal): React.ReactNode => {
+  //   const [toggle, setToggle] = useState<boolean>(Math.random() < 0.5);
+  const { query } = useRouter();
 
-    return (
-        <div
-            className="border-brd-clr border rounded-xl flex flex-col overflow-hidden"
-        >
-            <div className="my-4 mx-[18px] flex flex-col gap-5 ">
-                <div className="font-inter font-medium text-sm md:text-base tracking-wide text-secondary">
-                    Would the AFD finally favor the pensioners vs. end the statutory pensioners (inflation compensation etc.) ?
-                </div>
-                <div className="font-ibm-mono text-xs md:text-base text-tertiary">
-                    12 FEB 2024
-                </div>
-            </div>
-            <div className="bg-[#F5F5F5] border-t border-brd-clr text-secondary p-3 md:p-5 flex justify-center items-center">
-                <motion.button 
-                    className={`py-2 px-3 flex justify-center items-center gap-2.5  rounded-[10px] border border-[#E6E6E6] ${toggle ? "bg-primary-light text-primary" : "bg-[#EAEAEA] text-[#8C8C8C]"} transition-all duration-200`}
-                    onClick={() => setToggle(p => !p)}
-                    whileHover={{scaleX: 1.025}}
-                    whileTap={{scaleX: 0.995}}
-                >
-                    <FaThumbsUp  className={`text-lg md:text-xl ${toggle ? "rotate-0" : "-rotate-180"} transition-all duration-200`} />
-                    <div className="font-ibm-mono font-semibold text-xs md:text-sm tracking-wide ">
-                        {toggle ? "In favour" : "Adjusted Against"}
-                    </div>
-                </motion.button>
-            </div>
+  const drep_id = query.id as string;
+
+  return (
+    <div className="flex flex-col overflow-hidden rounded-xl border border-brd-clr">
+      <div className="mx-[18px] my-4 flex flex-col gap-5 ">
+        <div className="font-inter text-sm font-medium tracking-wide text-secondary md:text-base">
+          {category}
         </div>
-    );
+        <div className="font-inter text-sm font-medium tracking-wide text-secondary md:text-base">
+          {title}
+        </div>
+        <div className="font-inter text-sm font-medium tracking-wide text-secondary md:text-base">
+          {ada_amount} ADA
+        </div>
+        <div className="font-ibm-mono text-xs text-tertiary md:text-base">
+          {moment(created_at).format("LL")}
+        </div>
+      </div>
+      <div className="flex items-center justify-center border-t border-brd-clr bg-[#F5F5F5] p-3 text-secondary md:p-5">
+        <motion.button
+          className={`flex items-center justify-center gap-2.5 rounded-[10px] border  border-[#E6E6E6] px-3 py-2 ${agreed.includes(drep_id) ? "bg-primary-light text-primary" : "bg-[#EAEAEA] text-[#8C8C8C]"} transition-all duration-200`}
+          whileHover={{ scaleX: 1.025 }}
+          whileTap={{ scaleX: 0.995 }}
+        >
+          {(agreed.includes(drep_id) || not_agreed.includes(drep_id)) && (
+            <FaThumbsUp
+              className={`text-lg md:text-xl ${agreed.includes(drep_id) ? "rotate-0" : "-rotate-180"} transition-all duration-200`}
+            />
+          )}
+          <div className="font-ibm-mono text-xs font-semibold tracking-wide md:text-sm ">
+            {agreed.includes(drep_id)
+              ? "In favour"
+              : not_agreed.includes(drep_id)
+                ? "Adjusted Against"
+                : "Not decided"}
+          </div>
+        </motion.button>
+      </div>
+    </div>
+  );
 };
 
 export default Vote;
