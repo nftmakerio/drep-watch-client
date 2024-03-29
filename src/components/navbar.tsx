@@ -244,24 +244,23 @@ const Navbar: React.FC = (): React.ReactNode => {
             </div>
           </div>
           {connected && (
-          <div
-            className="group relative"
-            onMouseLeave={() => {
-              setTimeout(() => {
+            <div
+              className="group relative"
+              onMouseLeave={() => {
+                setTimeout(() => {
+                  setIsVisibleGrp2((prev) => ({
+                    icon: false,
+                    popup: prev.popup,
+                  }));
+                }, 1000);
+              }}
+              onMouseEnter={() =>
                 setIsVisibleGrp2((prev) => ({
-                  icon: false,
+                  icon: true,
                   popup: prev.popup,
-                }));
-              }, 1000);
-            }}
-            onMouseEnter={() =>
-              setIsVisibleGrp2((prev) => ({
-                icon: true,
-                popup: prev.popup,
-              }))
-            }
-          >
-            
+                }))
+              }
+            >
               <motion.button
                 whileHover={{ scaleX: 1.025 }}
                 whileTap={{ scaleX: 0.995 }}
@@ -276,72 +275,74 @@ const Navbar: React.FC = (): React.ReactNode => {
                   )}
               </motion.button>
 
-            <div
-              onMouseEnter={() =>
-                setIsVisibleGrp2((prev) => ({
-                  icon: prev.icon,
-                  popup: true,
-                }))
-              }
-              onMouseLeave={() =>
-                setIsVisibleGrp2((prev) => ({
-                  icon: prev.icon,
-                  popup: false,
-                }))
-              }
-              className={`absolute right-0 top-full max-h-0 w-full min-w-max translate-y-2 overflow-hidden rounded-lg bg-white/60 font-inter text-xs tracking-wide backdrop-blur transition-all duration-500 ${isVisibleGrp2.icon || isVisibleGrp2.popup ? "max-h-[500px]" : "max-h-0"} md:left-0 md:text-sm `}
-            >
-              <div className="flex flex-col gap-1 ">
-                <div className="flex max-w-min items-center gap-5 border-b border-brd-clr px-5">
-                  <div
-                    className={`px-2 py-3 ${active === 0 ? "border-b-2" : "border-b-0"} flex  cursor-pointer items-center justify-center gap-1 border-black`}
-                    onClick={() => setActive(0)}
-                  >
+              <div
+                onMouseEnter={() =>
+                  setIsVisibleGrp2((prev) => ({
+                    icon: prev.icon,
+                    popup: true,
+                  }))
+                }
+                onMouseLeave={() =>
+                  setIsVisibleGrp2((prev) => ({
+                    icon: prev.icon,
+                    popup: false,
+                  }))
+                }
+                className={`absolute right-0 top-full max-h-0 w-full min-w-max translate-y-2 overflow-hidden rounded-lg bg-white/60 font-inter text-xs tracking-wide backdrop-blur transition-all duration-500 ${isVisibleGrp2.icon || isVisibleGrp2.popup ? "max-h-[500px]" : "max-h-0"} md:left-0 md:text-sm `}
+              >
+                <div className="flex flex-col gap-1 ">
+                  <div className="flex max-w-min items-center gap-5 border-b border-brd-clr px-5">
                     <div
-                      className={`${active === 0 ? "font-semibold" : "font-normal"}`}
+                      className={`px-2 py-3 ${active === 0 ? "border-b-2" : "border-b-0"} flex  cursor-pointer items-center justify-center gap-1 border-black`}
+                      onClick={() => setActive(0)}
                     >
-                      Inbox
-                    </div>
-                    <div className="rounded-sm bg-primary p-0.5 px-1 leading-[1] text-white">
-                      {data &&
-                      data?.notifications.filter((notify) => !notify.opened)
-                        .length > 10
-                        ? "9+"
-                        : data?.notifications.filter((notify) => !notify.opened)
-                            .length}
+                      <div
+                        className={`${active === 0 ? "font-semibold" : "font-normal"}`}
+                      >
+                        Inbox
+                      </div>
+                      <div className="rounded-sm bg-primary p-0.5 px-1 leading-[1] text-white">
+                        {data &&
+                        data?.notifications.filter((notify) => !notify.opened)
+                          .length > 10
+                          ? "9+"
+                          : data?.notifications.filter(
+                              (notify) => !notify.opened,
+                            ).length}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="max-h-[400px] w-full  overflow-auto ">
-                  <div className="flex w-full flex-col items-start gap-1.5 ">
-                    {data && data.notifications.length === 0 ? (
-                      <div className="flex w-full max-w-[330px] items-start gap-3 border-b border-brd-clr px-4 py-5 md:max-w-[450px]">
-                        No Notifications
-                      </div>
-                    ) : (
-                      data?.notifications.map((notification) => (
-                        <NotificationItem
-                          answer={notification.answer}
-                          created_at={notification.created_at}
-                          question={notification.questions.question_title}
-                          username={notification.drep}
-                          isNew={!notification.opened}
-                          uuid={notification.uuid}
-                          notification_id={notification.id}
-                          afterOpen={() => refetch()}
-                        />
-                      ))
-                    )}
-                    {/* <NotificationItem isNew={true} /> */}
-                    {/* <NotificationItem />
+                  <div className="max-h-[400px] w-full  overflow-auto ">
+                    <div className="flex w-full flex-col items-start gap-1.5 ">
+                      {data && data.notifications.length === 0 ? (
+                        <div className="flex w-full max-w-[330px] items-start gap-3 border-b border-brd-clr px-4 py-5 md:max-w-[450px]">
+                          No Notifications
+                        </div>
+                      ) : (
+                        data?.notifications.map((notification) => (
+                          <NotificationItem
+                            answer={notification.answer}
+                            created_at={notification.created_at}
+                            question={notification.questions.question_title}
+                            username={notification.drep}
+                            isNew={!notification.opened}
+                            uuid={notification.uuid}
+                            notification_id={notification.id}
+                            afterOpen={() => refetch()}
+                            user={notification.user}
+                          />
+                        ))
+                      )}
+                      {/* <NotificationItem isNew={true} /> */}
+                      {/* <NotificationItem />
                     <NotificationItem /> */}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-            )}
+          )}
         </div>
       </motion.header>
     </div>
@@ -360,6 +361,7 @@ function NotificationItem({
   created_at: string;
   answer?: string;
   uuid: string;
+  user: string;
   notification_id: string;
   afterOpen: () => void;
 }) {
@@ -385,7 +387,11 @@ function NotificationItem({
           className={`aspect-square h-2 rounded-full ${isNew ? "bg-primary" : "bg-transparent"}`}
         ></div>
         <div>
-          <LetterAvatar rounded username={props.username} dimension={32} />
+          <LetterAvatar
+            rounded
+            username={is_admin?.drep_id ? props.user : props.username}
+            dimension={32}
+          />
         </div>
       </div>
 
@@ -394,7 +400,7 @@ function NotificationItem({
       >
         <div>
           <span className="mr-1 font-bold">
-            {props.username.slice(0, 16)}...
+            {(is_admin?.drep_id ? props.user : props.username).slice(0, 16)}...
           </span>
           <span>
             {is_admin?.drep_id
