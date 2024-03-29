@@ -80,7 +80,7 @@ const Vote = ({
             {agreed.includes(drep_id)
               ? "In favour"
               : not_agreed.includes(drep_id)
-                ? "Adjusted Against"
+                ? "Abstain"
                 : "Not decided"}
           </div>
         </motion.button>
