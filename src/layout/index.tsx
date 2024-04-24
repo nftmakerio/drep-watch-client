@@ -4,6 +4,7 @@ import axios, { AxiosError } from "axios";
 import { IBM_Plex_Mono, Inter } from "next/font/google";
 import localFont from "next/font/local";
 import { useEffect } from "react";
+import Footer from "~/components/footer";
 
 import Navbar from "~/components/navbar";
 import { LOCALSTORAGE_WALLET_KEY } from "~/constants/wallet";
@@ -109,6 +110,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     >
       <Navbar />
       {children}
+      <Footer/>
     </main>
   );
 };
