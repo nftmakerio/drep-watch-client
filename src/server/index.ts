@@ -6,10 +6,28 @@ async function getDreps(): Promise<{
   dreps: Drep[];
   questionAnswers: false;
 }> {
-  const res = await fetch(`${BASE_API_URL}/api/v1/drep`);
-  const dreps = (await res.json()) as Drep[];
+  const res = await fetch(
+    `https://cardano-sanchonet.blockfrost.io/api/v0/governance/dreps`,
+    {
+      headers: {
+        project_id: "sanchonetIEt2wrapbiDfjpPqvill3wVOV7FPaLcI",
+      },
+    },
+  );
+
+  const dreps = (await res.json()) as {
+    drep_id: string;
+  }[];
   // console.log("GET DREPS CALLED")
-  return { dreps, questionAnswers: false };
+  return {
+    dreps: dreps.map((drep) => ({
+      created_at: new Date().toISOString(),
+      drep_id: drep.drep_id,
+      email: drep.drep_id,
+      name: drep.drep_id,
+    })),
+    questionAnswers: false,
+  };
 }
 async function getLatestQuestions(): Promise<{
   answers: (Answer | undefined)[];
@@ -18,7 +36,7 @@ async function getLatestQuestions(): Promise<{
 }> {
   const res = await fetch(`${BASE_API_URL}/api/v1/questions/latest`);
   const resJson = (await res.json()) as { questions: Question[] };
-  console.log(resJson.questions, "fdasdfasf")
+  console.log(resJson.questions, "fdasdfasf");
   const questionIds = await Promise.all(
     resJson.questions.map((question) =>
       fetch(`${BASE_API_URL}/api/v1/answers/${question.uuid}`),
@@ -41,7 +59,9 @@ async function getUserQuestions(wallet_address: string): Promise<{
   questionAnswers: true;
   questions: Question[];
 }> {
-  const res = await fetch(`${BASE_API_URL}/api/v1/questions?wallet_address=${wallet_address}`);
+  const res = await fetch(
+    `${BASE_API_URL}/api/v1/questions?wallet_address=${wallet_address}`,
+  );
   const questions = (await res.json()) as Question[];
   const questionIds = await Promise.all(
     questions.map((question) =>
@@ -108,9 +128,8 @@ async function getDrepQuestions(drep_id: string): Promise<
       ),
     );
 
-
-    if(!answers){
-        return;
+    if (!answers) {
+      return;
     }
 
     return {
@@ -123,12 +142,16 @@ async function getDrepQuestions(drep_id: string): Promise<
   }
 }
 
-async function getDrepProposals(drep_id: string, fund_no: number){
+async function getDrepProposals(drep_id: string, fund_no: number) {
   try {
     const res = await fetch(
-      `${BASE_API_URL}/api/v1/drep/proposals/${drep_id}?fund=${fund_no}`,
+      `https://cardano-sanchonet.blockfrost.io/api/v0/governance/dreps/${drep_id}/votes`,
     );
-    const proposals = (await res.json()) as Proposal[];
+    const proposals = (await res.json()) as {
+      tx_hash: string;
+      cert_index: number;
+      vote: "yes" | "abstain" | "no";
+    }[];
 
     return {
       proposals,
@@ -151,5 +174,5 @@ export {
   getData,
   getDrepQuestions,
   getUserQuestions,
-  getDrepProposals
+  getDrepProposals,
 };
