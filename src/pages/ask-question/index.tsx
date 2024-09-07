@@ -9,9 +9,7 @@ export default function Index() {
         <>
             <Metatags />
 
-            <Layout>
                 <AskQuestion />
-            </Layout>
         </>
     );
 }

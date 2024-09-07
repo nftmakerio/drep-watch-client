@@ -8,9 +8,7 @@ export default function Index() {
         <>
             <Metatags />
 
-            <Layout>
                 <Home />
-            </Layout>
         </>
     );
 }
