@@ -6,7 +6,7 @@ import QueAnsCard from "./cards/que-ans";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { BASE_API_URL } from "~/data/api";
-import { Answer, Question } from "~/types";
+import type { Answer, Question } from "~/types";
 import axios, { AxiosError } from "axios";
 import LetterAvatar from "./letter-avatar";
 import Link from "next/link";
@@ -169,18 +169,18 @@ const Answer: React.FC = (): React.ReactNode => {
 
             <div className="flex w-[90%] flex-col items-center gap-6 rounded-xl border border-primary-light bg-white px-5  pb-7  pt-9 shadow-color md:w-auto md:flex-row ">
               <div>
-                <LetterAvatar username={profileData?.name} dimension={130} />
+                <LetterAvatar username={data?.question.drep_id} dimension={130} />
               </div>
               <div className="flex flex-col items-center md:items-start">
                 <div className="max-w-xs overflow-hidden text-ellipsis text-center font-ibm-mono text-xs tracking-wide text-tertiary md:max-w-max md:text-left md:text-sm">
-                  {profileData?.drep_id}
+                  {data?.question.drep_id.slice(0, 16)}...
                 </div>
                 <div className="font-neue-regrade text-[36px] font-semibold text-black ">
-                  {profileData?.name}
+                  {data?.question.drep_id.slice(0, 16)}...
                 </div>
                 <div className="mt-5 flex items-center gap-2.5">
                   <Link
-                    href={`/ask-question?to=${profileData?.drep_id}`}
+                    href={`/ask-question?to=${data?.question.drep_id}`}
                     className="flex items-center gap-2.5 rounded-lg bg-gradient-to-b from-[#FFC896] from-[-47.73%] to-[#FB652B] to-[78.41%] px-4 py-2.5 text-white"
                   >
                     <BsChatQuoteFill className="text-[24px]" />

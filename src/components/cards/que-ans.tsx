@@ -239,10 +239,17 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
       {answer?.answer && !is_admin?.drep_id && (
         <div className="flex flex-col justify-start gap-11 bg-[#F5F5F5] px-[18px] py-5">
           <div className="flex flex-col items-start justify-start gap-5">
-            <Link href={`/profile/${answer.drep_id}`} className="flex items-center gap-3 rounded-[10px] bg-primary-light p-2 pl-3 text-primary">
+            <Link
+              href={`/profile/${answer.drep_id}`}
+              className="flex items-center gap-3 rounded-[10px] bg-primary-light p-2 pl-3 text-primary"
+            >
               <div className="flex items-center gap-2 font-ibm-mono text-[13px] text-xs font-medium md:text-sm ">
                 <div className="text-[#FF986F]">Answered by</div>
-                <div>{answer.drep_name ?? answer.drep_id}</div>
+                <div>
+                  {(answer.drep_name ?? "")?.slice(0, 16) ??
+                    answer.drep_id.slice(0, 16)}
+                  ...
+                </div>
               </div>
 
               <div className="">

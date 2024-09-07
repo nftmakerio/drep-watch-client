@@ -245,7 +245,7 @@ const Questions = (): React.ReactNode => {
         <User
           user={{
             img: "/assets/ask-questions/user.png",
-            name: profileData?.name,
+            name: `${(query.to ?? "").slice(0, 16)}...` as string,
             questionsAnswers: profileData?.questionsAnswers,
             questionsAsked: profileData?.questionsAsked,
             walletId: profileData?.drep_id,

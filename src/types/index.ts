@@ -60,14 +60,6 @@ export interface Notification {
 }
 
 export interface Proposal {
-  id: string;
-  created_at: string;
   title: string;
-  description: string;
-  agreed: string[];
-  not_agreed: string[];
-  category: string;
-  ada_amount: number;
-  catalyst_link: string;
-  fund_no: number;
+  vote: "abstain" | "no" | "yes";
 }

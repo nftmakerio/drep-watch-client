@@ -46,11 +46,25 @@ const Search: React.FC = (): React.ReactNode => {
     setLoading(true);
     try {
       const res = await fetch(
-        `${BASE_API_URL}/api/v1/drep/query?search_query=${value}`,
+        `https://cardano-sanchonet.blockfrost.io/api/v0/governance/dreps/${value}`,
+        {
+          headers: {
+            project_id: "sanchonetIEt2wrapbiDfjpPqvill3wVOV7FPaLcI"
+          }
+        }
       );
-      const queryResults = (await res.json()) as SearchResult[];
+      const queryResults = (await res.json()) as {
+        drep_id: string;
+      };
       console.log(queryResults);
-      setSearchResults(queryResults);
+      setSearchResults(
+        [queryResults].map((result) => ({
+          created_at: "",
+          drep_id: result.drep_id,
+          email: result.drep_id,
+          name: result.drep_id,
+        })),
+      );
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -82,37 +96,39 @@ const Search: React.FC = (): React.ReactNode => {
         className={`absolute left-0 top-full w-full translate-y-4  overflow-hidden rounded-lg border-brd-clr bg-white ${searchText ? "max-h-[415px] border-b md:max-h-[350px] " : "max-h-0 border-0"} transition-all duration-300  `}
       >
         <div className="p-3 md:px-5 md:py-4">
-          { searchResults.length > 0 ? searchResults.map((el, i) => (
-            <div
-              key={i}
-              className={`flex flex-col items-center justify-between gap-2 border-b border-primary-light p-3 md:flex-row`}
-            >
-              <div className="flex items-center justify-center gap-3">
-                <div>
-                  <LetterAvatar rounded username={el.name} dimension={50} />
-                </div>
-                <div className="flex w-full max-w-none flex-col gap-1 md:max-w-[290px]">
-                  <div className="font-inter text-xs font-medium tracking-wide text-secondary md:text-sm">
-                    {el.name}
-                  </div>
-                  <div className="w-[200px] overflow-hidden text-ellipsis font-inter text-[10px] font-medium tracking-wide text-tertiary md:text-xs">
-                    {el?.drep_id}
-                  </div>
-                </div>
-              </div>
-              <Link
-                href={`/ask-question?to=${el.drep_id}`}
-                className="flex w-full items-center justify-center  gap-2.5 rounded-[10px] border border-[#E6E6E6] bg-primary-light px-3 py-2 text-primary md:w-auto md:px-[18px] md:py-4 "
+          {searchResults.length > 0 ? (
+            searchResults.map((el, i) => (
+              <div
+                key={i}
+                className={`flex flex-col items-center justify-between gap-2 border-b border-primary-light p-3 md:flex-row`}
               >
-                <BsChatQuoteFill className="text-lg md:text-xl" />
-                <div className="font-inter text-xs font-semibold tracking-wide md:text-sm ">
-                  Ask question
+                <div className="flex items-center justify-center gap-3">
+                  <div>
+                    <LetterAvatar rounded username={el.name} dimension={50} />
+                  </div>
+                  <div className="flex w-full max-w-none flex-col gap-1 md:max-w-[290px]">
+                    <div className="font-inter text-xs font-medium tracking-wide text-secondary md:text-sm">
+                      {el.name.slice(0, 16)}...
+                    </div>
+                    <div className="w-[200px] overflow-hidden text-ellipsis font-inter text-[10px] font-medium tracking-wide text-tertiary md:text-xs">
+                      {el?.drep_id.slice(0, 16)}...
+                    </div>
+                  </div>
                 </div>
-              </Link>
-            </div>
-          )) : (
+                <Link
+                  href={`/ask-question?to=${el.drep_id}`}
+                  className="flex w-full items-center justify-center  gap-2.5 rounded-[10px] border border-[#E6E6E6] bg-primary-light px-3 py-2 text-primary md:w-auto md:px-[18px] md:py-4 "
+                >
+                  <BsChatQuoteFill className="text-lg md:text-xl" />
+                  <div className="font-inter text-xs font-semibold tracking-wide md:text-sm ">
+                    Ask question
+                  </div>
+                </Link>
+              </div>
+            ))
+          ) : (
             <div className="font-inter text-xs font-medium tracking-wide text-secondary md:text-sm">
-                No result found
+              No result found
             </div>
           )}
         </div>

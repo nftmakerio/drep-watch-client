@@ -170,16 +170,16 @@ const Profile: React.FC = (): React.ReactNode => {
             <div>
               <LetterAvatar
                 rounded
-                username={profileData?.name}
+                username={query.id as string}
                 dimension={130}
               />
             </div>
             <div className="flex flex-col">
               <div className="w-[300px] overflow-hidden text-ellipsis text-center font-ibm-mono text-xs tracking-wide text-tertiary md:text-left md:text-sm">
-                {profileData?.drep_id}
+                {(query.id ?? "")?.slice(0, 16)}...
               </div>
               <div className="text-center font-neue-regrade text-[36px] font-semibold text-black md:text-start">
-                {profileData?.name}
+                {(query.id ?? "")?.slice(0, 16)}...
               </div>
               <div className="mt-5 flex items-center gap-2.5">
                 <Link
@@ -224,7 +224,7 @@ const Profile: React.FC = (): React.ReactNode => {
                   : "Voting Records:"}{" "}
               </div>
 
-              {active === P_FILTER_TYPES.VOTES && (
+              {/* {active === P_FILTER_TYPES.VOTES && (
                 <div className="relative">
                   <div
                     className="rounded-lg bg-[#EAEAEA] p-2 text-xs text-black md:text-sm"
@@ -278,7 +278,7 @@ const Profile: React.FC = (): React.ReactNode => {
                     </div>
                   </div>
                 </div>
-              )}
+              )} */}
             </div>
 
             <motion.div
@@ -343,13 +343,13 @@ const Profile: React.FC = (): React.ReactNode => {
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
                 {proposals.proposals.map((_, i) => (
                   <div key={i}>
-                    <Vote {..._} />
+                    <Vote title={_.tx_hash} vote={_.vote} />
                   </div>
                 ))}
               </div>
             ) : (
               <div className="w-full text-center text-sm text-tertiary">
-                No proposals to show for this fund {selectedFund}
+                No votes to show
               </div>
             ))}
         </div>

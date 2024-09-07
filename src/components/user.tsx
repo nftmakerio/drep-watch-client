@@ -48,7 +48,7 @@ const User: React.FC<UserProps> = ({ user }: UserProps): React.ReactNode => {
                 fill: "transparent",
                 stroke: "#FF4700",
                 strokeDasharray: "250",
-                strokeDashoffset: `calc(250 - (250 * ${percentage}) / 100)`,
+                strokeDashoffset: `calc(250 - (250 * ${Number.isNaN(percentage) ? 0 : percentage}) / 100)`,
                 strokeLinecap: "round",
                 strokeWidth: "6",
               }}
@@ -58,7 +58,7 @@ const User: React.FC<UserProps> = ({ user }: UserProps): React.ReactNode => {
             ></circle>
           </svg>
           <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-ibm-mono text-base font-semibold tracking-wide text-orange-500 ">
-            {percentage + "%"}
+            {Number.isNaN(percentage) ? 0 : percentage + "%"}
           </span>
         </div>
 
