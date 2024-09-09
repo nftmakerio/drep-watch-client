@@ -295,7 +295,7 @@ function TitleAndInput({
   ) => {
     let newValue = e.target.value;
     if (e.target.name === "theme") {
-      newValue = newValue.replace(/\s/g, ",");
+      newValue = newValue.trim().replace(/\s/g, ",");
     }
     setInpVal(newValue);
     onChange(newValue);
@@ -327,7 +327,7 @@ function TitleAndInput({
           />
         )}
 
-        {value && (
+        {!preview && value && (
           <svg
             className="pointer-events-none absolute right-3 top-3 h-5 w-5 text-gray-400"
             width="20"

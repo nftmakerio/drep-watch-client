@@ -43,11 +43,11 @@ const Navbar: React.FC = (): React.ReactNode => {
   const handleClick = async (name: string) => {
     try {
       setConnecting(true);
-      await connect(name);
+      await connect(name, [95]);
 
       localStorage.setItem(LOCALSTORAGE_WALLET_KEY, name);
 
-      const wallet = await BrowserWallet.enable(name);
+      const wallet = await BrowserWallet.enable(name, [95]);
       const address = (await wallet.getRewardAddresses())[0];
 
       if (!address) {
@@ -70,15 +70,19 @@ const Navbar: React.FC = (): React.ReactNode => {
       >(`${BASE_API_URL}/api/v1/user/create`, requestData);
 
       if (data?.data) {
-        const { data: wallet_data } = await axios.get<{
+        const drepID = await wallet.getPubDRepKey();
+        const { data: wallet_data } = await axios.post<{
           name: string;
           email: string;
           pool_id: string;
           active: boolean;
-          is_admin?: {
-            drep_id: string;
-          };
-        }>(`${BASE_API_URL}/api/v1/user/${data.data.wallet_address}`);
+          is_admin: boolean;
+        }>(`${BASE_API_URL}/api/v1/user`, {
+          wallet_address: data.data.wallet_address,
+          drep_id: drepID?.dRepIDBech32,
+        });
+
+        console.log(wallet_data.is_admin);
 
         saveWallet({
           connected: true,
@@ -87,9 +91,43 @@ const Navbar: React.FC = (): React.ReactNode => {
             active: wallet_data.active,
             pool_id: wallet_data.pool_id,
           },
-          is_admin: wallet_data.is_admin ?? null,
+          is_admin: {
+            active: wallet_data.is_admin,
+            drep_id: drepID?.dRepIDBech32 ?? "",
+          },
         });
       }
+
+      setConnecting(false);
+
+      // This is the address you should use bro
+    } catch (error) {
+      setConnecting(false);
+      if (error instanceof AxiosError) {
+        console.log(error.response?.data);
+      }
+    }
+  };
+
+  const handleDisconnect = async () => {
+    try {
+      setConnecting(true);
+      await disconnect();
+
+      localStorage.removeItem(LOCALSTORAGE_WALLET_KEY);
+
+      saveWallet({
+        connected: false,
+        stake_address: null,
+        delegatedTo: {
+          active: false,
+          pool_id: null,
+        },
+        is_admin: {
+          active: false,
+          drep_id: null,
+        },
+      });
 
       setConnecting(false);
 
@@ -186,7 +224,7 @@ const Navbar: React.FC = (): React.ReactNode => {
                 )}
               </div>
               {connected && (
-                <div onClick={() => disconnect()} className="">
+                <div onClick={() => handleDisconnect()} className="">
                   <AiOutlineDisconnect className="h-6 w-6" color="white" />
                 </div>
               )}

@@ -11,8 +11,9 @@
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {
-        "@meshsdk/core": "1.5.11-beta.6",
-        "@meshsdk/react": "1.1.10-beta.3",
+        "@emurgo/cardano-serialization-lib-asmjs": "^12.0.1",
+        "@meshsdk/core": "1.7.3",
+        "@meshsdk/react": "1.7.3",
         "@studio-freight/lenis": "^1.0.34",
         "@t3-oss/env-nextjs": "^0.7.1",
         "@tanstack/react-query": "^5.28.0",

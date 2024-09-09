@@ -3,11 +3,11 @@ import Metatags from "~/components/metatags";
 import Layout from "~/layout";
 
 export default function Index() {
-    return (
-        <>
-            <Metatags />
+  return (
+    <>
+      <Metatags />
 
-                <Answer />
-        </>
-    );
+      <Answer />
+    </>
+  );
 }

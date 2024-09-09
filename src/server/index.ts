@@ -1,31 +1,25 @@
+import axios from "axios";
 import { FILTER_TYPES } from "~/constants";
 import { BASE_API_URL } from "~/data/api";
 import { Answer, Drep, Proposal, Question } from "~/types";
 
-async function getDreps(): Promise<{
+async function getDreps(page: number): Promise<{
   dreps: Drep[];
   questionAnswers: false;
+  nextPage: number | null;
 }> {
-  const res = await fetch(
-    `https://cardano-sanchonet.blockfrost.io/api/v0/governance/dreps`,
-    {
-      headers: {
-        project_id: "sanchonetIEt2wrapbiDfjpPqvill3wVOV7FPaLcI",
-      },
-    },
-  );
-
-  const dreps = (await res.json()) as {
-    drep_id: string;
-  }[];
+  const { data } = await axios.get<{
+    dreps: {
+      drep_id: string;
+      givenName: string | null;
+      image: string | null;
+    }[];
+    nextPage: number | null;
+  }>(`${BASE_API_URL}/api/v1/drep?page=${page}`);
   // console.log("GET DREPS CALLED")
   return {
-    dreps: dreps.map((drep) => ({
-      created_at: new Date().toISOString(),
-      drep_id: drep.drep_id,
-      email: drep.drep_id,
-      name: drep.drep_id,
-    })),
+    dreps: data.dreps,
+    nextPage: data.nextPage,
     questionAnswers: false,
   };
 }
@@ -33,6 +27,7 @@ async function getLatestQuestions(): Promise<{
   answers: (Answer | undefined)[];
   questionAnswers: true;
   questions: Question[];
+  nextPage: number | null;
 }> {
   const res = await fetch(`${BASE_API_URL}/api/v1/questions/latest`);
   const resJson = (await res.json()) as { questions: Question[] };
@@ -51,6 +46,7 @@ async function getLatestQuestions(): Promise<{
     answers: answers,
     questionAnswers: true,
     questions: resJson.questions,
+    nextPage: null,
   };
 }
 
@@ -84,6 +80,7 @@ async function getLatestAnswers(): Promise<{
   answers: Answer[];
   questionAnswers: true;
   questions: Question[];
+  nextPage: number | null;
 }> {
   const res = await fetch(`${BASE_API_URL}/api/v1/answers?latest=true`);
   const resJson = (await res.json()) as { answers: Answer[] };
@@ -101,6 +98,7 @@ async function getLatestAnswers(): Promise<{
     answers: resJson.answers,
     questionAnswers: true,
     questions: questions.map((el) => el.question),
+    nextPage: null,
   };
 }
 
@@ -142,15 +140,14 @@ async function getDrepQuestions(drep_id: string): Promise<
   }
 }
 
-async function getDrepProposals(drep_id: string, fund_no: number) {
+async function getDrepProposals(drep_id: string) {
   try {
-    const res = await fetch(
-      `https://cardano-sanchonet.blockfrost.io/api/v0/governance/dreps/${drep_id}/votes`,
+    const res = await axios.get(
+      `${BASE_API_URL}/api/v1/drep/proposals/${drep_id}`,
     );
-    const proposals = (await res.json()) as {
-      tx_hash: string;
-      cert_index: number;
-      vote: "yes" | "abstain" | "no";
+    const proposals = res.data as {
+      title: string;
+      vote: "Yes" | "Abstain" | "No";
     }[];
 
     return {
@@ -161,9 +158,9 @@ async function getDrepProposals(drep_id: string, fund_no: number) {
   }
 }
 
-async function getData(activeNum: number) {
+async function getData(activeNum: number, page: number) {
   if (activeNum === FILTER_TYPES.LATEST_QUESTIONS) return getLatestQuestions();
-  else if (activeNum === FILTER_TYPES.EXPLORE_DREPS) return getDreps();
+  else if (activeNum === FILTER_TYPES.EXPLORE_DREPS) return getDreps(page);
   else return getLatestAnswers();
 }
 

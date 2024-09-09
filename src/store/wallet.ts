@@ -8,9 +8,7 @@ interface WalletState {
     pool_id: string | null;
     active: boolean;
   };
-  is_admin: {
-    drep_id: string
-  } | null
+  is_admin: { active: boolean; drep_id: string | null };
 
   saveWallet: (props: {
     connected: boolean;
@@ -19,9 +17,7 @@ interface WalletState {
       pool_id: string | null;
       active: boolean;
     };
-    is_admin: {
-      drep_id: string
-    } | null
+    is_admin: { active: boolean; drep_id: string | null };
   }) => void;
   setConnecting: (prop: boolean) => void;
 }
@@ -34,7 +30,10 @@ export const useWalletStore = create<WalletState>()((set) => ({
     pool_id: null,
     active: false,
   },
-  is_admin: null,
+  is_admin: {
+    active: false,
+    drep_id: null
+  },
   saveWallet: (props) =>
     set({
       connected: props.connected,
@@ -43,7 +42,7 @@ export const useWalletStore = create<WalletState>()((set) => ({
         active: props.delegatedTo.active,
         pool_id: props.delegatedTo.pool_id,
       },
-      is_admin: props.is_admin
+      is_admin: props.is_admin,
     }),
   setConnecting(prop) {
     set({ connecting: prop });

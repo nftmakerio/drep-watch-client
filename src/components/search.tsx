@@ -8,12 +8,13 @@ import Loader from "./loader";
 import { BASE_API_URL } from "~/data/api";
 import Link from "next/link";
 import LetterAvatar from "./letter-avatar";
+import axios from "axios";
 
 interface SearchResult {
   drep_id: string;
-  created_at: string;
-  name: string;
-  email: string;
+  active: boolean;
+  image: string | null;
+  givenName: string | null;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,26 +46,21 @@ const Search: React.FC = (): React.ReactNode => {
     setSearchText(value);
     setLoading(true);
     try {
-      const res = await fetch(
-        `https://cardano-sanchonet.blockfrost.io/api/v0/governance/dreps/${value}`,
-        {
-          headers: {
-            project_id: "sanchonetIEt2wrapbiDfjpPqvill3wVOV7FPaLcI"
-          }
-        }
-      );
-      const queryResults = (await res.json()) as {
+      const { data } = await axios.get<{
         drep_id: string;
-      };
-      console.log(queryResults);
-      setSearchResults(
-        [queryResults].map((result) => ({
-          created_at: "",
-          drep_id: result.drep_id,
-          email: result.drep_id,
-          name: result.drep_id,
-        })),
-      );
+        active: boolean;
+        image: string | null;
+        givenName: string | null;
+      }>(`${BASE_API_URL}/api/v1/drep/query?search_query=${value}`);
+
+      setSearchResults([
+        {
+          active: data.active,
+          drep_id: data.drep_id,
+          image: data.image,
+          givenName: data.givenName,
+        },
+      ]);
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -82,7 +78,7 @@ const Search: React.FC = (): React.ReactNode => {
       <input
         type="text"
         className="w-full flex-1 bg-transparent font-ibm-mono text-[13px] font-medium text-secondary outline-none placeholder:text-secondary/60"
-        placeholder="search dreps here"
+        placeholder="Enter DRep ID"
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         onChange={(e) => handleInputChange(e.target.value)}
       />
@@ -93,26 +89,36 @@ const Search: React.FC = (): React.ReactNode => {
             } */}
 
       <div
-        className={`absolute left-0 top-full w-full translate-y-4  overflow-hidden rounded-lg border-brd-clr bg-white ${searchText ? "max-h-[415px] border-b md:max-h-[350px] " : "max-h-0 border-0"} transition-all duration-300  `}
+        className={`absolute left-0 top-full w-full translate-y-4  overflow-y-scroll rounded-lg border-brd-clr bg-white ${searchText ? "max-h-[415px] border-b md:max-h-[350px] " : "max-h-0 border-0"} transition-all duration-300  `}
       >
         <div className="p-3 md:px-5 md:py-4">
           {searchResults.length > 0 ? (
-            searchResults.map((el, i) => (
+            (searchResults ?? []).map((el, i) => (
               <div
                 key={i}
                 className={`flex flex-col items-center justify-between gap-2 border-b border-primary-light p-3 md:flex-row`}
               >
                 <div className="flex items-center justify-center gap-3">
                   <div>
-                    <LetterAvatar rounded username={el.name} dimension={50} />
+                    <LetterAvatar
+                      rounded
+                      username={el?.givenName ?? el.drep_id.slice(6)}
+                      dimension={50}
+                      src={el?.image}
+                    />
                   </div>
                   <div className="flex w-full max-w-none flex-col gap-1 md:max-w-[290px]">
-                    <div className="font-inter text-xs font-medium tracking-wide text-secondary md:text-sm">
-                      {el.name.slice(0, 16)}...
-                    </div>
-                    <div className="w-[200px] overflow-hidden text-ellipsis font-inter text-[10px] font-medium tracking-wide text-tertiary md:text-xs">
-                      {el?.drep_id.slice(0, 16)}...
-                    </div>
+                    <Link
+                      href={`/profile/${el.drep_id}`}
+                      className="font-inter text-xs font-medium tracking-wide text-secondary hover:underline md:text-sm"
+                    >
+                      {el?.givenName ?? el.drep_id.slice(0, 16)}
+                    </Link>
+                    {el.givenName && (
+                      <div className="w-[200px] overflow-hidden text-ellipsis font-inter text-[10px] font-medium tracking-wide text-tertiary md:text-xs">
+                        {el.drep_id.slice(0, 16)}...
+                      </div>
+                    )}
                   </div>
                 </div>
                 <Link

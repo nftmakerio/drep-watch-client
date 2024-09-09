@@ -4,13 +4,13 @@ import Layout from "~/layout";
 import { getStaticProps } from "~/utils";
 
 export default function Index() {
-    return (
-        <>
-            <Metatags />
+  return (
+    <>
+      <Metatags />
 
-                <Home />
-        </>
-    );
+      <Home />
+    </>
+  );
 }
 
 export { getStaticProps };

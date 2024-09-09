@@ -9,6 +9,8 @@ import { BASE_API_URL } from "~/data/api";
 import { useWalletStore } from "~/store/wallet";
 import Link from "next/link";
 import { CgArrowsExpandRight } from "react-icons/cg";
+import { useWallet } from "@meshsdk/react";
+import Loader from "../loader";
 
 interface Question {
   question_title: string;
@@ -31,6 +33,7 @@ const AdminQueAnsCard = ({ id, question, asked_user }: QueAnsCardProps) => {
     MAX_LIMIT - value.length,
   );
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [saving, setSaving] = useState<boolean>(false);
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -59,12 +62,19 @@ const AdminQueAnsCard = ({ id, question, asked_user }: QueAnsCardProps) => {
     setIsEdit(!isEdit);
   };
 
+  const { wallet } = useWallet();
+
   const handleSave = async () => {
     try {
       setIsEdit(false); // Exit edit mode
       setValue(newValue);
 
-      if (!is_admin?.drep_id || !id) {
+      setSaving(true);
+
+      const drepID = await wallet.getPubDRepKey();
+
+      if (!is_admin.active || !id || !drepID) {
+        // toast.error(`Error: ${is_admin.active} ${id} ${drepID?.dRepIDBech32}`);
         return;
       }
 
@@ -75,7 +85,7 @@ const AdminQueAnsCard = ({ id, question, asked_user }: QueAnsCardProps) => {
         drep_name?: string | undefined;
       } = {
         answer: newValue,
-        drep_id: is_admin.drep_id,
+        drep_id: drepID.dRepIDBech32,
         uuid: id,
       };
 
@@ -84,7 +94,10 @@ const AdminQueAnsCard = ({ id, question, asked_user }: QueAnsCardProps) => {
         reqBody,
       );
 
-      console.log(data);
+      if (data?.savedAnswer) {
+        setSaving(false);
+        toast.success("Your answer is updated!");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -103,11 +116,12 @@ const AdminQueAnsCard = ({ id, question, asked_user }: QueAnsCardProps) => {
     ) : null;
   };
 
-  const renderButtons = () => {
+  const renderButtons = (saving: boolean) => {
     return (
       <div className="flex w-full items-center justify-end gap-3">
         <button
-          className="rounded-lg border border-brd-clr px-4 py-2.5 font-semibold text-secondary-dark"
+          disabled={saving}
+          className="rounded-lg border border-brd-clr px-4 py-2.5 font-semibold text-secondary-dark disabled:opacity-60"
           onClick={handleCancel}
         >
           Cancel
@@ -116,7 +130,7 @@ const AdminQueAnsCard = ({ id, question, asked_user }: QueAnsCardProps) => {
           className="rounded-lg border border-primary bg-primary px-4 py-2.5 font-semibold text-white"
           onClick={handleSave}
         >
-          Save
+          {saving ? <Loader colored={true} /> : "Save"}
         </button>
       </div>
     );
@@ -178,7 +192,7 @@ const AdminQueAnsCard = ({ id, question, asked_user }: QueAnsCardProps) => {
               {renderCharacterLimit()}
             </div>
 
-            {isEdit && renderButtons()}
+            {(isEdit || saving) && renderButtons(saving)}
           </div>
         </div>
       </div>

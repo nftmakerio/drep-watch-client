@@ -18,13 +18,101 @@ import { Transaction } from "@meshsdk/core";
 import toast from "react-hot-toast";
 import Masonry from "react-masonry-css";
 import { useWalletStore } from "~/store/wallet";
+import {
+  Address,
+  TransactionUnspentOutput,
+  TransactionUnspentOutputs,
+  TransactionOutput,
+  Value,
+  TransactionBuilder,
+  TransactionBuilderConfigBuilder,
+  LinearFee,
+  BigNum,
+  TransactionWitnessSet,
+  Transaction as CTransaction,
+  Credential,
+  Certificate,
+  PublicKey,
+  RewardAddress,
+  Ed25519KeyHash,
+  CertificatesBuilder,
+  VoteDelegation,
+  DRep,
+  Anchor,
+  DRepRegistration,
+  DRepUpdate,
+  DRepDeregistration,
+  VotingBuilder,
+  Voter,
+  GovernanceActionId,
+  TransactionHash,
+  VotingProcedure,
+  VotingProposalBuilder,
+  VotingProposal,
+  NewConstitutionAction,
+  Constitution,
+  AnchorDataHash,
+  URL,
+  GovernanceAction,
+  InfoAction,
+  TreasuryWithdrawals,
+  TreasuryWithdrawalsAction,
+  UpdateCommitteeAction,
+  Committee,
+  UnitInterval,
+  Credentials,
+  NoConfidenceAction,
+  ParameterChangeAction,
+  ProtocolParamUpdate,
+  HardForkInitiationAction,
+  ProtocolVersion,
+  ScriptHash,
+  ChangeConfig,
+  PlutusScript,
+  PlutusWitness,
+  PlutusScriptSource,
+  Redeemer,
+  RedeemerTag,
+  ExUnits,
+  PlutusData,
+  PlutusMap,
+  ExUnitPrices,
+  PlutusScripts,
+  Redeemers,
+  Costmdls,
+  CostModel,
+  Language,
+  Int,
+  TxInputsBuilder,
+} from "@emurgo/cardano-serialization-lib-asmjs";
+import { useState } from "react";
+import { buildSubmitConwayTx } from "~/core/delegateVote";
+
+const protocolParams = {
+  linearFee: {
+    minFeeA: "44",
+    minFeeB: "155381",
+  },
+  minUtxo: "1000000",
+  poolDeposit: "500000000",
+  keyDeposit: "2000000",
+  maxValSize: 5000,
+  maxTxSize: 16384,
+  priceMem: 0.0577,
+  priceStep: 0.0000721,
+  coinsPerUTxOByte: "4310",
+};
 
 const Answer: React.FC = (): React.ReactNode => {
   const { query } = useRouter();
 
-  const { connected, wallet } = useWallet();
+  const { connected, wallet, name } = useWallet();
 
   const { delegatedTo } = useWalletStore();
+
+  // const [certBuilder, setCertBuilder] = useState<CertificatesBuilder | null>(
+  //   null,
+  // );
 
   const { data, error: err1 } = useQuery({
     queryKey: ["question-data", query.id],
@@ -98,7 +186,7 @@ const Answer: React.FC = (): React.ReactNode => {
   });
 
   const { isLoading, data: pageData } = useQuery({
-    queryFn: () => getData(2),
+    queryFn: () => getData(2, 1),
     queryKey: ["latest_questions"],
   });
 
@@ -121,22 +209,18 @@ const Answer: React.FC = (): React.ReactNode => {
         return;
       }
 
-      const tx = new Transaction({ initiator: wallet });
+      const txHash = await buildSubmitConwayTx(true, wallet, poolId);
 
-      if (!delegatedTo.active) {
-        tx.registerStake(address);
+      if (txHash) {
+        toast.success(
+          `Successfully delegated to ${answerData?.answer.drep_id}. Transaction Hash: ${txHash}`,
+        );
+      } else {
+        throw new Error('Failed to delegate. Please try again.');
       }
-
-      tx.delegateStake(address, poolId);
-
-      const unsignedTx = await tx.build();
-      const signedTx = await wallet.signTx(unsignedTx);
-      const txHash = await wallet.submitTx(signedTx);
-
-      toast.success(`Successfully delegated to ${answerData?.answer.drep_id}`);
     } catch (error) {
-      if(error instanceof Error){
-        toast.error(error.message)
+      if (error instanceof Error) {
+        toast.error(error.message);
       }
       console.log(error);
     }
@@ -169,7 +253,10 @@ const Answer: React.FC = (): React.ReactNode => {
 
             <div className="flex w-[90%] flex-col items-center gap-6 rounded-xl border border-primary-light bg-white px-5  pb-7  pt-9 shadow-color md:w-auto md:flex-row ">
               <div>
-                <LetterAvatar username={data?.question.drep_id} dimension={130} />
+                <LetterAvatar
+                  username={data?.question.drep_id}
+                  dimension={130}
+                />
               </div>
               <div className="flex flex-col items-center md:items-start">
                 <div className="max-w-xs overflow-hidden text-ellipsis text-center font-ibm-mono text-xs tracking-wide text-tertiary md:max-w-max md:text-left md:text-sm">

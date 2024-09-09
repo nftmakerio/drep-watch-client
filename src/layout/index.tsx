@@ -30,16 +30,17 @@ const neue_regrade_font = localFont({
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { connect } = useWallet();
 
-  const { saveWallet, stake_address, setConnecting, connected } = useWalletStore();
+  const { saveWallet, stake_address, setConnecting, connected } =
+    useWalletStore();
 
   const handleClick = async (name: string) => {
     try {
       setConnecting(true);
-      await connect(name);
+      await connect(name, [95]);
 
       localStorage.setItem(LOCALSTORAGE_WALLET_KEY, name);
 
-      const wallet = await BrowserWallet.enable(name);
+      const wallet = await BrowserWallet.enable(name, [95]);
       const address = (await wallet.getRewardAddresses())[0];
 
       if (!address) {
@@ -62,17 +63,19 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       >(`${BASE_API_URL}/api/v1/user/create`, requestData);
 
       if (data?.data) {
-        const { data: wallet_data } = await axios.get<{
+        const drepID = await wallet.getPubDRepKey();
+        const { data: wallet_data } = await axios.post<{
           name: string;
           email: string;
           pool_id: string;
           active: boolean;
-          is_admin?: {
-            drep_id: string;
-          };
-        }>(`${BASE_API_URL}/api/v1/user/${data.data.wallet_address}`);
+          is_admin: boolean;
+        }>(`${BASE_API_URL}/api/v1/user`, {
+          wallet_address: data.data.wallet_address,
+          drep_id: drepID?.dRepIDBech32,
+        });
 
-        console.log(wallet_data.is_admin)
+        console.log(wallet_data.is_admin);
 
         saveWallet({
           connected: true,
@@ -81,7 +84,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             active: wallet_data.active,
             pool_id: wallet_data.pool_id,
           },
-          is_admin: wallet_data.is_admin ?? null,
+          is_admin: { active: wallet_data.is_admin, drep_id: drepID?.dRepIDBech32 ?? "" },
         });
       }
 
@@ -110,7 +113,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     >
       <Navbar />
       {children}
-      <Footer/>
+      <Footer />
     </main>
   );
 };

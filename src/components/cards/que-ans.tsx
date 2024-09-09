@@ -10,6 +10,8 @@ import { useWalletStore } from "~/store/wallet";
 import { BASE_API_URL } from "~/data/api";
 import axios from "axios";
 import { CgArrowsExpandRight } from "react-icons/cg";
+import { useWallet } from "@meshsdk/react";
+import Loader from "../loader";
 
 interface Question {
   theme: string;
@@ -44,9 +46,6 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
 }: QueAnsCardProps): React.ReactNode => {
   const { route } = useRouter();
 
-  console.log(route);
-
-  console.log(answer, "answer");
   const [enlargeText, setEnlargeText] = useState(false);
 
   // add from here
@@ -59,6 +58,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
   );
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [saving, setSaving] = useState<boolean>(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = e.target.value;
@@ -79,13 +79,17 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
 
   const { is_admin } = useWalletStore();
 
+  const { wallet } = useWallet();
+
   const handleSave = async () => {
     try {
+      setSaving(true);
       setIsEdit(false); // Exit edit mode
       setValue(newValue);
 
-      if (!is_admin?.drep_id || !id) {
-        console.log(is_admin, id);
+      const drepID = await wallet.getPubDRepKey();
+
+      if (!is_admin.active || !id || !drepID) {
         return;
       }
 
@@ -96,7 +100,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
         drep_name?: string | undefined;
       } = {
         answer: newValue,
-        drep_id: is_admin.drep_id,
+        drep_id: drepID.dRepIDBech32,
         uuid: id,
       };
 
@@ -105,7 +109,11 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
         reqBody,
       );
 
-      console.log(data);
+      if (data?.savedAnswer) {
+        toast.success("Your answer is updated!");
+
+        setSaving(false);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -124,11 +132,12 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
     setValue(answer?.answer ?? "");
   }, [answer?.answer]);
 
-  const renderButtons = () => {
+  const renderButtons = (saving: boolean) => {
     return (
       <div className="flex w-full items-center justify-end gap-3">
         <button
-          className="rounded-lg border border-brd-clr px-4 py-2.5 font-semibold text-secondary-dark"
+          disabled={saving}
+          className="rounded-lg border border-brd-clr px-4 py-2.5 font-semibold text-secondary-dark disabled:opacity-60"
           onClick={handleCancel}
         >
           Cancel
@@ -137,11 +146,15 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
           className="rounded-lg border border-primary bg-primary px-4 py-2.5 font-semibold text-white"
           onClick={handleSave}
         >
-          Save
+          {saving ? <Loader colored={true} /> : "Save"}
         </button>
       </div>
     );
   };
+
+  useEffect(() => {
+    console.log(is_admin);
+  }, [is_admin]);
 
   return (
     <motion.div
@@ -201,7 +214,7 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
         )}
 
         {/*  change is_admin to original var */}
-        {large && is_admin && (
+        {large && question?.drep_id === is_admin.drep_id && (
           <>
             <div className="flex w-full flex-col gap-1.5">
               <div className="flex w-full items-center justify-between">
@@ -231,12 +244,12 @@ const QueAnsCard: React.FC<QueAnsCardProps> = ({
               </div>
               {renderCharacterLimit()}
             </div>
-            {isEdit && renderButtons()}
+            {(isEdit || saving) && renderButtons(saving)}
           </>
         )}
       </div>
 
-      {answer?.answer && !is_admin?.drep_id && (
+      {answer?.answer && question?.drep_id !== is_admin.drep_id && (
         <div className="flex flex-col justify-start gap-11 bg-[#F5F5F5] px-[18px] py-5">
           <div className="flex flex-col items-start justify-start gap-5">
             <Link

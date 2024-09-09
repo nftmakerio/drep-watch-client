@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { LegacyRef, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -20,12 +20,19 @@ import Masonry from "react-masonry-css";
 
 const Home: React.FC = (): React.ReactNode => {
   const [active, setActive] = useState<number>(FILTER_TYPES.LATEST_ANSWERS);
+  const [page, setPage] = useState<number>(1);
 
   const deviceType = useDeviceType();
   const { initialLoad, ref } = useInView();
-  const { isLoading, data: pageData } = useQuery({
-    queryFn: () => getData(active),
-    queryKey: ["latest_questions", active],
+  const {
+    isLoading,
+    data: pageData,
+    refetch,
+  } = useQuery({
+    queryFn: () => getData(active, page),
+    queryKey: ["latest_questions", active, page],
+    refetchIntervalInBackground: active !== FILTER_TYPES.EXPLORE_DREPS,
+    refetchOnMount: active !== FILTER_TYPES.EXPLORE_DREPS,
   });
 
   const getLeftOffset = (): string => {
@@ -46,6 +53,33 @@ const Home: React.FC = (): React.ReactNode => {
   };
 
   const { is_admin } = useWalletStore();
+
+  const drepsDivRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    const div = drepsDivRef.current;
+    if (div) {
+      const { scrollTop, scrollHeight, clientHeight } = div;
+      if (scrollTop + clientHeight >= scrollHeight) {
+        if (pageData && pageData?.nextPage) {
+          setPage(pageData?.nextPage);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    const div = drepsDivRef.current;
+
+    if (div) {
+      div.addEventListener("scroll", handleScroll);
+    }
+    return () => {
+      if (div) {
+        div.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [drepsDivRef.current, pageData?.nextPage]);
 
   return (
     <section className="flex w-full flex-col gap-[40px] pb-20 pt-[150px] md:gap-[90px] md:pt-[190px]">
@@ -91,7 +125,37 @@ const Home: React.FC = (): React.ReactNode => {
           className="flex w-full max-w-[1600px] flex-col gap-6 md:gap-10"
         >
           <div className="flex w-full flex-col items-start justify-between gap-2 font-inter font-medium tracking-wide text-secondary-dark md:flex-row md:items-center ">
-            <div className="text-base md:text-xl">Questions and answers</div>
+            <div className="flex items-center gap-4 text-base md:text-xl">
+              <div className="">
+                {active === FILTER_TYPES.EXPLORE_DREPS
+                  ? "DReps"
+                  : "Questions and answers"}
+              </div>
+
+              <motion.div
+                className="flex items-center gap-4 rounded-lg p-1.5 text-xs text-tertiary md:text-sm"
+                initial={{ backgroundColor: "transparent", opacity: 0 }}
+                whileInView={{ backgroundColor: "#EAEAEA", opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 1, duration: 0.5 }}
+              >
+                <div
+                  onClick={() => (page > 1 ? setPage((page) => page - 1) : {})}
+                  className={`relative z-[1] cursor-pointer rounded-lg ${page <= 1 ? "bg-transparent" : "bg-white"} px-2 py-1.5 text-black hover:text-secondary`}
+                >
+                  Prev
+                </div>
+                <div className="text-black">{page}</div>
+                <div
+                  onClick={() =>
+                    pageData?.nextPage ? setPage(pageData?.nextPage) : {}
+                  }
+                  className={`relative z-[1] cursor-pointer rounded-lg ${pageData?.nextPage ? "bg-white" : "bg-transparent"} px-2 py-1.5 text-black hover:text-secondary`}
+                >
+                  Next
+                </div>
+              </motion.div>
+            </div>
             <motion.div
               className="rounded-lg p-1.5 text-xs text-tertiary md:text-sm"
               initial={{ backgroundColor: "transparent", opacity: 0 }}

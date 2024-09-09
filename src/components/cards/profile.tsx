@@ -7,6 +7,7 @@ import { useWallet } from "@meshsdk/react";
 import LetterAvatar from "../letter-avatar";
 import toast from "react-hot-toast";
 import { useWalletStore } from "~/store/wallet";
+import { buildSubmitConwayTx } from "~/core/delegateVote";
 
 interface ProfileCardProps {
   test?: string;
@@ -14,9 +15,9 @@ interface ProfileCardProps {
 }
 interface Drep {
   drep_id: string;
-  created_at: string;
-  name: string;
-  email: string;
+  // created_at: string;
+  givenName: string | null;
+  image: string | null;
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
@@ -43,19 +44,16 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         return;
       }
 
-      const tx = new Transaction({ initiator: wallet });
+      const txHash = await buildSubmitConwayTx(true, wallet, poolId);
 
-      if (!delegatedTo.active) {
-        tx.registerStake(address);
+      if (txHash) {
+        toast.success(
+          `Successfully delegated to ${poolId}. Transaction Hash: ${txHash}`,
+        );
+      } else {
+        throw new Error("Failed to delegate. Please try again.");
       }
-
-      tx.delegateStake(address, poolId);
-
-      const unsignedTx = await tx.build();
-      const signedTx = await wallet.signTx(unsignedTx);
-      const txHash = await wallet.submitTx(signedTx);
-
-      toast.success(`Successfully delegated to ${drep?.drep_id}`);
+      
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -72,14 +70,19 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         href={`/profile/${drep?.drep_id}`}
         className="mx-[18px] my-4 flex items-center justify-between"
       >
-        <LetterAvatar rounded username={drep?.name ?? ""} dimension={55} />
+        <LetterAvatar
+          rounded
+          username={(drep?.drep_id ?? "").slice(5)}
+          src={drep?.image}
+          dimension={55}
+        />
 
         <div className="w-[200px] overflow-hidden text-ellipsis rounded-[10px] bg-tertiary-light px-4 py-3 font-ibm-mono text-sm font-medium tracking-wide text-tertiary">
-          {drep?.drep_id}
+          {drep?.drep_id.slice(0, 32)}...
         </div>
       </Link>
       <div className="border-y border-brd-clr bg-[#F5F5F5] p-3 text-center font-inter text-sm font-semibold tracking-wide text-secondary md:p-5 md:text-base">
-        {drep?.name.slice(0, 32)}...
+        {drep?.givenName ?? `${drep?.drep_id.slice(0, 32)}...`}
       </div>
       <Link
         href={`/ask-question?to=${drep?.drep_id}`}

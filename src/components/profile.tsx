@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { BsChatQuoteFill } from "react-icons/bs";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Transaction } from "@meshsdk/core";
 
 import QueAnsCard from "./cards/que-ans";
 import Vote from "./cards/vote";
@@ -29,10 +28,11 @@ import { useWallet } from "@meshsdk/react";
 import toast from "react-hot-toast";
 import Masonry from "react-masonry-css";
 import { useWalletStore } from "~/store/wallet";
+import { buildSubmitConwayTx } from "~/core/delegateVote";
 
 const Profile: React.FC = (): React.ReactNode => {
   const { query } = useRouter();
-  const { connected, wallet } = useWallet();
+  const { connected, wallet, name } = useWallet();
   const { delegatedTo } = useWalletStore();
 
   const [active, setActive] = useState<number>(
@@ -68,10 +68,12 @@ const Profile: React.FC = (): React.ReactNode => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.post(
-        `${BASE_API_URL}/api/v1/drep/drep-profile`,
-        { drep_id: query.id },
-      );
+      const response = await axios.post<{
+        questionsAsked: number;
+        questionsAnswers: number;
+        image: string;
+        name: string;
+      }>(`${BASE_API_URL}/api/v1/drep/drep-profile`, { drep_id: query.id });
       // setProfileData(response.data);
 
       return response.data;
@@ -94,20 +96,23 @@ const Profile: React.FC = (): React.ReactNode => {
     queryFn: () => fetchData(),
   });
 
-  const { data: questions, error: err2 } = useQuery({
+  const {
+    data: questions,
+    error: err2,
+    isLoading: isLoadingQuestions,
+  } = useQuery({
     queryKey: ["drep-profile-questions", query?.id],
     queryFn: () => (query.id ? getDrepQuestions(query?.id as string) : null),
   });
 
-  const { data: proposals, error: err3 } = useQuery({
+  const {
+    data: proposals,
+    error: err3,
+    isLoading: isLoadingProposals,
+  } = useQuery({
     queryKey: ["drep-profile-proposals", query?.id, selectedFund],
-    queryFn: () =>
-      query.id ? getDrepProposals(query?.id as string, selectedFund) : null,
+    queryFn: () => (query.id ? getDrepProposals(query?.id as string) : null),
   });
-
-  // useEffect(() => {
-  //   console.log(questions, "|fdsafdsafas")
-  // }, [questions])
 
   if (query?.id && err1)
     return (
@@ -120,7 +125,6 @@ const Profile: React.FC = (): React.ReactNode => {
     try {
       if (!connected) {
         toast.error("Please connect your wallet to delegate.");
-
         return;
       }
 
@@ -136,19 +140,20 @@ const Profile: React.FC = (): React.ReactNode => {
         return;
       }
 
-      const tx = new Transaction({ initiator: wallet });
+      const txHash = await buildSubmitConwayTx(true, wallet, poolId);
 
-      if (!delegatedTo.active) {
-        tx.registerStake(address);
+      toast.success(
+        `Successfully delegated to ${query.id}. Transaction Hash: ${txHash}`,
+      );
+
+      if (txHash) {
+        toast.success(
+          `Successfully delegated to ${query.id}. Transaction Hash: ${txHash}`,
+        );
+      } else {
+        throw new Error("Failed to delegate. Please try again.");
       }
 
-      tx.delegateStake(address, poolId);
-
-      const unsignedTx = await tx.build();
-      const signedTx = await wallet.signTx(unsignedTx);
-      const txHash = await wallet.submitTx(signedTx);
-
-      toast.success(`Successfully delegated to ${query.id}`);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -172,6 +177,7 @@ const Profile: React.FC = (): React.ReactNode => {
                 rounded
                 username={query.id as string}
                 dimension={130}
+                src={profileData?.image}
               />
             </div>
             <div className="flex flex-col">
@@ -179,7 +185,7 @@ const Profile: React.FC = (): React.ReactNode => {
                 {(query.id ?? "")?.slice(0, 16)}...
               </div>
               <div className="text-center font-neue-regrade text-[36px] font-semibold text-black md:text-start">
-                {(query.id ?? "")?.slice(0, 16)}...
+                {profileData?.name ?? `${query.id?.slice(0, 16)}...`}
               </div>
               <div className="mt-5 flex items-center gap-2.5">
                 <Link
@@ -223,62 +229,6 @@ const Profile: React.FC = (): React.ReactNode => {
                   ? "Questions and answers"
                   : "Voting Records:"}{" "}
               </div>
-
-              {/* {active === P_FILTER_TYPES.VOTES && (
-                <div className="relative">
-                  <div
-                    className="rounded-lg bg-[#EAEAEA] p-2 text-xs text-black md:text-sm"
-                    onMouseLeave={() => {
-                      setTimeout(
-                        () =>
-                          setIsFundsPopupVisible((prev) => ({
-                            icon: false,
-                            popup: prev.popup,
-                          })),
-                        1000,
-                      );
-                    }}
-                    onMouseEnter={() =>
-                      setIsFundsPopupVisible((prev) => ({
-                        icon: true,
-                        popup: prev.popup,
-                      }))
-                    }
-                  >
-                    Fund {selectedFund}
-                  </div>
-                  <div
-                    onMouseEnter={() =>
-                      setIsFundsPopupVisible((prev) => ({
-                        icon: prev.icon,
-                        popup: true,
-                      }))
-                    }
-                    onMouseLeave={() =>
-                      setIsFundsPopupVisible((prev) => ({
-                        icon: prev.icon,
-                        popup: false,
-                      }))
-                    }
-                    className={`absolute left-1/2 top-full max-h-0 w-full min-w-max -translate-x-1/2 translate-y-2 overflow-hidden overflow-y-scroll rounded-lg bg-white text-xs text-tertiary md:text-sm ${isFundsPopupVisible.icon || isFundsPopupVisible.popup ? "max-h-[150px]" : "max-h-0"}`}
-                  >
-                    <div className="flex flex-col gap-3 p-3">
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(
-                        (fund_no) => (
-                          <motion.button
-                            onClick={() => setSelectedFund(fund_no)}
-                            className={`flex w-full items-center gap-2 border-b-2 border-tertiary border-opacity-20 p-1 px-2`}
-                            whileHover={{ scaleX: 1.025 }}
-                            whileTap={{ scaleX: 0.995 }}
-                          >
-                            Fund {fund_no}
-                          </motion.button>
-                        ),
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )} */}
             </div>
 
             <motion.div
@@ -317,24 +267,30 @@ const Profile: React.FC = (): React.ReactNode => {
 
           {active === P_FILTER_TYPES.QUESTIONS_ANSWERS && (
             <div className="w-full">
-              {questions && questions.questions && (
-                <Masonry
-                  breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
-                  className="masonry-grid"
-                  columnClassName="masonry-column"
-                >
-                  {questions.questions.map((question, i) => (
-                    <div key={i} className="masonry-item">
-                      <QueAnsCard
-                        asked_user={question.wallet_address}
-                        question={question}
-                        answer={questions.answers[i]}
-                        id={question.uuid}
-                      />
-                    </div>
-                  ))}
-                </Masonry>
-              )}
+              {questions && questions.questions ? (
+                questions.questions.length > 0 ? (
+                  <Masonry
+                    breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
+                    className="masonry-grid"
+                    columnClassName="masonry-column"
+                  >
+                    {questions.questions.map((question, i) => (
+                      <div key={i} className="masonry-item">
+                        <QueAnsCard
+                          asked_user={question.wallet_address}
+                          question={question}
+                          answer={questions.answers[i]}
+                          id={question.uuid}
+                        />
+                      </div>
+                    ))}
+                  </Masonry>
+                ) : (
+                  <div className="w-full text-center text-sm text-gray-500">
+                    {isLoadingQuestions ? "Loading..." : "No questions to show"}
+                  </div>
+                )
+              ) : null}
             </div>
           )}
 
@@ -343,13 +299,13 @@ const Profile: React.FC = (): React.ReactNode => {
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
                 {proposals.proposals.map((_, i) => (
                   <div key={i}>
-                    <Vote title={_.tx_hash} vote={_.vote} />
+                    <Vote title={_.title} vote={_.vote} />
                   </div>
                 ))}
               </div>
             ) : (
               <div className="w-full text-center text-sm text-tertiary">
-                No votes to show
+                {isLoadingQuestions ? "Loading..." : "No votes to show"}
               </div>
             ))}
         </div>

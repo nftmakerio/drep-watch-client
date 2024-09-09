@@ -39,9 +39,8 @@ export interface Answer {
 
 export interface Drep {
   drep_id: string;
-  created_at: string;
-  name: string;
-  email: string;
+  givenName: string | null;
+  image: string | null;
 }
 
 export interface Notification {
@@ -61,5 +60,5 @@ export interface Notification {
 
 export interface Proposal {
   title: string;
-  vote: "abstain" | "no" | "yes";
+  vote: "Abstain" | "No" | "Yes";
 }
