@@ -145,7 +145,7 @@ const Navbar: React.FC = (): React.ReactNode => {
   } | null>({
     queryKey: ["notifications", stake_address, is_admin],
     queryFn: () =>
-      is_admin
+      is_admin.active
         ? fetch(
             `${BASE_API_URL}/api/v1/notifications?drepId=${is_admin.drep_id}`,
           ).then((res) => res.json())
