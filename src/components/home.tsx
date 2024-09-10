@@ -25,7 +25,7 @@ const Home: React.FC = (): React.ReactNode => {
   const deviceType = useDeviceType();
   const { initialLoad, ref } = useInView();
   const {
-    isLoading,
+    isLoading: isLoadingQuestions,
     data: pageData,
     refetch,
   } = useQuery({
@@ -195,34 +195,42 @@ const Home: React.FC = (): React.ReactNode => {
               className={`${pageData && pageData.questionAnswers ? "w-full" : "flex w-full items-center"}`}
             >
               {pageData && pageData.questionAnswers ? (
-                <Masonry
-                  breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
-                  className="masonry-grid"
-                  columnClassName="masonry-column"
-                >
-                  {pageData.questions.map((question, i) => (
-                    <div className="masonry-item">
-                      {question.drep_id === is_admin?.drep_id ? (
-                        <AdminQueAnsCard
-                          asked_user={question.wallet_address}
-                          id={pageData.answers[i]?.uuid}
-                          question={{
-                            question_title: question.question_title,
-                            answer: pageData.answers[i]?.answer ?? "",
-                          }}
-                        />
-                      ) : (
-                        <QueAnsCard
-                          asked_user={question.wallet_address}
-                          question={question}
-                          answer={pageData.answers[i]}
-                          id={pageData.answers[i]?.uuid}
-                        />
-                      )}
-                    </div>
-                    // <AdminQueAnsCard />
-                  ))}
-                </Masonry>
+                pageData.questions.length === 0 ? (
+                  <div className="w-full text-center text-sm text-gray-500">
+                    {isLoadingQuestions ? "Loading..." : "No questions to show"}
+                  </div>
+                ) : (
+                  pageData.questions && (
+                    <Masonry
+                      breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
+                      className="masonry-grid"
+                      columnClassName="masonry-column"
+                    >
+                      {pageData.questions.map((question, i) => (
+                        <div className="masonry-item">
+                          {question.drep_id === is_admin?.drep_id ? (
+                            <AdminQueAnsCard
+                              asked_user={question.wallet_address}
+                              id={pageData.answers[i]?.uuid}
+                              question={{
+                                question_title: question.question_title,
+                                answer: pageData.answers[i]?.answer ?? "",
+                              }}
+                            />
+                          ) : (
+                            <QueAnsCard
+                              asked_user={question.wallet_address}
+                              question={question}
+                              answer={pageData.answers[i]}
+                              id={pageData.answers[i]?.uuid}
+                            />
+                          )}
+                        </div>
+                        // <AdminQueAnsCard />
+                      ))}
+                    </Masonry>
+                  )
+                )
               ) : (
                 <Loader />
               )}
@@ -234,33 +242,41 @@ const Home: React.FC = (): React.ReactNode => {
               className={`${pageData && pageData.questionAnswers ? "w-full" : "flex w-full items-center"}`}
             >
               {pageData && pageData.questionAnswers ? (
-                <Masonry
-                  breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
-                  className="masonry-grid"
-                  columnClassName="masonry-column"
-                >
-                  {pageData.questions.map((question, i) => (
-                    <div key={i} className="masonry-item">
-                      {question.drep_id === is_admin?.drep_id ? (
-                        <AdminQueAnsCard
-                          asked_user={question.wallet_address}
-                          id={question.uuid}
-                          question={{
-                            question_title: question.question_title,
-                            answer: pageData.answers[i]?.answer ?? "",
-                          }}
-                        />
-                      ) : (
-                        <QueAnsCard
-                          asked_user={question.wallet_address}
-                          question={question}
-                          answer={pageData.answers[i]}
-                          id={question.uuid}
-                        />
-                      )}
-                    </div>
-                  ))}
-                </Masonry>
+                pageData.questions.length === 0 ? (
+                  <div className="w-full text-center text-sm text-gray-500">
+                    {isLoadingQuestions ? "Loading..." : "No questions to show"}
+                  </div>
+                ) : (
+                  pageData.questions && (
+                    <Masonry
+                      breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
+                      className="masonry-grid"
+                      columnClassName="masonry-column"
+                    >
+                      {pageData.questions.map((question, i) => (
+                        <div key={i} className="masonry-item">
+                          {question.drep_id === is_admin?.drep_id ? (
+                            <AdminQueAnsCard
+                              asked_user={question.wallet_address}
+                              id={question.uuid}
+                              question={{
+                                question_title: question.question_title,
+                                answer: pageData.answers[i]?.answer ?? "",
+                              }}
+                            />
+                          ) : (
+                            <QueAnsCard
+                              asked_user={question.wallet_address}
+                              question={question}
+                              answer={pageData.answers[i]}
+                              id={question.uuid}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </Masonry>
+                  )
+                )
               ) : (
                 <Loader />
               )}
@@ -272,17 +288,25 @@ const Home: React.FC = (): React.ReactNode => {
               className={`${pageData && !pageData.questionAnswers ? "w-full" : "flex w-full items-center"}`}
             >
               {pageData && !pageData.questionAnswers ? (
-                <Masonry
-                  breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
-                  className="masonry-grid"
-                  columnClassName="masonry-column"
-                >
-                  {pageData.dreps.map((drep, i) => (
-                    <div key={i} className="masonry-item">
-                      <ProfileCard drep={drep} />
-                    </div>
-                  ))}
-                </Masonry>
+                pageData.dreps.length === 0 ? (
+                  <div className="w-full text-center text-sm text-gray-500">
+                    {isLoadingQuestions ? "Loading..." : "No questions to show"}
+                  </div>
+                ) : (
+                  pageData.dreps && (
+                    <Masonry
+                      breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
+                      className="masonry-grid"
+                      columnClassName="masonry-column"
+                    >
+                      {pageData.dreps.map((drep, i) => (
+                        <div key={i} className="masonry-item">
+                          <ProfileCard drep={drep} />
+                        </div>
+                      ))}
+                    </Masonry>
+                  )
+                )
               ) : (
                 <Loader colored={false} />
               )}
