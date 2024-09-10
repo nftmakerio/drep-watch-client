@@ -16,10 +16,11 @@ import { AiOutlineDisconnect } from "react-icons/ai";
 import LetterAvatar from "./letter-avatar";
 import { FaBell } from "react-icons/fa6";
 import { useQuery } from "@tanstack/react-query";
-import { Notification } from "~/types";
+import { type Notification } from "~/types";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { LOCALSTORAGE_WALLET_KEY } from "~/constants/wallet";
+import toast from "react-hot-toast";
 
 const Navbar: React.FC = (): React.ReactNode => {
   const [active, setActive] = useState<number>(0);
@@ -43,11 +44,18 @@ const Navbar: React.FC = (): React.ReactNode => {
   const handleClick = async (name: string) => {
     try {
       setConnecting(true);
-      await connect(name, [95]);
+
+      const wallet = await BrowserWallet.enable(name, [95]);
+      if ((await wallet.getNetworkId()) !== 1) {
+        toast.error("Please switch your Wallet Network !");
+        setConnecting(false);
+        return;
+      }
 
       localStorage.setItem(LOCALSTORAGE_WALLET_KEY, name);
 
-      const wallet = await BrowserWallet.enable(name, [95]);
+      await connect(name, [95]);
+      toast.success("Wallet Connected Successfully !");
       const address = (await wallet.getRewardAddresses())[0];
 
       if (!address) {
@@ -112,7 +120,7 @@ const Navbar: React.FC = (): React.ReactNode => {
   const handleDisconnect = async () => {
     try {
       setConnecting(true);
-      await disconnect();
+      void disconnect();
 
       localStorage.removeItem(LOCALSTORAGE_WALLET_KEY);
 
@@ -128,6 +136,8 @@ const Navbar: React.FC = (): React.ReactNode => {
           drep_id: null,
         },
       });
+
+      toast.success("Wallet Disconnected Successfully !");
 
       setConnecting(false);
 
@@ -253,7 +263,7 @@ const Navbar: React.FC = (): React.ReactNode => {
                       className={`flex w-full items-center gap-2 rounded p-1 px-2 ${name === w.name && "bg-primary-light"} `}
                       whileHover={{ scaleX: 1.025 }}
                       whileTap={{ scaleX: 0.995 }}
-                      onClick={() => void handleClick(w.name)}
+                      onClick={() => void handleClick(w.name.toLowerCase())}
                     >
                       <div className="aspect-square w-8 rounded">
                         <Image

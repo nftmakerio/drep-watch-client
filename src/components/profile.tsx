@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BsChatQuoteFill } from "react-icons/bs";
 import { motion } from "framer-motion";
-import Image from "next/image";
 
 import QueAnsCard from "./cards/que-ans";
 import Vote from "./cards/vote";
@@ -14,9 +13,7 @@ import {
 } from "~/constants";
 import useDeviceType from "~/hooks/use-device-type";
 import useInView from "~/hooks/use-in-view";
-import { useParams } from "next/navigation";
 import axios, { AxiosError } from "axios";
-import { DrepType, UserType } from "~/types";
 import Link from "next/link";
 import { BASE_API_URL } from "~/data/api";
 import { useQuery } from "@tanstack/react-query";
@@ -32,7 +29,7 @@ import { buildSubmitConwayTx } from "~/core/delegateVote";
 
 const Profile: React.FC = (): React.ReactNode => {
   const { query } = useRouter();
-  const { connected, wallet, name } = useWallet();
+  const { connected, wallet } = useWallet();
   const { delegatedTo } = useWalletStore();
 
   const [active, setActive] = useState<number>(
@@ -47,7 +44,7 @@ const Profile: React.FC = (): React.ReactNode => {
   const [selectedFund, setSelectedFund] = useState(12);
 
   const deviceType = useDeviceType();
-  const { initialLoad, ref } = useInView();
+  const { ref } = useInView();
 
   const getLeftOffset = (): string => {
     const ACTIVE_WIDTHS = deviceType === "mobile" ? P_SMALL_WIDTHS : P_WIDTHS;
@@ -71,20 +68,16 @@ const Profile: React.FC = (): React.ReactNode => {
       const response = await axios.post<{
         questionsAsked: number;
         questionsAnswers: number;
-        image: string;
-        name: string;
+        image?: string;
+        name?: string;
       }>(`${BASE_API_URL}/api/v1/drep/drep-profile`, { drep_id: query.id });
       // setProfileData(response.data);
 
       return response.data;
       //   console.log(data);
     } catch (error: unknown) {
-      if (
-        error instanceof AxiosError &&
-        error.response &&
-        error.response.data
-      ) {
-        const responseData = error.response.data;
+      if (error instanceof AxiosError && error?.response?.data) {
+        const responseData = error?.response?.data as unknown;
         console.log(responseData);
       }
       console.log(error);
@@ -95,7 +88,6 @@ const Profile: React.FC = (): React.ReactNode => {
     queryKey: ["drep-profile", query?.id],
     queryFn: () => fetchData(),
   });
-
   const {
     data: questions,
     error: err2,
@@ -142,18 +134,13 @@ const Profile: React.FC = (): React.ReactNode => {
 
       const txHash = await buildSubmitConwayTx(true, wallet, poolId);
 
-      toast.success(
-        `Successfully delegated to ${query.id}. Transaction Hash: ${txHash}`,
-      );
-
       if (txHash) {
         toast.success(
-          `Successfully delegated to ${query.id}. Transaction Hash: ${txHash}`,
+          `Successfully delegated to ${query.id as string}. Transaction Hash: ${txHash}`,
         );
       } else {
         throw new Error("Failed to delegate. Please try again.");
       }
-
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -185,11 +172,11 @@ const Profile: React.FC = (): React.ReactNode => {
                 {(query.id ?? "")?.slice(0, 16)}...
               </div>
               <div className="text-center font-neue-regrade text-[36px] font-semibold text-black md:text-start">
-                {profileData?.name ?? `${query.id?.slice(0, 16)}...`}
+                {profileData?.name ?? `${query.id?.slice(0, 16) as string}...`}
               </div>
               <div className="mt-5 flex items-center gap-2.5">
                 <Link
-                  href={`/ask-question?to=${query?.id}`}
+                  href={`/ask-question?to=${query?.id as string}`}
                   className="flex items-center gap-2.5 rounded-lg bg-gradient-to-b from-[#FFC896] from-[-47.73%] to-[#FB652B] to-[78.41%] px-4 py-2.5 text-white"
                 >
                   <BsChatQuoteFill className="text-[24px]" />
@@ -267,7 +254,7 @@ const Profile: React.FC = (): React.ReactNode => {
 
           {active === P_FILTER_TYPES.QUESTIONS_ANSWERS && (
             <div className="w-full">
-              {questions && questions.questions ? (
+              {questions?.questions ? (
                 questions.questions.length > 0 ? (
                   <Masonry
                     breakpointCols={{ default: 3, 1100: 2, 700: 1 }}

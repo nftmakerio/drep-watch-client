@@ -10,6 +10,7 @@ import Navbar from "~/components/navbar";
 import { LOCALSTORAGE_WALLET_KEY } from "~/constants/wallet";
 import { BASE_API_URL } from "~/data/api";
 import { useWalletStore } from "~/store/wallet";
+import toast from "react-hot-toast";
 
 const inter_font = Inter({
   subsets: ["latin"],
@@ -30,17 +31,19 @@ const neue_regrade_font = localFont({
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { connect } = useWallet();
 
-  const { saveWallet, stake_address, setConnecting, connected } =
+  const { saveWallet, setConnecting, connected } =
     useWalletStore();
 
   const handleClick = async (name: string) => {
     try {
       setConnecting(true);
-      await connect(name, [95]);
+      await connect(name.toLowerCase(), [95]);
 
       localStorage.setItem(LOCALSTORAGE_WALLET_KEY, name);
 
-      const wallet = await BrowserWallet.enable(name, [95]);
+      const wallet = await BrowserWallet.enable(name.toLowerCase(), [95]);
+      if (wallet)
+        toast.success(`Wallet connected successfully to ${name} !`);
       const address = (await wallet.getRewardAddresses())[0];
 
       if (!address) {
@@ -84,7 +87,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             active: wallet_data.active,
             pool_id: wallet_data.pool_id,
           },
-          is_admin: { active: wallet_data.is_admin, drep_id: drepID?.dRepIDBech32 ?? "" },
+          is_admin: {
+            active: wallet_data.is_admin,
+            drep_id: drepID?.dRepIDBech32 ?? "",
+          },
         });
       }
 

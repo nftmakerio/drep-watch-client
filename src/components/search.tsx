@@ -66,7 +66,7 @@ const Search: React.FC = (): React.ReactNode => {
       console.log(err);
     }
   }, 300);
-
+  console.log(searchResults);
   return (
     <motion.div
       className="relative z-[2] mt-5 flex w-[90%] items-center gap-3 rounded-xl border border-primary-light bg-white p-4 shadow-color md:w-[680px] md:p-5 "

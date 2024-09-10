@@ -61,7 +61,7 @@ const Home: React.FC = (): React.ReactNode => {
     if (div) {
       const { scrollTop, scrollHeight, clientHeight } = div;
       if (scrollTop + clientHeight >= scrollHeight) {
-        if (pageData && pageData?.nextPage) {
+        if (pageData?.nextPage) {
           setPage(pageData?.nextPage);
         }
       }
