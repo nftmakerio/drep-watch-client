@@ -46,6 +46,10 @@ const Questions = (): React.ReactNode => {
     console.log(query);
     setLoading(true);
     try {
+      if(!stake_address || stake_address.length === 0){
+        toast.error("Please try connecting wallet again and submit the question!")
+        return;
+      }
       const response = await axios.post(
         `${BASE_API_URL}/api/v1/questions/ask-question`,
         { drep_id: query.to, ...quesData, wallet_address: stake_address },
