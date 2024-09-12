@@ -55,7 +55,6 @@ const Navbar: React.FC = (): React.ReactNode => {
       localStorage.setItem(LOCALSTORAGE_WALLET_KEY, name);
 
       await connect(name, [95]);
-      toast.success("Wallet Connected Successfully !");
       const address = (await wallet.getRewardAddresses())[0];
 
       if (!address) {
@@ -90,7 +89,7 @@ const Navbar: React.FC = (): React.ReactNode => {
           drep_id: drepID?.dRepIDBech32,
         });
 
-        console.log(wallet_data.is_admin);
+        toast.success("Wallet Connected Successfully !");
 
         saveWallet({
           connected: true,
@@ -223,7 +222,7 @@ const Navbar: React.FC = (): React.ReactNode => {
                 <IoWalletSharp className="text-[24px]" />
               )}
               <div className="text-shadow font-inter text-xs font-medium md:text-sm ">
-                {connecting ? (
+                {connecting || !stake_address ? (
                   "Connecting..."
                 ) : connected ? (
                   <Link href="/my-questions">

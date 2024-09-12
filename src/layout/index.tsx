@@ -31,8 +31,7 @@ const neue_regrade_font = localFont({
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { connect } = useWallet();
 
-  const { saveWallet, setConnecting, connected } =
-    useWalletStore();
+  const { saveWallet, setConnecting, connected } = useWalletStore();
 
   const handleClick = async (name: string) => {
     try {
@@ -42,9 +41,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       localStorage.setItem(LOCALSTORAGE_WALLET_KEY, name);
 
       const wallet = await BrowserWallet.enable(name.toLowerCase(), [95]);
-      if (wallet)
-        toast.success(`Wallet connected successfully to ${name} !`);
-      const address = (await wallet.getRewardAddresses())[0];
+      const [address] = await wallet.getRewardAddresses();
 
       if (!address) {
         return;
@@ -78,7 +75,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           drep_id: drepID?.dRepIDBech32,
         });
 
-        console.log(wallet_data.is_admin);
+        if (wallet) toast.success(`Wallet connected successfully to ${name} !`);
 
         saveWallet({
           connected: true,
