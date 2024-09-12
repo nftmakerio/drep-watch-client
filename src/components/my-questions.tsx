@@ -23,7 +23,7 @@ const MyQuestions: React.FC = (): React.ReactNode => {
 
   const { isLoading, data: pageData } = useQuery({
     queryFn: () =>
-      is_admin?.drep_id
+      is_admin.active && is_admin?.drep_id
         ? getDrepQuestions(is_admin?.drep_id)
         : stake_address
           ? getUserQuestions(stake_address)
@@ -57,7 +57,7 @@ const MyQuestions: React.FC = (): React.ReactNode => {
     name: string;
   } | null>({
     queryKey: ["drep-profile", is_admin?.drep_id],
-    queryFn: () => (is_admin?.drep_id ? fetchData() : null),
+    queryFn: () => (is_admin.active && is_admin?.drep_id ? fetchData() : null),
   });
 
   return (
@@ -71,13 +71,13 @@ const MyQuestions: React.FC = (): React.ReactNode => {
             <div className="flex flex-col items-center gap-3 p-8 pb-6 md:flex-row md:gap-6 md:pr-6 ">
               <LetterAvatar
                 username={
-                  (is_admin?.drep_id ? profileData?.name : stake_address) ?? "A"
+                  (is_admin.active && is_admin?.drep_id ? profileData?.name : stake_address) ?? "A"
                 }
                 dimension={140}
               />
 
               <div className="max-w-[290px] truncate font-neue-regrade text-[28px] font-medium text-black md:text-[36px]">
-                {is_admin?.drep_id
+                {is_admin.active && is_admin?.drep_id
                   ? profileData?.name
                   : stake_address ?? "Connect Wallet"}
               </div>
@@ -85,7 +85,7 @@ const MyQuestions: React.FC = (): React.ReactNode => {
 
             <div className="flex flex-col items-center justify-center gap-2 p-8 pt-6 md:py-4 md:pl-6 ">
               <div className="font-ibm-mono text-xs text-tertiary md:text-sm">
-                {is_admin?.drep_id ? "Your dRep ID" : "Delegated to"}
+                {is_admin.active && is_admin?.drep_id ? "Your dRep ID" : "Delegated to"}
               </div>
               {/* <Image
                 src={"/assets/profile/img.png"}
@@ -96,7 +96,7 @@ const MyQuestions: React.FC = (): React.ReactNode => {
               /> */}
 
               <div className="rounded-lg bg-primary-light px-[18px] py-2  font-ibm-mono text-xs tracking-wide text-primary md:text-[13px]">
-                {is_admin?.drep_id
+                {is_admin.active && is_admin?.drep_id
                   ? `${is_admin?.drep_id?.slice(0, 24)}...`
                   : delegatedTo.pool_id
                     ? `${delegatedTo.pool_id?.slice(0, 24)}...`
@@ -139,7 +139,7 @@ const MyQuestions: React.FC = (): React.ReactNode => {
                 >
                   {pageData.questions.map((question, i) => (
                     <div key={i} className="masonry-item">
-                      {question.drep_id === is_admin?.drep_id ? (
+                      {is_admin.active && question.drep_id === is_admin?.drep_id ? (
                         <AdminQueAnsCard
                           asked_user={question.wallet_address}
                           id={question.uuid}
