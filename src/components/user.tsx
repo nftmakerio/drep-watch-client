@@ -19,7 +19,7 @@ const User: React.FC<UserProps> = ({ user }: UserProps): React.ReactNode => {
       </p>
       <div className="flex flex-col items-center ">
         <div>
-          <LetterAvatar username={user.name} dimension={140} />
+          <LetterAvatar username={user.name} dimension={140} src={user.img} />
         </div>
         <div className="mt-4 w-[200px] overflow-hidden text-ellipsis rounded-lg bg-primary-light px-[18px] py-2 font-ibm-mono text-xs font-semibold tracking-wide text-primary md:text-[13px]">
           {user.walletId}

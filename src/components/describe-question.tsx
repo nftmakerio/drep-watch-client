@@ -46,8 +46,10 @@ const Questions = (): React.ReactNode => {
     console.log(query);
     setLoading(true);
     try {
-      if(!stake_address || stake_address.length === 0){
-        toast.error("Please try connecting wallet again and submit the question!")
+      if (!stake_address || stake_address.length === 0) {
+        toast.error(
+          "Please try connecting wallet again and submit the question!",
+        );
         return;
       }
       const response = await axios.post(
@@ -88,10 +90,12 @@ const Questions = (): React.ReactNode => {
         return;
       }
 
-      const response = await axios.post(
-        `${BASE_API_URL}/api/v1/drep/drep-profile`,
-        { drep_id: query.to },
-      );
+      const response = await axios.post<{
+        questionsAsked: number;
+        questionsAnswers: number;
+        image?: string;
+        name?: string;
+      }>(`${BASE_API_URL}/api/v1/drep/drep-profile`, { drep_id: query.to });
       // setProfileData(response.data);
 
       return response.data;
@@ -248,11 +252,11 @@ const Questions = (): React.ReactNode => {
       <div className="hidden flex-1 items-center justify-center pb-8 md:flex lg:pb-0">
         <User
           user={{
-            img: "/assets/ask-questions/user.png",
-            name: `${(query.to ?? "").slice(0, 16)}...` as string,
-            questionsAnswers: profileData?.questionsAnswers,
-            questionsAsked: profileData?.questionsAsked,
-            walletId: profileData?.drep_id,
+            img: profileData?.image,
+            name: `${profileData?.name ?? `${(query.to ?? "").slice(0, 16)}...`}` as string,
+            questionsAnswers: profileData?.questionsAnswers ?? 0,
+            questionsAsked: profileData?.questionsAsked ?? 0,
+            walletId: (query.to as string) ?? "",
           }}
         />
       </div>

@@ -7,7 +7,7 @@ export interface UserType {
   walletId: string;
   questionsAnswers: number;
   questionsAsked: number;
-  img: string | StaticImageData;
+  img: string | undefined;
 }
 
 export interface DrepType {
