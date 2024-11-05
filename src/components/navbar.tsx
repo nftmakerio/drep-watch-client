@@ -222,7 +222,7 @@ const Navbar: React.FC = (): React.ReactNode => {
                 <IoWalletSharp className="text-[24px]" />
               )}
               <div className="text-shadow font-inter text-xs font-medium md:text-sm ">
-                {connecting || !stake_address ? (
+                {connecting ? (
                   "Connecting..."
                 ) : connected ? (
                   <Link href="/my-questions">
@@ -269,7 +269,7 @@ const Navbar: React.FC = (): React.ReactNode => {
                           width={1000}
                           height={1000}
                           className="h-8 w-8  object-contain"
-                          src={WALLETS[w.name.toLowerCase()]?.image ?? ""}
+                          src={w.icon ?? ""}
                           alt={WALLETS[w.name.toLowerCase()]?.title ?? ""}
                         />
                       </div>

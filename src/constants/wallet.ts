@@ -65,6 +65,11 @@ export const WALLETS: Record<
     image:
       "https://ticketingserver.nucast.io/storage/v1/object/public/web-assets/wallets/yoroi.svg",
   },
+  metamask: {
+    title: "Yoroi",
+    image:
+      "https://ticketingserver.nucast.io/storage/v1/object/public/web-assets/wallets/metamask.svg",
+  },
 };
 
 export const LOCALSTORAGE_WALLET_KEY = "_prev_connected_wallet";
