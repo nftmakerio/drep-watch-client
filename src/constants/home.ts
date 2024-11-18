@@ -11,13 +11,13 @@ const SMALL_WIDTHS: Record<number, string> = {
 
 const FILTER_TYPES = {
     EXPLORE_DREPS: 3,
-    LATEST_ANSWERS: 1,
-    LATEST_QUESTIONS: 2,
+    LATEST_ANSWERS: 2,
+    LATEST_QUESTIONS: 1,
 };
 
 const FILTERS = [
-    { label: "Latest answers", type: FILTER_TYPES.LATEST_ANSWERS },
     { label: "Latest questions", type: FILTER_TYPES.LATEST_QUESTIONS },
+    { label: "Latest answers", type: FILTER_TYPES.LATEST_ANSWERS },
     { label: "Explore Dreps", type: FILTER_TYPES.EXPLORE_DREPS },
 ];
 

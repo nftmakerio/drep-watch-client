@@ -19,7 +19,7 @@ import { useWalletStore } from "~/store/wallet";
 import Masonry from "react-masonry-css";
 
 const Home: React.FC = (): React.ReactNode => {
-  const [active, setActive] = useState<number>(FILTER_TYPES.LATEST_ANSWERS);
+  const [active, setActive] = useState<number>(FILTER_TYPES.LATEST_QUESTIONS);
   const [page, setPage] = useState<number>(1);
 
   const deviceType = useDeviceType();
@@ -197,7 +197,7 @@ const Home: React.FC = (): React.ReactNode => {
               {pageData && pageData.questionAnswers ? (
                 pageData.questions.length === 0 ? (
                   <div className="w-full text-center text-sm text-gray-500">
-                    {isLoadingQuestions ? "Loading..." : "No questions to show"}
+                    {isLoadingQuestions ? "Loading..." : "No results to show"}
                   </div>
                 ) : (
                   pageData.questions && (
@@ -244,7 +244,7 @@ const Home: React.FC = (): React.ReactNode => {
               {pageData && pageData.questionAnswers ? (
                 pageData.questions.length === 0 ? (
                   <div className="w-full text-center text-sm text-gray-500">
-                    {isLoadingQuestions ? "Loading..." : "No questions to show"}
+                    {isLoadingQuestions ? "Loading..." : "No results to show"}
                   </div>
                 ) : (
                   pageData.questions && (
@@ -290,7 +290,7 @@ const Home: React.FC = (): React.ReactNode => {
               {pageData && !pageData.questionAnswers ? (
                 pageData.dreps.length === 0 ? (
                   <div className="w-full text-center text-sm text-gray-500">
-                    {isLoadingQuestions ? "Loading..." : "No questions to show"}
+                    {isLoadingQuestions ? "Loading..." : "No results to show"}
                   </div>
                 ) : (
                   pageData.dreps && (

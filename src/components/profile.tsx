@@ -274,7 +274,7 @@ const Profile: React.FC = (): React.ReactNode => {
                   </Masonry>
                 ) : (
                   <div className="w-full text-center text-sm text-gray-500">
-                    {isLoadingQuestions ? "Loading..." : "No questions to show"}
+                    {isLoadingQuestions ? "Loading..." : "No results to show"}
                   </div>
                 )
               ) : null}

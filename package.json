@@ -12,8 +12,8 @@
     },
     "dependencies": {
         "@emurgo/cardano-serialization-lib-asmjs": "^12.0.1",
-        "@meshsdk/core": "1.7.3",
-        "@meshsdk/react": "1.7.3",
+        "@meshsdk/core": "1.7.12",
+        "@meshsdk/react": "1.7.12",
         "@studio-freight/lenis": "^1.0.34",
         "@t3-oss/env-nextjs": "^0.7.1",
         "@tanstack/react-query": "^5.28.0",

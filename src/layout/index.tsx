@@ -75,7 +75,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           drep_id: drepID?.dRepIDBech32,
         });
 
-        if (wallet) toast.success(`Wallet connected successfully to ${name} !`);
+        if (wallet) toast.success(`Wallet connected successfully!`);
 
         saveWallet({
           connected: true,

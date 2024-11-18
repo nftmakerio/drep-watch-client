@@ -262,10 +262,11 @@ const Navbar: React.FC = (): React.ReactNode => {
                       className={`flex w-full items-center gap-2 rounded p-1 px-2 ${name === w.name && "bg-primary-light"} `}
                       whileHover={{ scaleX: 1.025 }}
                       whileTap={{ scaleX: 0.995 }}
-                      onClick={() => void handleClick(w.name.toLowerCase())}
+                      onClick={() => void handleClick(w.id)}
                     >
                       <div className="aspect-square w-8 rounded">
                         <Image
+                          unoptimized
                           width={1000}
                           height={1000}
                           className="h-8 w-8  object-contain"
