@@ -53,10 +53,12 @@ const Search: React.FC = (): React.ReactNode => {
         givenName: string | null;
       }>(`${BASE_API_URL}/api/v1/drep/query?search_query=${value}`);
 
+      if(!data.drep_id) return;
+
       setSearchResults([
         {
           active: data.active,
-          drep_id: data.drep_id,
+          drep_id: data.drep_id ?? "",
           image: data.image,
           givenName: data.givenName,
         },

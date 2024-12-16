@@ -18,75 +18,8 @@ import { Transaction } from "@meshsdk/core";
 import toast from "react-hot-toast";
 import Masonry from "react-masonry-css";
 import { useWalletStore } from "~/store/wallet";
-import {
-  Address,
-  TransactionUnspentOutput,
-  TransactionUnspentOutputs,
-  TransactionOutput,
-  Value,
-  TransactionBuilder,
-  TransactionBuilderConfigBuilder,
-  LinearFee,
-  BigNum,
-  TransactionWitnessSet,
-  Transaction as CTransaction,
-  Credential,
-  Certificate,
-  PublicKey,
-  RewardAddress,
-  Ed25519KeyHash,
-  CertificatesBuilder,
-  VoteDelegation,
-  DRep,
-  Anchor,
-  DRepRegistration,
-  DRepUpdate,
-  DRepDeregistration,
-  VotingBuilder,
-  Voter,
-  GovernanceActionId,
-  TransactionHash,
-  VotingProcedure,
-  VotingProposalBuilder,
-  VotingProposal,
-  NewConstitutionAction,
-  Constitution,
-  AnchorDataHash,
-  URL,
-  GovernanceAction,
-  InfoAction,
-  TreasuryWithdrawals,
-  TreasuryWithdrawalsAction,
-  UpdateCommitteeAction,
-  Committee,
-  UnitInterval,
-  Credentials,
-  NoConfidenceAction,
-  ParameterChangeAction,
-  ProtocolParamUpdate,
-  HardForkInitiationAction,
-  ProtocolVersion,
-  ScriptHash,
-  ChangeConfig,
-  PlutusScript,
-  PlutusWitness,
-  PlutusScriptSource,
-  Redeemer,
-  RedeemerTag,
-  ExUnits,
-  PlutusData,
-  PlutusMap,
-  ExUnitPrices,
-  PlutusScripts,
-  Redeemers,
-  Costmdls,
-  CostModel,
-  Language,
-  Int,
-  TxInputsBuilder,
-} from "@emurgo/cardano-serialization-lib-asmjs";
-import { useState } from "react";
-import { buildSubmitConwayTx } from "~/core/delegateVote";
+import { BlockfrostProvider, MeshTxBuilder } from "@meshsdk/core";
+import { ReactNode } from "react";
 
 const protocolParams = {
   linearFee: {
@@ -103,7 +36,7 @@ const protocolParams = {
   coinsPerUTxOByte: "4310",
 };
 
-const Answer: React.FC = (): React.ReactNode => {
+const Answer: React.FC = (): ReactNode => {
   const { query } = useRouter();
 
   const { connected, wallet, name } = useWallet();
@@ -209,14 +142,39 @@ const Answer: React.FC = (): React.ReactNode => {
         return;
       }
 
-      const txHash = await buildSubmitConwayTx(true, wallet, poolId);
+      const utxos = await wallet.getUtxos();
+      const rewardAddresses = await wallet.getRewardAddresses();
+      const rewardAddress = rewardAddresses[0];
+      const changeAddress = await wallet.getChangeAddress();
+
+      const response = await fetch("/api/delegate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          utxos,
+          dRepId: poolId,
+          rewardAddress,
+          changeAddress,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delegate. Please try again.");
+      }
+
+      const { cbor: unsignedTx } = await response.json();
+
+      const signedTx = await wallet.signTx(unsignedTx);
+      const txHash = await wallet.submitTx(signedTx);
 
       if (txHash) {
         toast.success(
           `Successfully delegated to ${answerData?.answer.drep_id}. Transaction Hash: ${txHash}`,
         );
       } else {
-        throw new Error('Failed to delegate. Please try again.');
+        throw new Error("Failed to delegate. Please try again.");
       }
     } catch (error) {
       if (error instanceof Error) {

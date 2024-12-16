@@ -44,8 +44,33 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         return;
       }
 
-      const txHash = await buildSubmitConwayTx(true, wallet, poolId);
+      const utxos = await wallet.getUtxos();
+      const rewardAddresses = await wallet.getRewardAddresses();
+      const rewardAddress = rewardAddresses[0];
+      const changeAddress = await wallet.getChangeAddress();
 
+      const response = await fetch("/api/delegate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          utxos,
+          dRepId: poolId,
+          rewardAddress,
+          changeAddress,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delegate. Please try again.");
+      }
+
+      const { cbor: unsignedTx } = await response.json();
+
+      const signedTx = await wallet.signTx(unsignedTx);
+      const txHash = await wallet.submitTx(signedTx);
+      
       if (txHash) {
         toast.success(
           `Successfully delegated to ${poolId}. Transaction Hash: ${txHash}`,
@@ -53,7 +78,6 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       } else {
         throw new Error("Failed to delegate. Please try again.");
       }
-      
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
