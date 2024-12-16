@@ -226,7 +226,10 @@ const Navbar: React.FC = (): React.ReactNode => {
                   "Connecting..."
                 ) : connected ? (
                   <Link href="/my-questions">
-                    {stake_address?.slice(0, 10)}...
+                    {is_admin.active
+                      ? (is_admin.drep_id ?? "")?.slice(0, 10)
+                      : (stake_address ?? "")?.slice(0, 10)}
+                    ...
                   </Link>
                 ) : (
                   "Connect wallet"
