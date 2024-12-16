@@ -47,7 +47,6 @@ const MyQuestions: React.FC = (): React.ReactNode => {
         error.response.data
       ) {
         const responseData = error.response.data;
-        console.log(responseData);
       }
       console.log(error);
     }
