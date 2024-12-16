@@ -23,7 +23,8 @@ const Footer: React.FC = () => {
           </div>
         </Link>
         <div className="max-w-[320px] text-sm font-normal text-tertiary">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. doloremque
+          Drepwatch is a platform that enables direct communication between
+          users and their representatives.
         </div>
         <div className="flex items-center gap-3">
           <span className="rounded-full bg-[#EFEFEF]">
@@ -43,7 +44,8 @@ const Footer: React.FC = () => {
           <HiMapPin className="text-primary" size={26} /> Address
         </div>
         <div className="max-w-[300px] text-sm font-normal text-tertiary">
-          Suite 339 981 Hershel Shoals, South Kelsiview, TX 14298
+        utxo AG (NMKR), Döttingerstrasse 21, 5303 Würenlingen, Switzerland
+
         </div>
         <div>
           <Link
@@ -55,27 +57,6 @@ const Footer: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 ">
-        <div className="text-sm text-secondary md:text-base">
-          Subscribe to our newsletter !
-        </div>
-        <div className="max-w-[320px] text-sm font-normal text-tertiary">
-          Get valuable insights, updates, and special offers straight to your
-          inbox.
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="rounded-xl bg-white">
-            <input
-              type="email"
-              placeholder="Enter email address"
-              className=" rounded-xl border-none bg-tertiary-light p-3 outline-none placeholder:font-ibm-mono placeholder:text-tertiary"
-            />
-          </div>
-          <button className="rounded-lg bg-tertiary-light px-4 py-3 text-sm">
-            Subscribe
-          </button>
-        </div>
-      </div>
     </div>
   );
 };
