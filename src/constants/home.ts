@@ -1,12 +1,12 @@
 const WIDTHS: Record<number, string> = {
-    1: "123px",
-    2: "133px",
-    3: "114px",
+    1: "85px",
+    2: "80px",
+    3: "60px",
 }
 const SMALL_WIDTHS: Record<number, string> = {
-    1: "109px",
-    2: "117px",
-    3: "101px",
+    1: "80px",
+    2: "65px",
+    3: "55px",
 }
 
 const FILTER_TYPES = {
@@ -18,7 +18,7 @@ const FILTER_TYPES = {
 const FILTERS = [
     { label: "Questions", type: FILTER_TYPES.LATEST_QUESTIONS },
     { label: "Answers", type: FILTER_TYPES.LATEST_ANSWERS },
-    { label: "Explore Dreps", type: FILTER_TYPES.EXPLORE_DREPS },
+    { label: "Dreps", type: FILTER_TYPES.EXPLORE_DREPS },
 ];
 
 export {

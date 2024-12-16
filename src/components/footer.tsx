@@ -24,7 +24,7 @@ const Footer: React.FC = () => {
         </Link>
         <div className="max-w-[320px] text-sm font-normal text-tertiary">
           Drepwatch is a platform that enables direct communication between
-          users and their representatives.{" "}
+          users and their representatives.
         </div>
         <div className="flex items-center gap-3">
           <span className="rounded-full bg-[#EFEFEF]">
