@@ -16,8 +16,8 @@ const FILTER_TYPES = {
 };
 
 const FILTERS = [
-    { label: "Latest questions", type: FILTER_TYPES.LATEST_QUESTIONS },
-    { label: "Latest answers", type: FILTER_TYPES.LATEST_ANSWERS },
+    { label: "Questions", type: FILTER_TYPES.LATEST_QUESTIONS },
+    { label: "Answers", type: FILTER_TYPES.LATEST_ANSWERS },
     { label: "Explore Dreps", type: FILTER_TYPES.EXPLORE_DREPS },
 ];
 
