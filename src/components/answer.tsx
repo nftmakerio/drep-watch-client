@@ -221,7 +221,9 @@ const Answer: React.FC = (): ReactNode => {
                   {data?.question.drep_id.slice(0, 16)}...
                 </div>
                 <div className="font-neue-regrade text-[36px] font-semibold text-black ">
-                  {data?.question.drep_id.slice(0, 16)}...
+                  {profileData?.name
+                    ? profileData?.name
+                    : `${data?.question.drep_id.slice(0, 16)}...`}
                 </div>
                 <div className="mt-5 flex items-center gap-2.5">
                   <Link
