@@ -55,6 +55,10 @@ export const WALLETS: Record<
     image:
       "https://ticketingserver.nucast.io/storage/v1/object/public/web-assets/wallets/typhon.svg",
   },
+  "typhoncip30": {
+  title: "TyphonWallet",
+  image: "https://ticketingserver.nucast.io/storage/v1/object/public/web-assets/wallets/typhon.svg",
+},
   nufi: {
     title: "NuFi",
     image:
